@@ -28,3 +28,38 @@ class Cancelacion(models.Model):
 
     def __str__(self):
         return f"{self.descripcion} ({self.porcentaje}%)"
+
+class Admin(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    apellido = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.nombre} {self.apellido} ({self.email})"
+
+class Empleado(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    apellido = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    dni = models.CharField(max_length=20, unique=True)
+    password = models.CharField(max_length=100)
+
+    sucursal = models.ForeignKey('Sucursal', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.nombre} {self.apellido} {self.dni} {self.sucursal} ({self.email})"
+
+class Sucursal(models.Model):
+    id = models.AutoField(primary_key=True)
+    direccion = models.CharField(max_length=255)
+
+    # TODO: FK a tabla de localidad cuando localidad este creada
+    #localidad = models.ForeignKey('Localidad', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.direccion}" # + f" ({self.localidad})"
+    
+    
