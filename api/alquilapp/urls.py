@@ -1,14 +1,16 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import AlquilerViewSet, PaqueteExtraViewSet
+from rest_framework import routers
+from alquilapp import views
 
-# Crear un router y registrar el ViewSet
-router = DefaultRouter()
+router = routers.DefaultRouter()
+router.register(r'vehiculos', views.VehiculoView, basename='vehiculo')
+router.register(r'cancelaciones', views.CancelacionView, basename='cancelacion')
+router.register(r'admins', views.AdminViewSet, basename='admin')
+router.register(r'empleados', views.EmpleadoViewSet, basename='empleado')
+router.register(r'sucursales', views.SucursalViewSet, basename='sucursal')
 router.register(r'alquileres', AlquilerViewSet, basename='alquiler')
 router.register(r'paquetes', PaqueteExtraViewSet, basename='paqueteextra')
-#router.register(r'paquete-alquileres', PaqueteAlquilerViewSet, basename='paquetealquiler')
 
-# Las URLs del router son automáticamente registradas
 urlpatterns = [
-    path('api/', include(router.urls)),
+    path('api/v1/', include(router.urls)),
 ]
