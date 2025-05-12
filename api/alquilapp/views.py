@@ -1,8 +1,16 @@
 from rest_framework import viewsets
-from .serializer import VehiculoSerializer, CancelacionSerializer, AdminSerializer, EmpleadoSerializer, SucursalSerializer
-from .models import Vehiculo, Cancelacion, Admin, Empleado, Sucursal
+from .serializer import VehiculoSerializer, CancelacionSerializer, AdminSerializer, EmpleadoSerializer, SucursalSerializer, AlquilerSerializer, PaqueteAlquilerSerializer, PaqueteExtraSerializer
+from .models import Vehiculo, Cancelacion, Admin, Empleado, Sucursal, PaqueteExtra, Alquiler, PaqueteAlquiler
 
 # Create your views here.
+
+class AlquilerViewSet(viewsets.ModelViewSet):
+    queryset = Alquiler.objects.all()
+    serializer_class = AlquilerSerializer
+
+class PaqueteExtraViewSet(viewsets.ModelViewSet):
+    queryset = PaqueteExtra.objects.all()
+    serializer_class = PaqueteExtraSerializer
 
 class VehiculoView(viewsets.ModelViewSet):
     serializer_class = VehiculoSerializer
