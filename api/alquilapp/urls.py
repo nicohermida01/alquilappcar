@@ -12,6 +12,7 @@ router.register(r'alquileres', views.AlquilerViewSet, basename='alquiler')
 router.register(r'paquetes', views.PaqueteExtraViewSet, basename='paqueteextra')
 router.register(r'localidades', views.LocalidadViewSet, basename='localidad')
 router.register(r'categorias', views.CategoriaVehiculoViewSet, basename='categoria')
+router.register(r'clientes', views.ClienteViewSet, basename='cliente')
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),

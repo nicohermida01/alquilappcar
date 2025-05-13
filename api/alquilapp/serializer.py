@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Vehiculo, Cancelacion, Admin, Empleado, Sucursal, Alquiler, PaqueteExtra, PaqueteAlquiler, Localidad, CategoriaVehiculo
+from .models import Cliente, Vehiculo, Cancelacion, Admin, Empleado, Sucursal, Alquiler, PaqueteExtra, PaqueteAlquiler, Localidad, CategoriaVehiculo
 from django.utils.timezone import now
 from datetime import timedelta
 
@@ -144,3 +144,34 @@ class CategoriaVehiculoSerializer(serializers.ModelSerializer):
         model = CategoriaVehiculo
         fields = '__all__'
         read_only_fields = ['id']
+
+class ClienteSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Cliente
+        fields = '__all__'
+        read_only_fields = []
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        cliente = Cliente(**validated_data)
+        cliente.set_password(password) 
+        cliente.save()
+
+        return cliente
+    
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if password:
+            instance.set_password(password) 
+
+        instance.save()
+
+        return instance
+# TODO: Creo que hay que tocar una cosa mas con el tema del email. Hay que ver que no este registrado.
+#       No se si se hace aca o en otro lado. -Valen
