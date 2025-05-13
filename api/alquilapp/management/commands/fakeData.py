@@ -40,7 +40,7 @@ class Command(BaseCommand):
                 categoria_vehiculo=fake.random_element(elements=['Económico', 'SUV', 'Camioneta', 'Deportivo']),
                 sucursal_retiro=fake.city(),
                 vehiculo_asignado=fake.license_plate(),
-                cliente=fake.name(),
+                cliente=fake.random_element(elements=['Ivan Conofsitu', 'Nicormida', 'Agusto Bochazo', 'Valenton Paulino']),
                 precio_total=0 #temporal
             )
             
