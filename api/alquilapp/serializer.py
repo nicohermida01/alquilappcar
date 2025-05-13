@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Vehiculo, Cancelacion, Admin, Empleado, Sucursal, Alquiler, PaqueteExtra, PaqueteAlquiler
+from .models import Vehiculo, Cancelacion, Admin, Empleado, Sucursal, Alquiler, PaqueteExtra, PaqueteAlquiler, Localidad
 from django.utils.timezone import now
 from datetime import timedelta
 
@@ -130,5 +130,11 @@ class EmpleadoSerializer(serializers.ModelSerializer):
 class SucursalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sucursal
+        fields = '__all__'
+        read_only_fields = ['id']
+
+class LocalidadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Localidad
         fields = '__all__'
         read_only_fields = ['id']

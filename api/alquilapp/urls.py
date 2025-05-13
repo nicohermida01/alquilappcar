@@ -10,6 +10,7 @@ router.register(r'empleados', views.EmpleadoViewSet, basename='empleado')
 router.register(r'sucursales', views.SucursalViewSet, basename='sucursal')
 router.register(r'alquileres', views.AlquilerViewSet, basename='alquiler')
 router.register(r'paquetes', views.PaqueteExtraViewSet, basename='paqueteextra')
+router.register(r'localidades', views.LocalidadViewSet, basename='localidad')
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),
