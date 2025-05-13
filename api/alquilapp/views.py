@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .serializer import VehiculoSerializer, CancelacionSerializer, AdminSerializer, EmpleadoSerializer, SucursalSerializer, AlquilerSerializer, PaqueteAlquilerSerializer, PaqueteExtraSerializer, LocalidadSerializer
-from .models import Vehiculo, Cancelacion, Admin, Empleado, Sucursal, PaqueteExtra, Alquiler, PaqueteAlquiler, Localidad
+from .serializer import CategoriaVehiculoSerializer, VehiculoSerializer, CancelacionSerializer, AdminSerializer, EmpleadoSerializer, SucursalSerializer, AlquilerSerializer, PaqueteAlquilerSerializer, PaqueteExtraSerializer, LocalidadSerializer
+from .models import CategoriaVehiculo, Vehiculo, Cancelacion, Admin, Empleado, Sucursal, PaqueteExtra, Alquiler, PaqueteAlquiler, Localidad
 
 # Create your views here.
 
@@ -35,3 +35,7 @@ class SucursalViewSet(viewsets.ModelViewSet):
 class LocalidadViewSet(viewsets.ModelViewSet):
     serializer_class = LocalidadSerializer
     queryset = Localidad.objects.all()
+
+class CategoriaVehiculoViewSet(viewsets.ModelViewSet):
+    serializer_class = CategoriaVehiculoSerializer
+    queryset = CategoriaVehiculo.objects.all()

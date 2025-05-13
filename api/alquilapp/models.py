@@ -81,7 +81,7 @@ class Vehiculo(models.Model):
     #FK a tabla de cancelacion, notar que puse default=1 para que no rompa la base de datos
     cancelacion = models.ForeignKey('Cancelacion', on_delete=models.CASCADE, default=1) 
 
-    #categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE) AGREGAR CUANDO HAGAN EL MODELO DE CATEGORIA
+    categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.patente} {self.marca} {self.modelo} ({self.año})"
@@ -128,6 +128,13 @@ class Sucursal(models.Model):
 class Localidad(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f"{self.nombre}"
+    
+class CategoriaVehiculo(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.Charfield(max_length=32)
 
     def __str__(self):
         return f"{self.nombre}"
