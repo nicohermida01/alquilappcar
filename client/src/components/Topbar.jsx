@@ -4,7 +4,7 @@ import { Button } from "@heroui/button";
 
 function Topbar() {
   return (
-    <Navbar className="absolute top-0">
+    <Navbar className="absolute top-0 bg-background/60">
       <NavbarBrand>
         <Link to="/">
           <img src="/alquilappcar_logo.png" alt="Logo" style={{ width: 72 }} />
@@ -23,10 +23,10 @@ function Topbar() {
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Button color="primary">Reserve ahora</Button>
+          <Button color="secondary">Reserve ahora</Button>
         </NavbarItem>
         <NavbarItem>
-          <Button color="secondary">Register</Button>
+          <Button color="primary">Iniciar sesión</Button>
         </NavbarItem>
       </NavbarContent>
     </Navbar>
