@@ -12,7 +12,7 @@ export default {
   plugins: [
     heroui({
       themes: {
-        dark: {
+        light: {
           colors: {
             // colors 1 a 6 (de izq a der) son los colores de la paleta que paso el profe. La imagen esta en commons "logo59.png"
             primary: "#855329",
@@ -26,7 +26,6 @@ export default {
             "color-5": "#87532B",
             "color-6": "#503322",
           },
-          extends: {},
         },
       },
     }),
