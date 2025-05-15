@@ -29,14 +29,15 @@ class Alquiler(models.Model):
     def cantidad_dias_totales(self):
         return (self.fecha_devolucion - self.fecha_inicio).days
 
-    def calcular_precio_total(self):
-        dias = self.cantidad_dias_totales
+    # Esta func dijimos que la hace el frontend asi que la comento
+    #def calcular_precio_total(self):
+    #    dias = self.cantidad_dias_totales
         # campo de prueba hasta que esté la entidad categoria
-        costo_categoria = 5000  # valor fijo de prueba
+    #    costo_categoria = 5000  # valor fijo de prueba
         # cuando esté la entidad va la linea de abajo y no la de arriba.
         # costo_categoria = self.categoria_vehiculo.costo_por_dia
-        costo_paquetes = sum([p.paquete.costo for p in self.paquetealquiler_set.all()])
-        return (costo_categoria * dias) + costo_paquetes
+    #    costo_paquetes = sum([p.paquete.costo for p in self.paquetealquiler_set.all()])
+    #    return (costo_categoria * dias) + costo_paquetes
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -140,7 +141,9 @@ class Cliente(models.Model):
     nombre = models.CharField(max_length=16)
     apellido = models.CharField(max_length=16)
     fecha_de_nacimiento = models.DateTimeField()
-    contacto = models.EmailField(unique=True)
+    contacto = models.CharField(max_length=32)
+    email = models.EmaiField(unique=True)
+    password = models.CharField(max_length=64)
 
     def __str__(self):
         return f"{self.dni} {self.nombre} {self.apellido} {self.fecha_de_nacimiento} {self.contacto}"
