@@ -14,10 +14,10 @@ function Topbar() {
 					<img src='/alquilappcar_logo.png' alt='Logo' style={{ width: 72 }} />
 				</Link>
 			</NavbarBrand>
-			<NavbarContent className='hidden sm:flex gap-14' justify='center'>
-				<NavbarItem>
+			<NavbarContent className='hidden sm:flex gap-14' justify='start'>
+				{/* <NavbarItem>
 					<Link to='/'>Home</Link>
-				</NavbarItem>
+				</NavbarItem> */}
 				<NavbarItem>
 					<Link to='/flota'>Flota</Link>
 				</NavbarItem>
@@ -27,9 +27,13 @@ function Topbar() {
 			</NavbarContent>
 			<NavbarContent justify='end'>
 				<NavbarItem>
-					<Button className='text-white' color='secondary'>
-						Reserve ahora
-					</Button>
+          <Link to="/alquiler"><Button
+                    className="text-white"
+                    color="secondary"
+                    type="submit"
+                  >
+                    Reserve ahora
+                  </Button></Link>
 				</NavbarItem>
 				<NavbarItem>
 					<Button className='text-white' color='primary'>
