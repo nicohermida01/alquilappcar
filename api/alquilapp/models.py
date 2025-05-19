@@ -15,7 +15,7 @@ class Alquiler(models.Model):
     # puede no enviarse la fecha de inicio si resulta que es un alquiler en el momento
     fecha_inicio = models.DateTimeField(default=now)
     fecha_devolucion = models.DateTimeField()
-    categoria_vehiculo = models.ForeignKey('CategoriaVehiculo', on_delete=models.PROTECT)
+    categoria_vehiculo = models.ForeignKey('CategoriaVehiculo', on_delete=models.PROTECT, null=False)
     sucursal_retiro = models.ForeignKey('Sucursal', on_delete=models.PROTECT)
     vehiculo_asignado = models.ForeignKey('Vehiculo', on_delete=models.SET_NULL, null=True, blank=True, to_field='patente')
     cliente = models.ForeignKey('Cliente', on_delete=models.PROTECT)
@@ -74,7 +74,7 @@ class Vehiculo(models.Model):
     #FK a tabla de cancelacion, notar que puse default=1 para que no rompa la base de datos
     cancelacion = models.ForeignKey('Cancelacion', on_delete=models.CASCADE, default=1) 
 
-    categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE)
+    categoria = models.ForeignKey('CategoriaVehiculo', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.patente} {self.marca} {self.modelo} ({self.año})"
@@ -127,7 +127,7 @@ class Localidad(models.Model):
     
 class CategoriaVehiculo(models.Model):
     id = models.AutoField(primary_key=True)
-    nombre = models.Charfield(max_length=32)
+    nombre = models.CharField(max_length=32)
     precio = models.DecimalField(max_digits=7, decimal_places=2)
 
     def __str__(self):
@@ -142,7 +142,7 @@ class Cliente(models.Model):
     apellido = models.CharField(max_length=16)
     fecha_de_nacimiento = models.DateTimeField()
     contacto = models.CharField(max_length=32)
-    email = models.EmaiField(unique=True)
+    email = models.EmailField(unique=True)
     password = models.CharField(max_length=64)
 
     def __str__(self):
