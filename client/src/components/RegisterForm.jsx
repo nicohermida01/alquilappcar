@@ -2,6 +2,9 @@ import { Input, Button, Textarea } from '@heroui/react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { InputPassword } from './InputPassword'
+import { authService } from '../services/auth.service'
+import { format } from 'date-fns'
+import toast, { Toaster } from 'react-hot-toast'
 
 const InputField = ({ children }) => {
 	return <fieldset className='flex items-center gap-3'>{children}</fieldset>
@@ -13,8 +16,33 @@ export function RegisterForm() {
 	const { register, handleSubmit, reset, getValues } = useForm()
 
 	const onSubmit = data => {
-		console.log(data)
-		reset()
+		const { confirmPassword, ...dataWithoutConfirm } = data
+		let userData = dataWithoutConfirm
+
+		if (dataWithoutConfirm.contacto === '') {
+			const { contacto, ...dataWithoutContact } = dataWithoutConfirm
+			userData = dataWithoutContact
+		}
+
+		// Django: Date has wrong format. Use one of these formats instead: YYYY-MM-DD. -Nico
+		userData.fecha_de_nacimiento = format(
+			userData.fecha_de_nacimiento,
+			'yyyy-MM-dd'
+		)
+
+		authService
+			.register(userData)
+			.then(() => {
+				toast('Cuenta creada con éxito!')
+				reset()
+				// TODO redirigir a la homepage
+			})
+			.catch(err => {
+				toast.error(
+					'Ups :(. Parece que hubo un error al crear la cuenta. Prueba de nuevo.'
+				)
+				console.error(err)
+			})
 	}
 
 	const onError = errors => {
@@ -36,94 +64,98 @@ export function RegisterForm() {
 	}
 
 	return (
-		<form
-			className='w-[50%] flex flex-col gap-4 p-8 bg-white rounded-lg shadow-lg'
-			onSubmit={handleSubmit(onSubmit, onError)}
-		>
-			<h1 className='text-3xl font-bold text-center'>Crear cuenta</h1>
+		<>
+			<form
+				className='w-[50%] flex flex-col gap-4 p-8 bg-white rounded-lg shadow-lg'
+				onSubmit={handleSubmit(onSubmit, onError)}
+			>
+				<h1 className='text-3xl font-bold text-center'>Crear cuenta</h1>
 
-			<InputField>
-				<Input
-					type='text'
-					label='Nombre'
-					{...register('nombre', { required: true })}
-					isRequired
-				/>
+				<InputField>
+					<Input
+						type='text'
+						label='Nombre'
+						{...register('nombre', { required: true })}
+						isRequired
+					/>
+
+					<Input
+						type='text'
+						label='Apellido'
+						{...register('apellido', { required: true })}
+						isRequired
+					/>
+				</InputField>
+
+				<InputField>
+					<Input
+						type='email'
+						label='Correo electrónico'
+						{...register('email', { required: true })}
+						isRequired
+					/>
+
+					<Input
+						type='number'
+						label='DNI'
+						{...register('dni', {
+							required: true,
+							valueAsNumber: true,
+						})}
+						isRequired
+					/>
+				</InputField>
 
 				<Input
-					type='text'
-					label='Apellido'
-					{...register('apellido', { required: true })}
-					isRequired
-				/>
-			</InputField>
-
-			<InputField>
-				<Input
-					type='email'
-					label='Correo electrónico'
-					{...register('email', { required: true })}
-					isRequired
-				/>
-
-				<Input
-					type='number'
-					label='DNI'
-					{...register('dni', {
+					type='date'
+					label='Fecha de nacimiento'
+					{...register('fecha_de_nacimiento', {
+						valueAsDate: true,
 						required: true,
-						valueAsNumber: true,
 					})}
 					isRequired
 				/>
-			</InputField>
 
-			<Input
-				type='date'
-				label='Fecha de nacimiento'
-				{...register('fecha_de_nacimiento', {
-					valueAsDate: true,
-					required: true,
-				})}
-				isRequired
-			/>
-
-			<Textarea
-				label='Información de contacto'
-				resize='none'
-				size='lg'
-				isRequired
-				{...register('contacto', { required: true })}
-			/>
-
-			<InputField>
-				<InputPassword
-					label='Contraseña'
-					register={{
-						...register('password', {
-							required: true,
-							validate: validatePassword,
-						}),
-					}}
+				<Textarea
+					label='Información de contacto'
+					resize='none'
+					size='lg'
+					{...register('contacto')}
 				/>
 
-				<InputPassword
-					label='Confirmar contraseña'
-					register={{
-						...register('confirmPassword', {
-							required: true,
-							validate: validatePassword,
-						}),
-					}}
-				/>
-			</InputField>
+				<InputField>
+					<InputPassword
+						label='Contraseña'
+						register={{
+							...register('password', {
+								required: true,
+								validate: validatePassword,
+							}),
+						}}
+					/>
 
-			{!matchPasswords && (
-				<span className='text-error text-xs'>Las contraseñas no coinciden</span>
-			)}
+					<InputPassword
+						label='Confirmar contraseña'
+						register={{
+							...register('confirmPassword', {
+								required: true,
+								validate: validatePassword,
+							}),
+						}}
+					/>
+				</InputField>
 
-			<Button type='submit' color='primary' className='text-white'>
-				Confirmar
-			</Button>
-		</form>
+				{!matchPasswords && (
+					<span className='text-error text-sm bg-red-100 w-max px-4 py-2 rounded-md'>
+						Las contraseñas no coinciden
+					</span>
+				)}
+
+				<Button type='submit' color='primary' className='text-white'>
+					Confirmar
+				</Button>
+			</form>
+			<Toaster />
+		</>
 	)
 }
