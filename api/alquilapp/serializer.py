@@ -156,10 +156,11 @@ class ClienteSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         password = validated_data.pop('password')
         cliente = Cliente(**validated_data)
-        cliente.set_password(password) 
+        cliente.set_password(password)
         cliente.save()
 
         return cliente
+
     
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
