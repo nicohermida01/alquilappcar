@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from .serializer import ClienteSerializer, CategoriaVehiculoSerializer, VehiculoSerializer, CancelacionSerializer, AdminSerializer, EmpleadoSerializer, SucursalSerializer, AlquilerSerializer, PaqueteAlquilerSerializer, PaqueteExtraSerializer, LocalidadSerializer, MarcaSerializer
 from .models import Cliente, CategoriaVehiculo, Vehiculo, Cancelacion, Admin, Empleado, Sucursal, PaqueteExtra, Alquiler, PaqueteAlquiler, Localidad, Marca
+from rest_framework.response import Response
 
 # Create your views here.
 
@@ -46,4 +47,13 @@ class CategoriaVehiculoViewSet(viewsets.ModelViewSet):
 
 class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
-    queryset = Cliente.objects.all()
+    
+    def create(self, request):
+        # validar que haya un body en la request
+        if not request.data:
+            return Response({"error": "No data provided"}, status=400)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)

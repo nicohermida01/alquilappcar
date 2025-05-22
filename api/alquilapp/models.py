@@ -2,6 +2,7 @@ from django.db import models
 from .managers import ActivosManager
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
+from django.contrib.auth.hashers import make_password
 
 class PaqueteExtra(models.Model):
     nombre = models.CharField(max_length=100)
@@ -145,13 +146,18 @@ class CategoriaVehiculo(models.Model):
 #       Hay que sacar el campo precio de esta entidad pero no se como se hace. ENVIEN APOYO. -Valen
     
 class Cliente(models.Model):
-    dni = models.IntegerField(primary_key=True)
+    dni = models.IntegerField(unique=True)
     nombre = models.CharField(max_length=16)
     apellido = models.CharField(max_length=16)
-    fecha_de_nacimiento = models.DateTimeField()
-    contacto = models.CharField(max_length=32)
+    fecha_de_nacimiento = models.DateField()
+    contacto = models.CharField(max_length=64, blank=True, null=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=64)
 
     def __str__(self):
-        return f"{self.dni} {self.nombre} {self.apellido} {self.fecha_de_nacimiento} {self.contacto}"
+        return f"{self.nombre} {self.apellido} ({self.dni})" # Esto solo se usa para mostrar en el admin, no es tan importante -Nico
+    
+    def set_password(self, password):
+        # Este método se usa para encriptar la contraseña antes de guardarla en la base de datos -Nico
+        self.password = make_password(password)
+        self.save()
