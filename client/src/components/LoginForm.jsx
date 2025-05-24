@@ -4,11 +4,13 @@ import { useForm } from 'react-hook-form'
 import { InputPassword } from './InputPassword'
 import { authService } from '../services/auth.service'
 import { useAuth } from '../contexts/AuthContext'
-import { redirect } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
 
 export function LoginForm() {
 	const { login } = useAuth()
+
+	let navigate = useNavigate()
 
 	const { register, handleSubmit, reset } = useForm()
 
@@ -19,7 +21,7 @@ export function LoginForm() {
 				login(res)
 				toast.success('Sesión iniciada correctamente')
 				reset()
-				redirect('/')
+				navigate('/')
 			})
 			.catch(err => {
 				toast.error('Credenciales inválidas')
