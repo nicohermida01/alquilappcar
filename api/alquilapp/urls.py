@@ -4,6 +4,7 @@ from alquilapp import views
 
 router = routers.DefaultRouter()
 router.register(r'vehiculos', views.VehiculoView, basename='vehiculo')
+router.register(r'marcas', views.MarcaView, basename='marca')
 router.register(r'cancelaciones', views.CancelacionView, basename='cancelacion')
 router.register(r'admins', views.AdminViewSet, basename='admin')
 router.register(r'empleados', views.EmpleadoViewSet, basename='empleado')

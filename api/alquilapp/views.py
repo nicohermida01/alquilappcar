@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .serializer import ClienteSerializer, CategoriaVehiculoSerializer, VehiculoSerializer, CancelacionSerializer, AdminSerializer, EmpleadoSerializer, SucursalSerializer, AlquilerSerializer, PaqueteAlquilerSerializer, PaqueteExtraSerializer, LocalidadSerializer
-from .models import Cliente, CategoriaVehiculo, Vehiculo, Cancelacion, Admin, Empleado, Sucursal, PaqueteExtra, Alquiler, PaqueteAlquiler, Localidad
+from .serializer import ClienteSerializer, CategoriaVehiculoSerializer, VehiculoSerializer, CancelacionSerializer, AdminSerializer, EmpleadoSerializer, SucursalSerializer, AlquilerSerializer, PaqueteAlquilerSerializer, PaqueteExtraSerializer, LocalidadSerializer, MarcaSerializer
+from .models import Cliente, CategoriaVehiculo, Vehiculo, Cancelacion, Admin, Empleado, Sucursal, PaqueteExtra, Alquiler, PaqueteAlquiler, Localidad, Marca
 from rest_framework.response import Response
 from datetime import datetime, timedelta
 from rest_framework.views import APIView
@@ -20,6 +20,10 @@ class PaqueteExtraViewSet(viewsets.ModelViewSet):
 class VehiculoView(viewsets.ModelViewSet):
     serializer_class = VehiculoSerializer
     queryset = Vehiculo.objects.all()
+
+class MarcaView(viewsets.ModelViewSet):
+    serializer_class = MarcaSerializer
+    queryset = Marca.objects.all()
 
 class CancelacionView(viewsets.ModelViewSet):
     serializer_class = CancelacionSerializer
