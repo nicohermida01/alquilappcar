@@ -17,4 +17,5 @@ router.register(r'clientes', views.ClienteViewSet, basename='cliente')
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),
+    path('api/v1/login/', views.LoginAPIView.as_view(), name='login')
 ]

@@ -1,3 +1,4 @@
+
 import Topbar from "../components/Topbar";
 import ReserveCard from "../components/ReserveCard";
 import { PageLayout } from "../components/PageLayout";
@@ -17,6 +18,7 @@ function HomePage() {
             </section>
         </PageLayout>
     );
+
 }
 
-export default HomePage;
+export default HomePage

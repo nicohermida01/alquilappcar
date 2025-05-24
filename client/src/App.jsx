@@ -3,22 +3,24 @@ import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import CreateAlquiler from './pages/CreateAlquiler'
+import { AuthProvider } from './contexts/AuthContext'
 
 function App() {
 	return (
-		<BrowserRouter>
-			<Routes>
-				<Route path='/' element={<HomePage />} />
-				<Route path='/login' element={<LoginPage />} />
-				<Route path='/register' element={<RegisterPage />} />
-        <Route path='/alquiler' element={<CreateAlquiler />} />
-			</Routes>
-		</BrowserRouter>
+		<AuthProvider>
+			<BrowserRouter>
+				<Routes>
+					<Route path='/' element={<HomePage />} />
+					<Route path='/login' element={<LoginPage />} />
+					<Route path='/register' element={<RegisterPage />} />
+					<Route path='/alquiler' element={<CreateAlquiler />} />
+				</Routes>
+			</BrowserRouter>
+		</AuthProvider>
 	)
 }
 
 export default App
-
 
 /* ACLARACIONES DEL CABESAURIO: 
 
