@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from datetime import datetime, timedelta
 from rest_framework.views import APIView
 from django.conf import settings
-import jwt
 
 # Create your views here.
 
