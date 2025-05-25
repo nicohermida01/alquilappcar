@@ -2,6 +2,10 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8000/alquilapp/api/v1/";
 
+export const getAllVehicles = () => {
+    return axios.get(BASE_URL + "vehiculos/");
+};
+
 export const getAllBrands = () => {
     return axios.get(BASE_URL + "marcas/");
 };
