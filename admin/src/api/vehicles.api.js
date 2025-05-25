@@ -1,27 +1,40 @@
-import axios from "axios";
+import { api } from "./main";
 
-const BASE_URL = "http://localhost:8000/alquilapp/api/v1/";
-
-export const getAllVehicles = () => {
-    return axios.get(BASE_URL + "vehiculos/");
+const getAllVehicles = async () => {
+    const response = await api.get("vehiculos/");
+    return response.data;
 };
 
-export const getAllBrands = () => {
-    return axios.get(BASE_URL + "marcas/");
+const getAllBrands = async () => {
+    const response = await api.get("marcas/");
+    return response.data;
 };
 
-export const getAllSucursales = () => {
-    return axios.get(BASE_URL + "localidades/");
+const getAllSucursales = async () => {
+    const response = await api.get("localidades/");
+    return response.data;
 };
 
-export const getAllCategorias = () => {
-    return axios.get(BASE_URL + "categorias/");
+const getAllCategorias = async () => {
+    const response = await api.get("categorias/");
+    return response.data;
 };
 
-export const getAllCancelaciones = () => {
-    return axios.get(BASE_URL + "cancelaciones/");
+const getAllCancelaciones = async () => {
+    const response = await api.get("cancelaciones/");
+    return response.data;
 };
 
-export const createVehicle = (data) => {
-    return axios.post(BASE_URL + "vehiculos/", data);
+const createVehicle = async (vehicleData) => {
+    const response = await api.post("vehiculos/", vehicleData);
+    return response.data;
+};
+
+export const vehiclesApi = {
+    getAllVehicles,
+    getAllBrands,
+    getAllSucursales,
+    getAllCategorias,
+    getAllCancelaciones,
+    createVehicle,
 };

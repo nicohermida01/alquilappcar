@@ -1,19 +1,20 @@
-import { Input, Button, Select, SelectItem, Checkbox } from "@heroui/react";
+import {
+    Input,
+    Button,
+    Select,
+    SelectItem,
+    Checkbox,
+    addToast,
+} from "@heroui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-    getAllBrands,
-    getAllSucursales,
-    createVehicle,
-    getAllCategorias,
-    getAllCancelaciones,
-} from "../api/vehicles.api";
+import { vehiclesApi } from "../api/vehicles.api";
 
 const InputField = ({ children }) => {
     return <fieldset className="flex items-center gap-3">{children}</fieldset>;
 };
 
-export function RegisterVehicleForm() {
+function RegisterVehicleForm() {
     const { register, handleSubmit, reset, getValues } = useForm();
 
     const [brands, setBrands] = useState([]);
@@ -22,9 +23,22 @@ export function RegisterVehicleForm() {
     const [cancelaciones, setCancelaciones] = useState([]);
 
     const onSubmit = (data) => {
-        async function submitVehicle() {
-            await createVehicle(data);
-        }
+        vehiclesApi
+            .createVehicle(data)
+            .then(() => {
+                addToast({
+                    title: "Vehículo creado",
+                    description: "El vehículo ha sido creado correctamente",
+                    color: "success",
+                });
+            })
+            .catch((error) => {
+                addToast({
+                    title: "Error",
+                    description: "No se ha podido crear el vehículo. " + error,
+                    color: "danger",
+                });
+            });
         console.log(data);
         submitVehicle();
         reset();
@@ -35,36 +49,25 @@ export function RegisterVehicleForm() {
     };
 
     useEffect(() => {
-        async function fetchBrands() {
-            const res = await getAllBrands();
-            setBrands(res.data);
-        }
+        vehiclesApi.getAllBrands().then((res) => {
+            setBrands(res);
+        });
+        vehiclesApi.getAllSucursales().then((res) => {
+            setSucursales(res);
+        });
+        vehiclesApi.getAllCategorias().then((res) => {
+            setCategorias(res);
+        });
+        vehiclesApi.getAllCancelaciones().then((res) => {
+            setCancelaciones(res);
+        });
 
-        async function fetchSucursales() {
-            const res = await getAllSucursales();
-            setSucursales(res.data);
-        }
-
-        async function fetchCategorias() {
-            const res = await getAllCategorias();
-            setCategorias(res.data);
-        }
-
-        async function fetchCancelaciones() {
-            const res = await getAllCancelaciones();
-            setCancelaciones(res.data);
-        }
-
-        fetchSucursales();
-        fetchBrands();
-        fetchCategorias();
-        fetchCancelaciones();
         reset();
     }, [reset]);
 
     return (
         <form
-            className="w-[50%] flex flex-col gap-4 p-8 bg-white rounded-lg shadow-lg"
+            className="flex flex-col gap-4 p-8 bg-white rounded-lg shadow-lg"
             onSubmit={handleSubmit(onSubmit, onError)}
         >
             <div className="text-center mb-4">
@@ -201,3 +204,5 @@ export function RegisterVehicleForm() {
         </form>
     );
 }
+
+export default RegisterVehicleForm;

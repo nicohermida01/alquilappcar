@@ -15,14 +15,16 @@ import {
     Chip,
     User,
     Pagination,
+    useDisclosure,
 } from "@heroui/react";
-import { getAllBrands, getAllVehicles } from "../api/vehicles.api";
+import { vehiclesApi } from "../api/vehicles.api";
 import {
     SearchIcon,
     PlusIcon,
     ChevronDownIcon,
     VerticalDotsIcon,
 } from "../assets/icons";
+import CreateVehicleModal from "./CreateVehicleModal";
 
 export const columns = [
     { name: "ID", uid: "id", sortable: true },
@@ -51,33 +53,30 @@ export const statusColorMap = {
 
 const INITIAL_VISIBLE_COLUMNS = ["marca", "modelo", "patente", "actions"];
 
-export default function App() {
+export default function ListVehicles() {
     const [vehicles, setVehicles] = React.useState([]);
     const [brands, setBrands] = React.useState([]);
 
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
     React.useEffect(() => {
-        async function fetchVehicles() {
-            try {
-                const res = await getAllVehicles();
-                console.log(res.data);
-                setVehicles(res.data);
-            } catch (error) {
+        vehiclesApi
+            .getAllVehicles()
+            .then((res) => {
+                setVehicles(res);
+            })
+            .catch((error) => {
                 console.error("Error fetching data:", error);
-            }
-        }
+            });
 
-        async function fetchBrands() {
-            try {
-                const res = await getAllBrands();
-                console.log(res.data);
-                setBrands(res.data);
-            } catch (error) {
+        vehiclesApi
+            .getAllBrands()
+            .then((res) => {
+                setBrands(res);
+            })
+            .catch((error) => {
                 console.error("Error fetching data:", error);
-            }
-        }
-
-        fetchVehicles();
-        fetchBrands();
+            });
     }, []);
 
     const [filterValue, setFilterValue] = React.useState("");
@@ -175,7 +174,7 @@ export default function App() {
                 return (
                     <Chip
                         className="capitalize"
-                        color={statusColorMap[vehicle.patente]}
+                        color={statusColorMap[vehicle.status]}
                         size="sm"
                         variant="flat"
                     >
@@ -191,7 +190,7 @@ export default function App() {
                                     <VerticalDotsIcon className="text-default-300" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu>
+                            <DropdownMenu closeOnSelect={false}>
                                 <DropdownItem key="view">View</DropdownItem>
                                 <DropdownItem key="edit">Edit</DropdownItem>
                                 <DropdownItem key="delete">Delete</DropdownItem>
@@ -242,7 +241,7 @@ export default function App() {
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Search by name..."
+                        placeholder="Buscar por patente..."
                         startContent={<SearchIcon />}
                         value={filterValue}
                         onClear={() => onClear()}
@@ -309,9 +308,7 @@ export default function App() {
                         </Dropdown>
                         <Button
                             color="primary"
-                            onPress={() =>
-                                console.log(brands[vehicles[0].marca - 1])
-                            }
+                            onPress={onOpen}
                             endContent={<PlusIcon />}
                         >
                             Add New
@@ -386,43 +383,53 @@ export default function App() {
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
     return (
-        <Table
-            isHeaderSticky
-            aria-label="Example table with custom cells, pagination and sorting"
-            bottomContent={bottomContent}
-            bottomContentPlacement="outside"
-            classNames={{
-                wrapper: "max-h-[382px]",
-            }}
-            className="w-[80%]"
-            selectedKeys={selectedKeys}
-            selectionMode="multiple"
-            sortDescriptor={sortDescriptor}
-            topContent={topContent}
-            topContentPlacement="outside"
-            onSelectionChange={setSelectedKeys}
-            onSortChange={setSortDescriptor}
-        >
-            <TableHeader columns={headerColumns}>
-                {(column) => (
-                    <TableColumn
-                        key={column.uid}
-                        align={column.uid === "actions" ? "center" : "start"}
-                        allowsSorting={column.sortable}
-                    >
-                        {column.name}
-                    </TableColumn>
-                )}
-            </TableHeader>
-            <TableBody emptyContent={"No vehicles found"} items={sortedItems}>
-                {(item) => (
-                    <TableRow key={item.id}>
-                        {(columnKey) => (
-                            <TableCell>{renderCell(item, columnKey)}</TableCell>
-                        )}
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+        <>
+            <CreateVehicleModal onOpenChange={onOpenChange} isOpen={isOpen} />
+            <Table
+                isHeaderSticky
+                aria-label="Example table with custom cells, pagination and sorting"
+                bottomContent={bottomContent}
+                bottomContentPlacement="outside"
+                classNames={{
+                    wrapper: "max-h-[382px]",
+                }}
+                className="w-[80%]"
+                selectedKeys={selectedKeys}
+                selectionMode="multiple"
+                sortDescriptor={sortDescriptor}
+                topContent={topContent}
+                topContentPlacement="outside"
+                onSelectionChange={setSelectedKeys}
+                onSortChange={setSortDescriptor}
+            >
+                <TableHeader columns={headerColumns}>
+                    {(column) => (
+                        <TableColumn
+                            key={column.uid}
+                            align={
+                                column.uid === "actions" ? "center" : "start"
+                            }
+                            allowsSorting={column.sortable}
+                        >
+                            {column.name}
+                        </TableColumn>
+                    )}
+                </TableHeader>
+                <TableBody
+                    emptyContent={"No vehicles found"}
+                    items={sortedItems}
+                >
+                    {(item) => (
+                        <TableRow key={item.id}>
+                            {(columnKey) => (
+                                <TableCell>
+                                    {renderCell(item, columnKey)}
+                                </TableCell>
+                            )}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </>
     );
 }
