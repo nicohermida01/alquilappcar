@@ -16,6 +16,8 @@ const InputField = ({ children }) => {
 function RegisterVehicleForm({
     vehicleInfo,
     databaseInfo: { brands, sucursales, categorias, cancelaciones },
+    updateVehicleList,
+    onClose,
 }) {
     const { register, handleSubmit, reset, getValues } = useForm();
 
@@ -30,6 +32,7 @@ function RegisterVehicleForm({
                               "El vehículo ha sido actualizado correctamente",
                           color: "success",
                       });
+                      updateVehicleList();
                   })
                   .catch((error) => {
                       addToast({
@@ -49,6 +52,8 @@ function RegisterVehicleForm({
                               "El vehículo ha sido creado correctamente",
                           color: "success",
                       });
+                      updateVehicleList();
+                      onClose();
                   })
                   .catch((error) => {
                       addToast({

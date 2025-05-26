@@ -6,6 +6,7 @@ export default function ModifyVehicleModal({
     databaseInfo,
     isOpen,
     onOpenChange,
+    updateVehicleList,
 }) {
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl">
@@ -17,6 +18,7 @@ export default function ModifyVehicleModal({
                             <RegisterVehicleForm
                                 databaseInfo={databaseInfo}
                                 vehicleInfo={vehicleInfo}
+                                updateVehicleList={updateVehicleList}
                             />
                         </ModalBody>
                     </>

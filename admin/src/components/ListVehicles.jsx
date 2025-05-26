@@ -17,6 +17,7 @@ import {
     Pagination,
     useDisclosure,
     Tooltip,
+    addToast,
 } from "@heroui/react";
 import { vehiclesApi } from "../api/vehicles.api";
 import {
@@ -91,7 +92,7 @@ export default function ListVehicles() {
         onOpenModifyVehicle();
     }
 
-    React.useEffect(() => {
+    function fetchInfo() {
         vehiclesApi
             .getAllVehicles()
             .then((res) => {
@@ -136,6 +137,10 @@ export default function ListVehicles() {
             .catch((error) => {
                 console.error("Error fetching data:", error);
             });
+    }
+
+    React.useEffect(() => {
+        fetchInfo();
     }, []);
 
     const [filterValue, setFilterValue] = React.useState("");
@@ -209,7 +214,7 @@ export default function ListVehicles() {
                 return (
                     <User
                         avatarProps={{ radius: "lg", src: vehicle.avatar }}
-                        name={brands.find((b) => b.id === vehicle.marca)?.name}
+                        name={brands[vehicle.marca - 1]?.name}
                         description={vehicle.marca}
                     ></User>
                 );
@@ -255,7 +260,28 @@ export default function ListVehicles() {
                             </span>
                         </Tooltip>
                         <Tooltip color="danger" content="Eliminar vehículo">
-                            <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                            <span
+                                className="text-lg text-danger cursor-pointer active:opacity-50"
+                                onClick={() =>
+                                    vehiclesApi
+                                        .deleteVehicle(vehicle.id)
+                                        .then(() => {
+                                            fetchInfo();
+                                            addToast({
+                                                title: "Éxito",
+                                                description:
+                                                    "Vehículo eliminado correctamente.",
+                                                color: "success",
+                                            });
+                                        })
+                                        .catch((error) => {
+                                            console.error(
+                                                "Error deleting vehicle:",
+                                                error
+                                            );
+                                        })
+                                }
+                            >
                                 <DeleteIcon />
                             </span>
                         </Tooltip>
@@ -452,6 +478,7 @@ export default function ListVehicles() {
                     categorias,
                     cancelaciones,
                 }}
+                updateVehiclesList={fetchInfo}
             />
             <ViewVehicleModal
                 onOpenChange={onOpenChangeViewVehicle}
@@ -468,6 +495,7 @@ export default function ListVehicles() {
                     categorias,
                     cancelaciones,
                 }}
+                updateVehicleList={fetchInfo}
             />
             <Table
                 isHeaderSticky

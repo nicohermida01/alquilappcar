@@ -5,6 +5,7 @@ export default function CreateVehicleModal({
     databaseInfo,
     isOpen,
     onOpenChange,
+    updateVehiclesList,
 }) {
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl">
@@ -13,7 +14,11 @@ export default function CreateVehicleModal({
                     <>
                         <ModalHeader className="flex flex-col gap-1"></ModalHeader>
                         <ModalBody>
-                            <RegisterVehicleForm databaseInfo={databaseInfo} />
+                            <RegisterVehicleForm
+                                databaseInfo={databaseInfo}
+                                updateVehicleList={updateVehiclesList}
+                                onClose={onClose}
+                            />
                         </ModalBody>
                     </>
                 )}

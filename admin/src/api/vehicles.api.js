@@ -35,6 +35,11 @@ const updateVehicle = async (vehicleData, id) => {
     return response.data;
 };
 
+const deleteVehicle = async (id) => {
+    const response = await api.delete(`vehiculos/${id}/`);
+    return response.data;
+};
+
 export const vehiclesApi = {
     getAllVehicles,
     getAllBrands,
@@ -43,4 +48,5 @@ export const vehiclesApi = {
     getAllCancelaciones,
     createVehicle,
     updateVehicle,
+    deleteVehicle,
 };
