@@ -8,17 +8,28 @@ import {
     Button,
 } from "@heroui/react";
 
-export default function ViewVehicleModal({ isOpen, onOpenChange }) {
+export default function ViewVehicleModal({ isOpen, onOpenChange, vehicle }) {
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl">
             <ModalContent>
                 {(onClose) => (
                     <>
                         <ModalHeader className="flex flex-col gap-1">
-                            Modal Title
+                            Detalles del vehículo
                         </ModalHeader>
                         <ModalBody>
-                            <p>Holi</p>
+                            <section className="flex gap-2">
+                                <p className="font-bold">Patente: </p>
+                                <p>{vehicle.patente}</p>
+                            </section>
+                            <section className="flex gap-2">
+                                <p className="font-bold">Modelo: </p>
+                                <p>{vehicle.modelo}</p>
+                            </section>
+                            <section className="flex gap-2">
+                                <p className="font-bold">Marca: </p>
+                                <p>{vehicle.marca}</p>
+                            </section>
                         </ModalBody>
                         <ModalFooter>
                             <Button

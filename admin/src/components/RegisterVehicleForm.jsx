@@ -6,7 +6,6 @@ import {
     Checkbox,
     addToast,
 } from "@heroui/react";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { vehiclesApi } from "../api/vehicles.api";
 
@@ -14,56 +13,57 @@ const InputField = ({ children }) => {
     return <fieldset className="flex items-center gap-3">{children}</fieldset>;
 };
 
-function RegisterVehicleForm() {
+function RegisterVehicleForm({
+    vehicleInfo,
+    databaseInfo: { brands, sucursales, categorias, cancelaciones },
+}) {
     const { register, handleSubmit, reset, getValues } = useForm();
 
-    const [brands, setBrands] = useState([]);
-    const [sucursales, setSucursales] = useState([]);
-    const [categorias, setCategorias] = useState([]);
-    const [cancelaciones, setCancelaciones] = useState([]);
-
     const onSubmit = (data) => {
-        vehiclesApi
-            .createVehicle(data)
-            .then(() => {
-                addToast({
-                    title: "Vehículo creado",
-                    description: "El vehículo ha sido creado correctamente",
-                    color: "success",
-                });
-            })
-            .catch((error) => {
-                addToast({
-                    title: "Error",
-                    description: "No se ha podido crear el vehículo. " + error,
-                    color: "danger",
-                });
-            });
-        console.log(data);
-        submitVehicle();
-        reset();
+        vehicleInfo
+            ? vehiclesApi
+                  .updateVehicle(data, vehicleInfo.id)
+                  .then(() => {
+                      addToast({
+                          title: "Vehículo actualizado",
+                          description:
+                              "El vehículo ha sido actualizado correctamente",
+                          color: "success",
+                      });
+                  })
+                  .catch((error) => {
+                      addToast({
+                          title: "Error",
+                          description:
+                              "No se ha podido actualizar el vehículo. " +
+                              error,
+                          color: "danger",
+                      });
+                  })
+            : (vehiclesApi
+                  .createVehicle(data)
+                  .then(() => {
+                      addToast({
+                          title: "Vehículo creado",
+                          description:
+                              "El vehículo ha sido creado correctamente",
+                          color: "success",
+                      });
+                  })
+                  .catch((error) => {
+                      addToast({
+                          title: "Error",
+                          description:
+                              "No se ha podido crear el vehículo. " + error,
+                          color: "danger",
+                      });
+                  }),
+              reset());
     };
 
     const onError = (errors) => {
         console.error(errors);
     };
-
-    useEffect(() => {
-        vehiclesApi.getAllBrands().then((res) => {
-            setBrands(res);
-        });
-        vehiclesApi.getAllSucursales().then((res) => {
-            setSucursales(res);
-        });
-        vehiclesApi.getAllCategorias().then((res) => {
-            setCategorias(res);
-        });
-        vehiclesApi.getAllCancelaciones().then((res) => {
-            setCancelaciones(res);
-        });
-
-        reset();
-    }, [reset]);
 
     return (
         <form
@@ -72,14 +72,14 @@ function RegisterVehicleForm() {
         >
             <div className="text-center mb-4">
                 <h2 className="text-3xl font-bold text-center">
-                    Registrar vehículo
+                    {vehicleInfo ? "Modificar vehículo" : "Registrar vehículo"}
                 </h2>
-                <span className="text-error">Solo para administradores</span>
             </div>
 
             <Input
                 type="text"
                 label="Patente"
+                defaultValue={vehicleInfo?.patente}
                 {...register("patente", { required: true })}
                 isRequired
             />
@@ -91,6 +91,7 @@ function RegisterVehicleForm() {
                         required: true,
                         valueAsNumber: true,
                     })}
+                    defaultSelectedKeys={[vehicleInfo?.marca.toString()]}
                     isRequired
                 >
                     {brands.map((brand) => (
@@ -101,6 +102,7 @@ function RegisterVehicleForm() {
                 <Input
                     type="text"
                     label="Modelo"
+                    defaultValue={vehicleInfo?.modelo}
                     {...register("modelo", {
                         required: true,
                     })}
@@ -111,6 +113,7 @@ function RegisterVehicleForm() {
             <InputField>
                 <Select
                     label="Categoría"
+                    defaultSelectedKeys={[vehicleInfo?.categoria.toString()]}
                     {...register("categoria", {
                         required: true,
                         valueAsNumber: true,
@@ -126,6 +129,7 @@ function RegisterVehicleForm() {
 
                 <Select
                     label="Cancelación"
+                    defaultSelectedKeys={[vehicleInfo?.cancelacion.toString()]}
                     {...register("cancelacion", {
                         required: true,
                         valueAsNumber: true,
@@ -144,6 +148,7 @@ function RegisterVehicleForm() {
                 <Input
                     type="number"
                     label="Año"
+                    defaultValue={vehicleInfo?.año}
                     {...register("año", {
                         required: true,
                         valueAsNumber: true,
@@ -153,6 +158,7 @@ function RegisterVehicleForm() {
                 <Input
                     type="number"
                     label="Pasajeros"
+                    defaultValue={vehicleInfo?.max_pasajeros}
                     {...register("max_pasajeros", {
                         required: true,
                         valueAsNumber: true,
@@ -162,6 +168,7 @@ function RegisterVehicleForm() {
 
             <Select
                 label="Localidad"
+                defaultSelectedKeys={[vehicleInfo?.localidad.toString()]}
                 {...register("localidad", {
                     required: true,
                     valueAsNumber: true,
@@ -177,6 +184,7 @@ function RegisterVehicleForm() {
                 <Input
                     label="Precio"
                     type="number"
+                    defaultValue={vehicleInfo?.precio_dia}
                     {...register("precio_dia", {
                         required: true,
                         valueAsNumber: true,
@@ -186,6 +194,7 @@ function RegisterVehicleForm() {
                 <Input
                     label="Días minimos de alquiler"
                     type="number"
+                    defaultValue={vehicleInfo?.min_dias_alquiler}
                     {...register("min_dias_alquiler", {
                         required: true,
                         valueAsNumber: true,
@@ -194,7 +203,10 @@ function RegisterVehicleForm() {
                 />
             </InputField>
 
-            <Checkbox {...register("aptitud_discapacidad")}>
+            <Checkbox
+                {...register("aptitud_discapacidad")}
+                defaultSelected={vehicleInfo?.aptitud_discapacidad}
+            >
                 Apto para discapacitados
             </Checkbox>
 

@@ -30,6 +30,11 @@ const createVehicle = async (vehicleData) => {
     return response.data;
 };
 
+const updateVehicle = async (vehicleData, id) => {
+    const response = await api.put(`vehiculos/${id}/`, vehicleData);
+    return response.data;
+};
+
 export const vehiclesApi = {
     getAllVehicles,
     getAllBrands,
@@ -37,4 +42,5 @@ export const vehiclesApi = {
     getAllCategorias,
     getAllCancelaciones,
     createVehicle,
+    updateVehicle,
 };
