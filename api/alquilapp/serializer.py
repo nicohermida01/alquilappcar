@@ -119,19 +119,10 @@ class EmpleadoSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop('password') 
-        empleado = Empleado(**validated_data)
-        empleado.set_password(password) 
-        empleado.save()
-        return empleado
-    
-    def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        if password:
-            instance.set_password(password) 
-        instance.save()
-        return instance
+        employee = Empleado(**validated_data)
+        employee.set_password(password) 
+        employee.save()
+        return employee
 
 class SucursalSerializer(serializers.ModelSerializer):
     class Meta:

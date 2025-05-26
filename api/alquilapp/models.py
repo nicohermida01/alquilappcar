@@ -2,7 +2,7 @@ from django.db import models
 from .managers import ActivosManager
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 
 class PaqueteExtra(models.Model):
     nombre = models.CharField(max_length=100)
@@ -103,21 +103,33 @@ class Admin(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
 
+    def set_password(self, password):
+        # Este método se usa para encriptar la contraseña antes de guardarla en la base de datos -Nico
+        self.password = make_password(password)
+        self.save()
+
     def __str__(self):
         return f"{self.nombre} {self.apellido} ({self.email})"
 
 class Empleado(models.Model):
-    id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     dni = models.CharField(max_length=20, unique=True)
     password = models.CharField(max_length=100)
-
     sucursal = models.ForeignKey('Sucursal', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.nombre} {self.apellido} {self.dni} {self.sucursal} ({self.email})"
+        return f"{self.nombre} {self.apellido} {self.dni}"
+    
+    def set_password(self, password):
+        # Este método se usa para encriptar la contraseña antes de guardarla en la base de datos -Nico
+        self.password = make_password(password)
+        self.save()
+
+    def check_password(self, inputPassword):
+        # Este método se usa para verificar la contraseña ingresada por el cliente -Nico
+        return check_password(inputPassword, self.password)
 
 class Sucursal(models.Model):
     id = models.AutoField(primary_key=True)
@@ -161,3 +173,7 @@ class Cliente(models.Model):
         # Este método se usa para encriptar la contraseña antes de guardarla en la base de datos -Nico
         self.password = make_password(password)
         self.save()
+
+    def check_password(self, inputPassword):
+        # Este método se usa para verificar la contraseña ingresada por el cliente -Nico
+        return check_password(inputPassword, self.password)

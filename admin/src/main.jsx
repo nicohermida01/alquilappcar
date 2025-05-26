@@ -8,6 +8,7 @@ import { LoginPage } from "./pages/LoginPage.jsx";
 import VehiclesPage from "./pages/VehiclesPage.jsx";
 import { DashboardLayout } from "./components/DashboardLayout.jsx";
 import { DashboardPage } from "./pages/DashboardPage.jsx";
+import { AuthProvider } from "./contexts/AuthContext.jsx";
 
 // Todas las páginas que se agregan dentro de la ruta van a tener el layout definido, está agregado dentro de
 // el componente DashboardLayout.jsx, que es el que se encarga de renderizar el sidebar y el topbar. Si se fijan,
@@ -15,17 +16,25 @@ import { DashboardPage } from "./pages/DashboardPage.jsx";
 createRoot(document.getElementById("root")).render(
     <StrictMode>
         <HeroUIProvider>
-            <ToastProvider />
-            <BrowserRouter>
-                <Routes>
-                    <Route element={<DashboardLayout />}>
-                        <Route path="/" element={<DashboardPage />} />
-                        <Route path="/vehiculos" element={<VehiclesPage />} />
-                        <Route path="/empleados" element={<EmployeePage />} />
-                    </Route>
-                    <Route path="/login" element={<LoginPage />} />
-                </Routes>
-            </BrowserRouter>
+            <AuthProvider>
+                <ToastProvider />
+                <BrowserRouter>
+                    <Routes>
+                        <Route element={<DashboardLayout />}>
+                            <Route path="/" element={<DashboardPage />} />
+                            <Route
+                                path="/vehiculos"
+                                element={<VehiclesPage />}
+                            />
+                            <Route
+                                path="/empleados"
+                                element={<EmployeePage />}
+                            />
+                        </Route>
+                        <Route path="/login" element={<LoginPage />} />
+                    </Routes>
+                </BrowserRouter>
+            </AuthProvider>
         </HeroUIProvider>
     </StrictMode>
 );
