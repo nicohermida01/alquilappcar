@@ -35,7 +35,15 @@ class AdminViewSet(viewsets.ModelViewSet):
 
 class EmpleadoViewSet(viewsets.ModelViewSet):
     serializer_class = EmpleadoSerializer
-    queryset = Empleado.objects.all()
+    
+    def create(self, request):
+        if not request.data:
+            return Response({"error": "No data provided"}, status=400)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
 
 class SucursalViewSet(viewsets.ModelViewSet):
     serializer_class = SucursalSerializer
