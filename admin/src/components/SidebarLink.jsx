@@ -1,17 +1,11 @@
 import { Link } from "react-router";
 import { useState } from "react";
+import { Button } from "@heroui/react";
 
 export default function SidebarLink({ to, children }) {
-    const [isHovered, setIsHovered] = useState(false);
-
     return (
-        <Link
-            to={to}
-            className={isHovered ? "bg-gray-100 p-2" : "p-2"}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-        >
-            {children}
-        </Link>
+        <Button variant="light" radius="full">
+            <Link to={to}>{children}</Link>
+        </Button>
     );
 }

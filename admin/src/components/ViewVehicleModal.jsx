@@ -1,4 +1,3 @@
-import RegisterVehicleForm from "./RegisterVehicleForm";
 import {
     Modal,
     ModalContent,
@@ -8,7 +7,12 @@ import {
     Button,
 } from "@heroui/react";
 
-export default function ViewVehicleModal({ isOpen, onOpenChange, vehicle }) {
+export default function ViewVehicleModal({
+    isOpen,
+    onOpenChange,
+    vehicle,
+    databaseInfo,
+}) {
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl">
             <ModalContent>
@@ -28,21 +32,57 @@ export default function ViewVehicleModal({ isOpen, onOpenChange, vehicle }) {
                             </section>
                             <section className="flex gap-2">
                                 <p className="font-bold">Marca: </p>
-                                <p>{vehicle.marca}</p>
+                                <p>
+                                    {
+                                        databaseInfo.brands[vehicle.marca - 1]
+                                            .nombre
+                                    }
+                                </p>
+                            </section>
+                            <section className="flex gap-2">
+                                <p className="font-bold">Categoría: </p>
+                                <p>
+                                    {
+                                        databaseInfo.categorias[
+                                            vehicle.categoria - 1
+                                        ].nombre
+                                    }
+                                </p>
+                            </section>
+                            <section className="flex gap-2">
+                                <p className="font-bold">
+                                    Política de cancelación:{" "}
+                                </p>
+                                <p>
+                                    {
+                                        databaseInfo.cancelaciones[
+                                            vehicle.marca - 1
+                                        ].descripcion
+                                    }
+                                </p>
+                            </section>
+                            <section className="flex gap-2">
+                                <p className="font-bold">Sucursal: </p>
+                                <p>
+                                    {
+                                        databaseInfo.sucursales[
+                                            vehicle.localidad - 1
+                                        ].nombre
+                                    }
+                                </p>
+                            </section>
+                            <section className="flex gap-2">
+                                <p className="font-bold">
+                                    Aptitud para discapacitados:{" "}
+                                </p>
+                                <p>
+                                    {vehicle.aptitud_discapacidad
+                                        ? "Apto"
+                                        : "No apto"}
+                                </p>
                             </section>
                         </ModalBody>
-                        <ModalFooter>
-                            <Button
-                                color="danger"
-                                variant="light"
-                                onPress={onClose}
-                            >
-                                Close
-                            </Button>
-                            <Button color="primary" onPress={onClose}>
-                                Action
-                            </Button>
-                        </ModalFooter>
+                        <ModalFooter />
                     </>
                 )}
             </ModalContent>

@@ -31,6 +31,7 @@ import {
 import CreateVehicleModal from "./CreateVehicleModal";
 import ViewVehicleModal from "./ViewVehicleModal";
 import ModifyVehicleModal from "./ModifyVehicleModal";
+import DeleteVehicleModal from "./DeleteVehicleModal";
 
 const columns = [
     { name: "ID", uid: "id", sortable: true },
@@ -40,18 +41,6 @@ const columns = [
     { name: "AÑO", uid: "año", sortable: true },
     { name: "ACCIONES", uid: "actions" },
 ];
-
-const statusOptions = [
-    { name: "Active", uid: "active" },
-    { name: "Paused", uid: "paused" },
-    { name: "Vacation", uid: "vacation" },
-];
-
-const statusColorMap = {
-    active: "success",
-    paused: "warning",
-    vacation: "danger",
-};
 
 const INITIAL_VISIBLE_COLUMNS = ["marca", "modelo", "patente", "actions"];
 
@@ -81,6 +70,17 @@ export default function ListVehicles() {
         onOpen: onOpenModifyVehicle,
         onOpenChange: onOpenChangeModifyVehicle,
     } = useDisclosure();
+
+    const {
+        isOpen: isOpenDeleteVehicle,
+        onOpen: onOpenDeleteVehicle,
+        onOpenChange: onOpenChangeDeleteVehicle,
+    } = useDisclosure();
+
+    function onOpenVehicleDelete(vehicle) {
+        setSelectedVehicle(vehicle);
+        onOpenDeleteVehicle();
+    }
 
     function onOpenVehicleView(vehicle) {
         setSelectedVehicle(vehicle);
@@ -147,7 +147,7 @@ export default function ListVehicles() {
     const [visibleColumns, setVisibleColumns] = React.useState(
         new Set(INITIAL_VISIBLE_COLUMNS)
     );
-    const [statusFilter, setStatusFilter] = React.useState("all");
+
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState({
         column: "age",
@@ -175,17 +175,9 @@ export default function ListVehicles() {
                     .includes(filterValue.toLowerCase())
             );
         }
-        if (
-            statusFilter !== "all" &&
-            Array.from(statusFilter).length !== statusOptions.length
-        ) {
-            filteredVehicles = filteredVehicles.filter((vehicle) =>
-                Array.from(statusFilter).includes(vehicle.status)
-            );
-        }
 
         return filteredVehicles;
-    }, [vehicles, filterValue, statusFilter]);
+    }, [vehicles, filterValue]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage) || 1;
 
@@ -212,33 +204,9 @@ export default function ListVehicles() {
         switch (columnKey) {
             case "marca":
                 return (
-                    <User
-                        avatarProps={{ radius: "lg", src: vehicle.avatar }}
-                        name={brands[vehicle.marca - 1]?.name}
-                        description={vehicle.marca}
-                    ></User>
-                );
-            case "modelo":
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">
-                            {cellValue}
-                        </p>
-                        <p className="text-bold text-tiny capitalize text-default-400">
-                            {vehicle.modelo}
-                        </p>
-                    </div>
-                );
-            case "patente":
-                return (
-                    <Chip
-                        className="capitalize"
-                        color={statusColorMap[vehicle.status]}
-                        size="sm"
-                        variant="flat"
-                    >
+                    <p className="text-bold text-small capitalize">
                         {cellValue}
-                    </Chip>
+                    </p>
                 );
             case "actions":
                 return (
@@ -262,25 +230,7 @@ export default function ListVehicles() {
                         <Tooltip color="danger" content="Eliminar vehículo">
                             <span
                                 className="text-lg text-danger cursor-pointer active:opacity-50"
-                                onClick={() =>
-                                    vehiclesApi
-                                        .deleteVehicle(vehicle.id)
-                                        .then(() => {
-                                            fetchInfo();
-                                            addToast({
-                                                title: "Éxito",
-                                                description:
-                                                    "Vehículo eliminado correctamente.",
-                                                color: "success",
-                                            });
-                                        })
-                                        .catch((error) => {
-                                            console.error(
-                                                "Error deleting vehicle:",
-                                                error
-                                            );
-                                        })
-                                }
+                                onClick={() => onOpenVehicleDelete(vehicle)}
                             >
                                 <DeleteIcon />
                             </span>
@@ -326,7 +276,7 @@ export default function ListVehicles() {
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4 ">
-                <div className="flex justify-between gap-3 items-end">
+                <div className="flex justify-between gap-3">
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
@@ -345,36 +295,7 @@ export default function ListVehicles() {
                                     }
                                     variant="flat"
                                 >
-                                    Status
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setStatusFilter}
-                            >
-                                {statusOptions.map((status) => (
-                                    <DropdownItem
-                                        key={status.uid}
-                                        className="capitalize"
-                                    >
-                                        {status.name}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button
-                                    endContent={
-                                        <ChevronDownIcon className="text-small" />
-                                    }
-                                    variant="flat"
-                                >
-                                    Columns
+                                    Columnas
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
@@ -400,16 +321,16 @@ export default function ListVehicles() {
                             onPress={onOpenCreateVehicle}
                             endContent={<PlusIcon />}
                         >
-                            Add New
+                            Crear nuevo
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total {vehicles.length} vehicles
+                        Total {vehicles.length} vehículos
                     </span>
                     <label className="flex items-center text-default-400 text-small">
-                        Rows per page:
+                        Filas por página:
                         <select
                             className="bg-transparent outline-none text-default-400 text-small"
                             onChange={onRowsPerPageChange}
@@ -424,7 +345,6 @@ export default function ListVehicles() {
         );
     }, [
         filterValue,
-        statusFilter,
         visibleColumns,
         onRowsPerPageChange,
         vehicles.length,
@@ -452,7 +372,7 @@ export default function ListVehicles() {
                         variant="flat"
                         onPress={onPreviousPage}
                     >
-                        Previous
+                        Siguiente
                     </Button>
                     <Button
                         isDisabled={pages === 1}
@@ -460,7 +380,7 @@ export default function ListVehicles() {
                         variant="flat"
                         onPress={onNextPage}
                     >
-                        Next
+                        Anterior
                     </Button>
                 </div>
             </div>
@@ -484,6 +404,12 @@ export default function ListVehicles() {
                 onOpenChange={onOpenChangeViewVehicle}
                 isOpen={isOpenViewVehicle}
                 vehicle={selectedVehicle}
+                databaseInfo={{
+                    brands,
+                    sucursales,
+                    categorias,
+                    cancelaciones,
+                }}
             />
             <ModifyVehicleModal
                 onOpenChange={onOpenChangeModifyVehicle}
@@ -495,6 +421,12 @@ export default function ListVehicles() {
                     categorias,
                     cancelaciones,
                 }}
+                updateVehicleList={fetchInfo}
+            />
+            <DeleteVehicleModal
+                onOpenChange={onOpenChangeDeleteVehicle}
+                isOpen={isOpenDeleteVehicle}
+                vehicle={selectedVehicle}
                 updateVehicleList={fetchInfo}
             />
             <Table
