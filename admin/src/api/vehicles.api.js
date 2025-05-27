@@ -40,6 +40,21 @@ const deleteVehicle = async (id) => {
     return response.data;
 };
 
+const updateBrand = async (brandData, id) => {
+    const response = await api.put(`marcas/${id}/`, brandData);
+    return response.data;
+};
+
+const createBrand = async (brandData) => {
+    const response = await api.post("marcas/", brandData);
+    return response.data;
+};
+
+const deleteBrand = async (id) => {
+    const response = await api.delete(`marcas/${id}/`);
+    return response.data;
+};
+
 export const vehiclesApi = {
     getAllVehicles,
     getAllBrands,
@@ -49,4 +64,7 @@ export const vehiclesApi = {
     createVehicle,
     updateVehicle,
     deleteVehicle,
+    updateBrand,
+    createBrand,
+    deleteBrand,
 };
