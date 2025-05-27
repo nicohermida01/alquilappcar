@@ -6,7 +6,7 @@ import { HeroUIProvider, ToastProvider } from '@heroui/react'
 import { BrowserRouter, Routes, Route } from 'react-router'
 import { DashboardPage } from './pages/DashboardPage.jsx'
 import { LoginPage } from './pages/LoginPage.jsx'
-import VehiculoPage from './pages/VehiculoPage.jsx'
+import VehiculoPage from './pages/VehiclesPage.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 
 createRoot(document.getElementById('root')).render(
