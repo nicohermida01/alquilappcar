@@ -34,7 +34,15 @@ class AdminViewSet(viewsets.ModelViewSet):
 
 class EmpleadoViewSet(viewsets.ModelViewSet):
     serializer_class = EmpleadoSerializer
-    queryset = Empleado.objects.all()
+    
+    def create(self, request):
+        if not request.data:
+            return Response({"error": "No data provided"}, status=400)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
 
 class SucursalViewSet(viewsets.ModelViewSet):
     serializer_class = SucursalSerializer
@@ -60,6 +68,32 @@ class ClienteViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=201)
+    
+class LoginAdminAPIView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if not email or not password:
+            return Response({"error": "Email and password are required"}, status=400)
+        
+        try:
+            employee = Empleado.objects.get(email=email)
+        except Empleado.DoesNotExist:
+            return Response({"error": "Invalid email or password"}, status=400)
+
+        if not employee.check_password(password):
+            return Response({"error": "Invalid email or password"}, status=400)
+        
+        payload = {
+            'empleado_id': employee.id,
+            'exp': datetime.now() + timedelta(hours=2), # con esto decimos que el token expira en 2hs
+            'iat': datetime.now()
+        }
+
+        token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+        return Response({'accessToken': token, 'empleadoId': employee.id, 'email': employee.email}, status=200)
+
 
 class LoginAPIView(APIView):
     def post(self, request):
