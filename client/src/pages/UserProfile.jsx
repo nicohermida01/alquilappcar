@@ -10,7 +10,7 @@ function UserProfile() {
 
     return (
         <PageLayout>
-            <div className="flex bg-gray-100 mt-16 h-[93vh]">
+            <div className="flex bg-gray-100 mt-16 h-full">
                 <SideMenu onSelect={setActiveSection}/>
                 <div className="flex-grow">
                     {activeSection === 'myinfo' && <UserData />}

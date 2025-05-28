@@ -1,14 +1,14 @@
-import CustomLi from "./CustomLi.jsx"
+import FieldCard from "./FieldCard.jsx"
 
 function UserData() {
     return (
-        <div className="mt-16 ml-[40vh]">
+        <div className="mt-16 ml-[25%] justify-center">
             <ul>
-                <CustomLi campo="Nombre" value="Valentrix"/>
-                <CustomLi campo="Apellido"/>
-                <CustomLi campo="Fecha de nacimiento"/>
-                <CustomLi campo="E-mail"/>
-                <CustomLi campo="Contacto"/>
+                <li><FieldCard field="Nombre" value="name"/></li>
+                <li><FieldCard field="Apellido" value="Lname"/></li>
+                <li><FieldCard field="Fecha de nacimiento" value="DoB"/></li>
+                <li><FieldCard field="E-mail" value="email"/></li>
+                <li><FieldCard field="Contacto" value="contact"/></li>
             </ul>
         </div>
     )
