@@ -1,24 +1,23 @@
-import ListItems from "../components/ListPageComponents/ListItems";
-import RegisterBrandForm from "../components/RegisterBrandForm";
-import ShowBrand from "../components/ShowBrand";
-import { vehiclesApi } from "../api/vehicles.api";
 import React from "react";
-import DeleteBrand from "../components/DeleteBrand";
+import ListItems from "../components/ListPageComponents/ListItems";
+import { vehiclesApi } from "../api/vehicles.api";
+import RegisterCategoriaForm from "../components/RegisterCategoriaForm";
 
-export default function BrandsPage() {
+export default function CategoriasPage() {
     const columns = [
         { name: "ID", uid: "id", sortable: true },
         { name: "NOMBRE", uid: "nombre", sortable: true },
+        { name: "PRECIO", uid: "precio", sortable: true },
         { name: "ACCIONES", uid: "actions" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["id", "nombre", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["nombre", "precio", "actions"];
 
     const [itemList, setItemList] = React.useState([]);
 
     function fetchInfo() {
         vehiclesApi
-            .getAllBrands()
+            .getAllCategorias()
             .then((res) => {
                 setItemList(res);
             })
@@ -33,16 +32,18 @@ export default function BrandsPage() {
 
     return (
         <section className="w-full py-[135px] flex flex-col items-center justify-center bg-gray-100 gap-10">
-            <h2 className="text-3xl font-bold text-center">Lista de marcas</h2>
+            <h2 className="text-3xl font-bold text-center">
+                Lista de categorías
+            </h2>
             <ListItems
-                registerForm={<RegisterBrandForm />}
-                infoShow={<ShowBrand />}
-                deleteItem={<DeleteBrand />}
+                registerForm={<RegisterCategoriaForm />}
+                infoShow={<></>} // Placeholder for info show component
+                deleteItem={<></>} // Placeholder for delete item component
                 columns={columns}
                 INITIAL_VISIBLE_COLUMNS={INITIAL_VISIBLE_COLUMNS}
                 fetchInfo={fetchInfo}
                 itemList={itemList}
-                itemName={"marca"}
+                itemName={"categoría"}
             />
         </section>
     );

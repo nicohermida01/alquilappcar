@@ -1,12 +1,20 @@
-import RegisterVehicleForm from "./RegisterVehicleForm";
+import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/react";
 
-export default function CreateVehicleModal({
-    databaseInfo,
+export default function ModifyItemModal({
+    itemInfo,
     isOpen,
     onOpenChange,
-    updateVehiclesList,
+    updateItemList,
+    registerForm,
+    databaseInfo,
 }) {
+    const newProps = {
+        itemInfo: itemInfo,
+        updateItemList: updateItemList,
+        databaseInfo: databaseInfo,
+    };
+
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl">
             <ModalContent>
@@ -14,11 +22,10 @@ export default function CreateVehicleModal({
                     <>
                         <ModalHeader className="flex flex-col gap-1"></ModalHeader>
                         <ModalBody>
-                            <RegisterVehicleForm
-                                databaseInfo={databaseInfo}
-                                updateVehicleList={updateVehiclesList}
-                                onClose={onClose}
-                            />
+                            {React.cloneElement(registerForm, {
+                                ...registerForm.props,
+                                ...newProps,
+                            })}
                         </ModalBody>
                     </>
                 )}

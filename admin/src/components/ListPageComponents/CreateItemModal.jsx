@@ -1,16 +1,16 @@
 import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/react";
 
-export default function ModifyItemModal({
-    itemInfo,
+export default function CreateItemModal({
     isOpen,
     onOpenChange,
     updateItemList,
     registerForm,
+    databaseInfo,
 }) {
     const newProps = {
-        itemInfo: itemInfo,
         updateItemList: updateItemList,
+        databaseInfo: databaseInfo,
     };
 
     return (
@@ -23,6 +23,7 @@ export default function ModifyItemModal({
                             {React.cloneElement(registerForm, {
                                 ...registerForm.props,
                                 ...newProps,
+                                onClose: onClose,
                             })}
                         </ModalBody>
                     </>

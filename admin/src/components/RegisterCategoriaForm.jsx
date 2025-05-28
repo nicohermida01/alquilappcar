@@ -2,7 +2,7 @@ import { Input, Button, addToast } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { vehiclesApi } from "../api/vehicles.api";
 
-export default function RegisterBrandForm({
+export default function RegisterCategoriaForm({
     itemInfo,
     updateItemList,
     onClose,
@@ -12,12 +12,12 @@ export default function RegisterBrandForm({
     const onSubmit = (data) => {
         itemInfo
             ? vehiclesApi
-                  .updateBrand(data, itemInfo.id)
+                  .updateCategoria(data, itemInfo.id)
                   .then(() => {
                       addToast({
-                          title: "Marca actualizada",
+                          title: "Categoría actualizada",
                           description:
-                              "La marca ha sido actualizada correctamente",
+                              "La categoría ha sido actualizada correctamente",
                           color: "success",
                       });
                       updateItemList();
@@ -26,16 +26,18 @@ export default function RegisterBrandForm({
                       addToast({
                           title: "Error",
                           description:
-                              "No se ha podido actualizar la marca. " + error,
+                              "No se ha podido actualizar la categoría. " +
+                              error,
                           color: "danger",
                       });
                   })
             : (vehiclesApi
-                  .createBrand(data)
+                  .createCategoria(data)
                   .then(() => {
                       addToast({
-                          title: "Marca creada",
-                          description: "La marca ha sido creada correctamente",
+                          title: "Categoría creada",
+                          description:
+                              "La categoría ha sido creada correctamente",
                           color: "success",
                       });
                       updateItemList();
@@ -45,7 +47,7 @@ export default function RegisterBrandForm({
                       addToast({
                           title: "Error",
                           description:
-                              "No se ha podido crear la marca. " + error,
+                              "No se ha podido crear la categoría. " + error,
                           color: "danger",
                       });
                   }),
@@ -63,7 +65,7 @@ export default function RegisterBrandForm({
         >
             <div className="text-center mb-4">
                 <h2 className="text-3xl font-bold text-center">
-                    {itemInfo ? "Modificar marca" : "Registrar marca"}
+                    {itemInfo ? "Modificar categoría" : "Registrar categoría"}
                 </h2>
             </div>
 
@@ -72,6 +74,14 @@ export default function RegisterBrandForm({
                 label="Nombre"
                 defaultValue={itemInfo?.nombre}
                 {...register("nombre", { required: true })}
+                isRequired
+            />
+
+            <Input
+                type="number"
+                label="Precio"
+                defaultValue={itemInfo?.precio}
+                {...register("precio", { required: true, valueAsNumber: true })}
                 isRequired
             />
 

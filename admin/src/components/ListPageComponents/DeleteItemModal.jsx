@@ -1,21 +1,17 @@
-import {
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-} from "@heroui/react";
+import { Modal, ModalContent, ModalHeader } from "@heroui/react";
 import React from "react";
 
-export default function ViewItemModal({
+export default function DeleteItemModal({
     isOpen,
     onOpenChange,
-    infoShow,
     itemInfo,
+    updateItemList,
+    deleteItem,
     databaseInfo,
 }) {
     const newProps = {
         itemInfo: itemInfo,
+        updateItemList: updateItemList,
         databaseInfo: databaseInfo,
     };
 
@@ -25,15 +21,14 @@ export default function ViewItemModal({
                 {(onClose) => (
                     <>
                         <ModalHeader className="flex flex-col gap-1">
-                            Detalles del vehículo
+                            Está seguro que desea eliminar el siguiente
+                            elemento?
                         </ModalHeader>
-                        <ModalBody>
-                            {React.cloneElement(infoShow, {
-                                ...infoShow.props,
-                                ...newProps,
-                            })}
-                        </ModalBody>
-                        <ModalFooter />
+                        {React.cloneElement(deleteItem, {
+                            ...deleteItem.props,
+                            ...newProps,
+                            onClose: onClose,
+                        })}
                     </>
                 )}
             </ModalContent>

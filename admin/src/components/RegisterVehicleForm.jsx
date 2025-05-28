@@ -8,17 +8,20 @@ import {
 } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { vehiclesApi } from "../api/vehicles.api";
+import { use, useEffect } from "react";
 
 const InputField = ({ children }) => {
     return <fieldset className="flex items-center gap-3">{children}</fieldset>;
 };
 
 function RegisterVehicleForm({
-    vehicleInfo,
-    databaseInfo: { brands, sucursales, categorias, cancelaciones },
-    updateVehicleList,
+    itemInfo: vehicleInfo,
+    databaseInfo,
+    updateItemList,
     onClose,
 }) {
+    const { brands, sucursales, categorias, cancelaciones } = databaseInfo;
+
     const { register, handleSubmit, reset, getValues } = useForm();
 
     const onSubmit = (data) => {
@@ -32,7 +35,7 @@ function RegisterVehicleForm({
                               "El vehículo ha sido actualizado correctamente",
                           color: "success",
                       });
-                      updateVehicleList();
+                      updateItemList();
                   })
                   .catch((error) => {
                       addToast({
@@ -52,7 +55,7 @@ function RegisterVehicleForm({
                               "El vehículo ha sido creado correctamente",
                           color: "success",
                       });
-                      updateVehicleList();
+                      updateItemList();
                       onClose();
                   })
                   .catch((error) => {

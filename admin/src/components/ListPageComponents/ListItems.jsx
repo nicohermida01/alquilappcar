@@ -12,14 +12,10 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Chip,
-    User,
     Pagination,
     useDisclosure,
     Tooltip,
-    addToast,
 } from "@heroui/react";
-import { vehiclesApi } from "../api/vehicles.api";
 import {
     SearchIcon,
     PlusIcon,
@@ -27,121 +23,63 @@ import {
     EyeIcon,
     EditIcon,
     DeleteIcon,
-} from "../assets/icons";
-import CreateVehicleModal from "./CreateVehicleModal";
-import ViewVehicleModal from "./ViewVehicleModal";
-import ModifyVehicleModal from "./ModifyVehicleModal";
-import DeleteVehicleModal from "./DeleteVehicleModal";
+} from "../../assets/icons";
+import CreateItemModal from "./CreateItemModal";
+import ModifyItemModal from "./ModifyItemModal";
+import ViewItemModal from "./ViewItemModal";
+import DeleteItemModal from "./DeleteItemModal";
 
-const columns = [
-    { name: "ID", uid: "id", sortable: true },
-    { name: "MODELO", uid: "modelo", sortable: true },
-    { name: "PATENTE", uid: "patente", sortable: true },
-    { name: "MARCA", uid: "marca", sortable: true },
-    { name: "AÑO", uid: "año", sortable: true },
-    { name: "ACCIONES", uid: "actions" },
-];
-
-const INITIAL_VISIBLE_COLUMNS = ["marca", "modelo", "patente", "actions"];
-
-export default function ListVehicles() {
-    const [vehicles, setVehicles] = React.useState([]);
-    const [brands, setBrands] = React.useState([]);
-    const [sucursales, setSucursales] = React.useState([]);
-    const [categorias, setCategorias] = React.useState([]);
-    const [cancelaciones, setCancelaciones] = React.useState([]);
-
-    const [selectedVehicle, setSelectedVehicle] = React.useState();
+export default function ListItems({
+    columns,
+    INITIAL_VISIBLE_COLUMNS,
+    registerForm,
+    infoShow,
+    deleteItem,
+    itemList,
+    databaseInfo,
+    fetchInfo,
+    itemName,
+}) {
+    const [selectedItem, setSelectedItem] = React.useState();
 
     const {
-        isOpen: isOpenCreateVehicle,
-        onOpen: onOpenCreateVehicle,
-        onOpenChange: onOpenChangeCreateVehicle,
+        isOpen: isOpenCreateItem,
+        onOpen: onOpenCreateItem,
+        onOpenChange: onOpenChangeCreateItem,
     } = useDisclosure();
 
     const {
-        isOpen: isOpenViewVehicle,
-        onOpen: onOpenViewVehicle,
-        onOpenChange: onOpenChangeViewVehicle,
+        isOpen: isOpenViewItem,
+        onOpen: onOpenViewItem,
+        onOpenChange: onOpenChangeViewItem,
     } = useDisclosure();
 
     const {
-        isOpen: isOpenModifyVehicle,
-        onOpen: onOpenModifyVehicle,
-        onOpenChange: onOpenChangeModifyVehicle,
+        isOpen: isOpenModifyItem,
+        onOpen: onOpenModifyItem,
+        onOpenChange: onOpenChangeModifyItem,
     } = useDisclosure();
 
     const {
-        isOpen: isOpenDeleteVehicle,
-        onOpen: onOpenDeleteVehicle,
-        onOpenChange: onOpenChangeDeleteVehicle,
+        isOpen: isOpenDeleteItem,
+        onOpen: onOpenDeleteItem,
+        onOpenChange: onOpenChangeDeleteItem,
     } = useDisclosure();
 
-    function onOpenVehicleDelete(vehicle) {
-        setSelectedVehicle(vehicle);
-        onOpenDeleteVehicle();
+    function onOpenItemDelete(item) {
+        setSelectedItem(item);
+        onOpenDeleteItem();
     }
 
-    function onOpenVehicleView(vehicle) {
-        setSelectedVehicle(vehicle);
-        onOpenViewVehicle();
+    function onOpenItemView(item) {
+        setSelectedItem(item);
+        onOpenViewItem();
     }
 
-    function onOpenVehicleModify(vehicle) {
-        setSelectedVehicle(vehicle);
-        onOpenModifyVehicle();
+    function onOpenItemModify(item) {
+        setSelectedItem(item);
+        onOpenModifyItem();
     }
-
-    function fetchInfo() {
-        vehiclesApi
-            .getAllVehicles()
-            .then((res) => {
-                setVehicles(res);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-
-        vehiclesApi
-            .getAllBrands()
-            .then((res) => {
-                setBrands(res);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-
-        vehiclesApi
-            .getAllSucursales()
-            .then((res) => {
-                setSucursales(res);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-
-        vehiclesApi
-            .getAllCategorias()
-            .then((res) => {
-                setCategorias(res);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-
-        vehiclesApi
-            .getAllCancelaciones()
-            .then((res) => {
-                setCancelaciones(res);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-    }
-
-    React.useEffect(() => {
-        fetchInfo();
-    }, []);
 
     const [filterValue, setFilterValue] = React.useState("");
     const [visibleColumns, setVisibleColumns] = React.useState(
@@ -166,18 +104,18 @@ export default function ListVehicles() {
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredVehicles = [...vehicles];
+        let filteredItems = [...itemList];
 
         if (hasSearchFilter) {
-            filteredVehicles = filteredVehicles.filter((vehicle) =>
-                vehicle.patente
+            filteredItems = filteredItems.filter((item) =>
+                item[Object.keys(item)[1]]
                     .toLowerCase()
                     .includes(filterValue.toLowerCase())
             );
         }
 
-        return filteredVehicles;
-    }, [vehicles, filterValue]);
+        return filteredItems;
+    }, [itemList, filterValue]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage) || 1;
 
@@ -198,39 +136,36 @@ export default function ListVehicles() {
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = React.useCallback((vehicle, columnKey) => {
-        const cellValue = vehicle[columnKey];
+    const renderCell = React.useCallback((item, columnKey) => {
+        const cellValue = item[columnKey];
 
         switch (columnKey) {
-            case "marca":
-                return (
-                    <p className="text-bold text-small capitalize">
-                        {cellValue}
-                    </p>
-                );
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
                         <Tooltip content="Detalles">
                             <span
                                 className="text-lg text-default-400  active:opacity-50"
-                                onClick={() => onOpenVehicleView(vehicle)}
+                                onClick={() => onOpenItemView(item)}
                             >
                                 <EyeIcon />
                             </span>
                         </Tooltip>
-                        <Tooltip content="Editar vehículo">
+                        <Tooltip content={"Editar " + itemName}>
                             <span
                                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                                onClick={() => onOpenVehicleModify(vehicle)}
+                                onClick={() => onOpenItemModify(item)}
                             >
                                 <EditIcon />
                             </span>
                         </Tooltip>
-                        <Tooltip color="danger" content="Eliminar vehículo">
+                        <Tooltip
+                            color="danger"
+                            content={"Eliminar " + itemName}
+                        >
                             <span
                                 className="text-lg text-danger cursor-pointer active:opacity-50"
-                                onClick={() => onOpenVehicleDelete(vehicle)}
+                                onClick={() => onOpenItemDelete(item)}
                             >
                                 <DeleteIcon />
                             </span>
@@ -280,7 +215,7 @@ export default function ListVehicles() {
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Buscar por patente..."
+                        placeholder="Buscar por nombre..."
                         startContent={<SearchIcon />}
                         value={filterValue}
                         onClear={() => onClear()}
@@ -318,7 +253,7 @@ export default function ListVehicles() {
                         </Dropdown>
                         <Button
                             color="primary"
-                            onPress={onOpenCreateVehicle}
+                            onPress={onOpenCreateItem}
                             endContent={<PlusIcon />}
                         >
                             Crear nuevo
@@ -327,7 +262,7 @@ export default function ListVehicles() {
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total {vehicles.length} vehículos
+                        Total {itemList.length} {itemName}s
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
@@ -347,7 +282,7 @@ export default function ListVehicles() {
         filterValue,
         visibleColumns,
         onRowsPerPageChange,
-        vehicles.length,
+        itemList.length,
         onSearchChange,
         hasSearchFilter,
     ]);
@@ -385,49 +320,38 @@ export default function ListVehicles() {
                 </div>
             </div>
         );
-    }, [items.length, page, pages, hasSearchFilter]);
+    }, [itemList.length, page, pages, hasSearchFilter]);
 
     return (
         <>
-            <CreateVehicleModal
-                onOpenChange={onOpenChangeCreateVehicle}
-                isOpen={isOpenCreateVehicle}
-                databaseInfo={{
-                    brands,
-                    sucursales,
-                    categorias,
-                    cancelaciones,
-                }}
-                updateVehiclesList={fetchInfo}
+            <CreateItemModal
+                onOpenChange={onOpenChangeCreateItem}
+                isOpen={isOpenCreateItem}
+                updateItemList={fetchInfo}
+                registerForm={registerForm}
+                databaseInfo={databaseInfo}
             />
-            <ViewVehicleModal
-                onOpenChange={onOpenChangeViewVehicle}
-                isOpen={isOpenViewVehicle}
-                vehicle={selectedVehicle}
-                databaseInfo={{
-                    brands,
-                    sucursales,
-                    categorias,
-                    cancelaciones,
-                }}
+            <ModifyItemModal
+                itemInfo={selectedItem}
+                isOpen={isOpenModifyItem}
+                onOpenChange={onOpenChangeModifyItem}
+                updateItemList={fetchInfo}
+                registerForm={registerForm}
+                databaseInfo={databaseInfo}
             />
-            <ModifyVehicleModal
-                onOpenChange={onOpenChangeModifyVehicle}
-                isOpen={isOpenModifyVehicle}
-                vehicleInfo={selectedVehicle}
-                databaseInfo={{
-                    brands,
-                    sucursales,
-                    categorias,
-                    cancelaciones,
-                }}
-                updateVehicleList={fetchInfo}
+            <ViewItemModal
+                isOpen={isOpenViewItem}
+                onOpenChange={onOpenChangeViewItem}
+                infoShow={infoShow}
+                itemInfo={selectedItem}
+                databaseInfo={databaseInfo}
             />
-            <DeleteVehicleModal
-                onOpenChange={onOpenChangeDeleteVehicle}
-                isOpen={isOpenDeleteVehicle}
-                vehicle={selectedVehicle}
-                updateVehicleList={fetchInfo}
+            <DeleteItemModal
+                onOpenChange={onOpenChangeDeleteItem}
+                isOpen={isOpenDeleteItem}
+                itemInfo={selectedItem}
+                updateItemList={fetchInfo}
+                deleteItem={deleteItem}
             />
             <Table
                 isHeaderSticky
@@ -457,7 +381,7 @@ export default function ListVehicles() {
                     )}
                 </TableHeader>
                 <TableBody
-                    emptyContent={"No vehicles found"}
+                    emptyContent={"No se encontraron " + itemName + "s"}
                     items={sortedItems}
                 >
                     {(item) => (
