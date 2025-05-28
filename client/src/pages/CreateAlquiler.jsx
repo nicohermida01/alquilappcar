@@ -12,8 +12,39 @@ import {
   SelectItem,
   Select
 } from '@heroui/react';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function AlquilerForm() {
+  const [sucursales, setSucursales] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
+  const { isAuthenticated, user } = useAuth();
+
+  const fetchSucursales = async () => {
+    try {
+      setIsFetching(true);
+      const response = await axios.get('http://localhost:8000/alquilapp/api/v1/sucursales/populated/');
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener sucursales:', error);
+      throw error;
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+ useEffect(() => {
+  const cargarSucursales = async () => {
+    try {
+      const data = await fetchSucursales();
+      setSucursales(data);
+      console.log(data, 'HOLA')
+    } catch (error) {
+      alert('Error al cargar las sucursales.');
+    }
+  };
+  cargarSucursales();
+}, []);
+
   // En caso de haberse submiteado el formulario de Home, se obtiene la data, Pero si se apretó en el botón de la topbar, no hay data que obtener.
   // Si location.state esta definido lo retorna sino devuelve un objeto vacio, y si no hay un formData dentro del mismo entonces es vacío.
   const location = useLocation();
@@ -60,8 +91,14 @@ export default function AlquilerForm() {
       if (diasCalculados > 0 && formData.categoria_vehiculo) {
       }
     }
-    console.log(data, 'INFO FORM')
+    //console.log(data, 'INFO FORM')
+    // TRAER EL ID DE LA SESION Y PONERLO EN DATA.
+    console.log(user,'UYSER')
+    data['client_id'] = user.clientId;
+    console.log(data, 'INFOFORM');
     try {
+      // ACA VA LA LOGICA DEL PAGO.
+      // CUANDO SEA SUCCESS, SE HACE EL POST.
       //await axios.post('http://localhost:8000/alquilapp/api/v1/alquileres/', data);
       alert('Alquiler creado exitosamente');
     } catch (error) {
@@ -86,8 +123,9 @@ export default function AlquilerForm() {
   // La cantidad de días del alquiler.
   // El precio estimado.
   useEffect(() => {
-    if (formData.fecha_entrega && formData.fecha_devolucion) {
+    if (fechaInicio && fechaDevolucion) {
       const dias = calcularDias(fechaInicio, fechaDevolucion);
+      console.log(dias, 'DIAS CALCULADOS')
       setDiasCalculados(dias);
     }
     if (diasCalculados > 0 && categoriaVehiculo) {
@@ -118,12 +156,12 @@ export default function AlquilerForm() {
     now.setHours(now.getHours() - 3); // retorna una hora en un timezone raro, tengo que restarle 3 para que se acople a la local.
     return now.toISOString().slice(0, 16); // formato: 'YYYY-MM-DDTHH:MM'
   };
-
+  //if(!isAuthenticated) return 'No estas logueado'
   return (
     <div className="bg-[url(/../commons/obi-aZKJEvydrNM-unsplash.jpg)] min-h-screen bg-cover flex items-center relative">
       <div className="absolute top-0 left-0 w-full h-full bg-black/40 " />
       <Topbar />
-      <Card className="max-w-2xl mx-auto mt-10 bg-background/60 p-6" isBlurred>
+      {isAuthenticated ? (<Card className="max-w-2xl mx-auto mt-10 bg-background/60 p-6" isBlurred>
         <CardHeader>
           {/* Si formData estaba cargado, Se muestra mostrar alquiler, sino se muestra otro titulo más acorde. */}
           <h2 className="text-xl font-semibold">{formData.fecha_entrega ? 'Confirmar Alquiler' : 'Solicitar Alquiler'}</h2>
@@ -162,11 +200,20 @@ export default function AlquilerForm() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Sucursal de Retiro</label>
-              <Select {...register("sucursal", { required: true })} aria-label="Seleccionar sucursal">
+              {/* <Select {...register("sucursal", { required: true })} aria-label="Seleccionar sucursal">
                 <SelectItem key="Tolosa" value="Tolosa">Tolosa</SelectItem>
                 <SelectItem key="Avellaneda" value="Avellaneda">Avellaneda</SelectItem>
                 <SelectItem key="Mar del Plata" value="Mar del Plata">Mar del Plata</SelectItem>
-              </Select>
+              </Select> */}
+               <Select {...register("sucursal", { required: true })} aria-label="Seleccionar sucursal" label="Seleccione una sucursal" selectedKeys={formData.sucursal}>
+                {sucursales.map((s)=>{
+                  console.log(s.id == formData.sucursal, 'AAA');
+                    const value = `${s.direccion}, ${s.localidad.nombre}`;
+                  return <SelectItem key={s.id} value={s.id}>{value}</SelectItem>
+                }
+                )}
+                <SelectItem value="hola">test</SelectItem>
+          </Select>
               {errors.sucursal && (
                 <span className="text-red-500 text-sm">Este campo es requerido</span>
               )}
@@ -198,7 +245,7 @@ export default function AlquilerForm() {
               </Button>
           </form>
         </CardBody>
-      </Card>
+      </Card>):(<Card className="p-5">No tenes permisos</Card>)}
     </div>
   );
 }
