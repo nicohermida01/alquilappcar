@@ -36,6 +36,7 @@ class AdminViewSet(viewsets.ModelViewSet):
 
 class EmpleadoViewSet(viewsets.ModelViewSet):
     serializer_class = EmpleadoSerializer
+    queryset = Empleado.objects.all()
     
     def create(self, request):
         if not request.data:

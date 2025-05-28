@@ -103,6 +103,11 @@ class Admin(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
 
+    def set_password(self, password):
+        # Este método se usa para encriptar la contraseña antes de guardarla en la base de datos -Nico
+        self.password = make_password(password)
+        self.save()
+
     def __str__(self):
         return f"{self.nombre} {self.apellido} ({self.email})"
 
