@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
 				email: userData.email,
 			})
 		)
+    console.log(userData);
 		setUser(userData)
 	}
 
