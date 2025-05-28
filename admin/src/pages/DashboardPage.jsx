@@ -5,14 +5,24 @@ import { useAuth } from '../contexts/AuthContext'
 import { useEffect } from 'react'
 
 export function DashboardPage() {
-	const { isAuthenticated } = useAuth()
+	const { isAuthenticated, loadingAuth } = useAuth()
 	const navigate = useNavigate()
 
 	useEffect(() => {
+		if (loadingAuth) return
+
 		if (!isAuthenticated) {
 			navigate('/login')
 		}
-	}, [])
+	}, [isAuthenticated, navigate, loadingAuth])
+
+	if (loadingAuth) {
+		return (
+			<section className='min-h-screen w-full flex items-center justify-center bg-gray-100'>
+				<p className='text-lg'>Cargando...</p>
+			</section>
+		)
+	}
 
 	if (!isAuthenticated)
 		return (
