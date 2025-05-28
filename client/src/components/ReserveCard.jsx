@@ -1,16 +1,19 @@
 import { Button, Card, CardBody, Form, Input, Link, Select, SelectItem } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useAuth } from '../contexts/AuthContext';
+
 import axios from 'axios';
 
 function ReserveCard() {
   const [sucursales, setSucursales] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
+  const {isAuthenticated} = useAuth();
 
   const fetchSucursales = async () => {
     try {
       setIsFetching(true);
-      const response = await axios.get('http://localhost:8000/alquilapp/api/v1/sucursales/');
+      const response = await axios.get('http://localhost:8000/alquilapp/api/v1/sucursales/populated/');
       return response.data;
     } catch (error) {
       console.error('Error al obtener sucursales:', error);
@@ -25,7 +28,7 @@ function ReserveCard() {
     try {
       const data = await fetchSucursales();
       setSucursales(data);
-      //console.log(data, 'HOLA')
+      console.log(data, 'HOLA')
     } catch (error) {
       alert('Error al cargar las sucursales.');
     }
@@ -62,18 +65,22 @@ function ReserveCard() {
           onSubmit={(e) => {
             e.preventDefault();
             let data = Object.fromEntries(new FormData(e.currentTarget));
-            //console.log(data)
-            //setAction(`submit ${JSON.stringify(data)}`);
-            // se envia a la pagina de alquiler con la información seteada.
-            navigate("/alquiler", { state: { formData: data } });
+            //console.log(data, 'HOLA')
+            if (isAuthenticated) {
+              navigate("/alquiler", { state: { formData: data } });
+            } else {
+              navigate("/login");
+            }
           }}
         >
           <label className="block text-sm font-medium mb-1">Sucursal de Retiro</label>
-          <Select aria-label="Seleccionar sucursal" label="Seleccione una sucursal">
-            {sucursales.map((s)=>(
-              <SelectItem key={s.id} value={s.direccion}>{s.direccion}</SelectItem>
-            ))}
-              </Select>
+          <Select name="sucursal" aria-label="Seleccionar sucursal" label="Seleccione una sucursal">
+            {sucursales.map((s)=>{
+                const value = `${s.direccion}, ${s.localidad.nombre}`;
+              return <SelectItem key={s.id} value={s.id}>{value}</SelectItem>
+            }
+            )}
+          </Select>
 
           <div className="grid grid-cols-2 gap-4 w-full">
             <Input
@@ -102,7 +109,6 @@ function ReserveCard() {
               <Button type="reset" variant="flat">
                 Limpiar
               </Button>
-              
                 <Button
                   className="text-white"
                   color="secondary"
@@ -111,7 +117,6 @@ function ReserveCard() {
                 >
                   Reserve ahora
                 </Button>
-              
             </div>
           </div>
         </Form>
