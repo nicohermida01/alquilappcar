@@ -19,4 +19,5 @@ urlpatterns = [
     path('api/v1/', include(router.urls)),
     path('api/v1/login/', views.LoginAPIView.as_view(), name='login'),
     path('api/v1/login/admin/', views.LoginAdminAPIView.as_view(), name='login_admin'),
+    path('api/v1/login/admin/2fa/<int:id>/', views.Confirm2FAAPIView.as_view(), name='login_admin_2fa'),
 ]
