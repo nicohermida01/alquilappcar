@@ -2,12 +2,13 @@ import { Button, Card, CardBody, Form, Input, Link, Select, SelectItem } from "@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from '../contexts/AuthContext';
-
+import RequiredIcon from '../components/RequiredIcon'
 import axios from 'axios';
 
 function ReserveCard() {
   const [sucursales, setSucursales] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
+  const [fechaEntrega, setFechaEntrega] = useState('');
   const {isAuthenticated} = useAuth();
 
   const fetchSucursales = async () => {
@@ -28,7 +29,7 @@ function ReserveCard() {
     try {
       const data = await fetchSucursales();
       setSucursales(data);
-      console.log(data, 'HOLA')
+      //console.log(data, 'HOLA')
     } catch (error) {
       alert('Error al cargar las sucursales.');
     }
@@ -52,6 +53,14 @@ function ReserveCard() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+    // Necesito hacer una funcion que calcule un mínimo para deshabilitar fechas viejas en el input de fecha_entrega.
+    const getNowForInput = () => {
+      const now = new Date();
+      now.setSeconds(0, 0); // limpiamos segundos y milisegundos
+      now.setHours(now.getHours() - 3); // retorna una hora en un timezone raro, tengo que restarle 3 para que se acople a la local.
+      return now.toISOString().slice(0, 16); // formato: 'YYYY-MM-DDTHH:MM'
+    };
+
   return (
     <Card className="bg-background/60" isBlurred>
       {isFetching ? (
@@ -65,7 +74,7 @@ function ReserveCard() {
           onSubmit={(e) => {
             e.preventDefault();
             let data = Object.fromEntries(new FormData(e.currentTarget));
-            //console.log(data, 'HOLA')
+            console.log(data, 'HOLA')
             if (isAuthenticated) {
               navigate("/alquiler", { state: { formData: data } });
             } else {
@@ -73,8 +82,7 @@ function ReserveCard() {
             }
           }}
         >
-          <label className="block text-sm font-medium mb-1">Sucursal de Retiro</label>
-          <Select name="sucursal" aria-label="Seleccionar sucursal" label="Seleccione una sucursal">
+          <Select errorMessage="Es necesario que indique una sucursal de retiro." isRequired name="sucursal" aria-label="Seleccionar sucursal" label="Sucursal de retiro" labelPlacement="outside" placeholder="Seleccionar sucursal">
             {sucursales.map((s)=>{
                 const value = `${s.direccion}, ${s.localidad.nombre}`;
               return <SelectItem key={s.id} value={s.id}>{value}</SelectItem>
@@ -83,25 +91,8 @@ function ReserveCard() {
           </Select>
 
           <div className="grid grid-cols-2 gap-4 w-full">
-            <Input
-              isRequired
-              errorMessage="Ingrese una fecha válida"
-              label="Fecha y hora de entrega"
-              labelPlacement="outside"
-              name="fecha_entrega"
-              placeholder="Ingrese una fecha"
-              type="datetime-local"
-            />
-
-            <Input
-              isRequired
-              errorMessage="Ingrese una fecha válida"
-              label="Fecha y hora de devolución"
-              labelPlacement="outside"
-              name="fecha_devolucion"
-              placeholder="Ingrese una fecha"
-              type="datetime-local"
-            />
+          <Input onChange={(e) => setFechaEntrega(e.target.value)} name="fecha_entrega" isRequired errorMessage="Ingrese una fecha válida" label={"Fecha y hora de entrega"} labelPlacement="outside" placeholder="Ingrese una fecha" type="datetime-local" min={getNowForInput()} />     
+          <Input min={fechaEntrega} disabled={!fechaEntrega} name="fecha_devolucion" className={!fechaEntrega ? "opacity-50 cursor-not-allowed" : ""} isRequired errorMessage="La fecha debe ser válida y posterior a la de inicio." label="Fecha y hora de devolucion" labelPlacement="outside" placeholder="Ingrese una fecha" type="datetime-local"/>     
           </div>
 
           <div className="relative w-full" style={{ height: "50px" }}>

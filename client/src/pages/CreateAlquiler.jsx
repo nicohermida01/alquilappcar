@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import axios from 'axios';
 import { useState, useEffect } from 'react'
 import Topbar from '../components/Topbar'
+import RequiredIcon from '../components/RequiredIcon'
 import {
   Card,
   CardBody,
@@ -21,16 +22,30 @@ export default function AlquilerForm() {
   const [sucursales, setSucursales] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [paquetes, setPaquetes] = useState([]);
-  // CREO QEU NO ES NECESARIO
-  // const [paquetesSeleccionados, setPaquetesSeleccionados] = useState([]);
-  // const togglePaquete = (id) => {
-  //   setSelectedPaquetes((prev) =>
-  //     prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
-  //   );
-  // };
   const [isFetching, setIsFetching] = useState(true);
   const { isAuthenticated, user } = useAuth();
-
+  // En caso de haberse submiteado el formulario de Home, se obtiene la data, Pero si se apretó en el botón de la topbar, no hay data que obtener.
+  // Si location.state esta definido lo retorna sino devuelve un objeto vacio, y si no hay un formData dentro del mismo entonces es vacío.
+  const location = useLocation();
+  const { formData = {} } = location.state || {};
+  // Numero de días entre fecha de inicio y devolucion (esto es únicamente a modo de info para el cliente).
+  // Además, calcula el precio estimado según categoria de vehículo, paquetes seleccionados (FALTA), y cantidad de días calculados.
+  const [diasCalculados, setDiasCalculados] = useState(null);
+  const [precioEstimado, setPrecioEstimado] = useState(null);
+  
+  // Si formData tiene valores definidos los setea default el useForm (a partir de aca ya se usa el react-hook-form, formData es sólo la parte "anterior")
+  // y sino los deja vacíos.
+  const { register, handleSubmit, watch, control, formState: { errors }, setValue } = useForm({
+    defaultValues: {
+      fecha_entrega: formData.fecha_entrega || "",
+      fecha_devolucion: formData.fecha_devolucion || "",
+      sucursal_retiro: '', // LA SUCURSAL SE CARGA MANUALMENTE CON EL FORMDATA UNA VEZ HECHO EL GET DE SUCURSALES.
+      categoria_vehiculo: "",
+      paquetes: [],
+      precio_total: ""
+    }});
+  
+  // ______ FUNCIONES DE FETCH
   const fetchSucursales = async () => {
     try {
       setIsFetching(true);
@@ -43,7 +58,6 @@ export default function AlquilerForm() {
       setIsFetching(false);
     }
   };
-
   const fetchCategorias = async () => {
     try {
       setIsFetching(true);
@@ -56,7 +70,6 @@ export default function AlquilerForm() {
       setIsFetching(false);
     }
   };
-
   const fetchPaquetes = async () => {
     try {
       setIsFetching(true);
@@ -69,7 +82,7 @@ export default function AlquilerForm() {
       setIsFetching(false);
     }
   };
-
+// _______ CARGA DE DATOS USANDO LOS FETCH PREVIOS.
  useEffect(() => {
   const cargarDatos = async () => {
     try {
@@ -79,6 +92,10 @@ export default function AlquilerForm() {
         fetchPaquetes()
       ]);
       setSucursales(sucursalesData);
+      if (formData?.sucursal) {
+        // Espera a que estén cargadas las sucursales y luego setea el valor
+        setValue("sucursal_retiro", formData?.sucursal);
+      }
       setCategorias(categoriasData);
       setPaquetes(paquetesData);
     } catch (error) {
@@ -91,27 +108,8 @@ export default function AlquilerForm() {
   cargarDatos();
 }, []);
 
-  // En caso de haberse submiteado el formulario de Home, se obtiene la data, Pero si se apretó en el botón de la topbar, no hay data que obtener.
-  // Si location.state esta definido lo retorna sino devuelve un objeto vacio, y si no hay un formData dentro del mismo entonces es vacío.
-  const location = useLocation();
-  const { formData = {} } = location.state || {};
-  
-  // Numero de días entre fecha de inicio y devolucion (esto es únicamente a modo de info para el cliente).
-  // Además, calcula el precio estimado según categoria de vehículo, paquetes seleccionados (FALTA), y cantidad de días calculados.
-  const [diasCalculados, setDiasCalculados] = useState(null);
-  const [precioEstimado, setPrecioEstimado] = useState(null);
-
-  // Si formData tiene valores definidos los setea default el useForm (a partir de aca ya se usa el react-hook-form, formData es sólo la parte "anterior")
-  // y sino los deja vacíos.
-  const { register, handleSubmit, watch, control, formState: { errors } } = useForm({
-    defaultValues: {
-      fecha_entrega: formData.fecha_entrega || "",
-      fecha_devolucion: formData.fecha_devolucion || "",
-      sucursal: formData.sucursal || "",
-      categoria_vehiculo: "",
-      paquetes: [],
-    }});
-  
+  // YA SE FETCHEO LO NECESARIO, Y YA SE SETEARON EN REACT-HOOK-FORMS LOS VALORES PREVIOS SI ES QUE LOS HUBO, A PARTIR DE AHORA SE REGISTRAN Y SE MANEJAN
+  // CAMPOS DE REACT-HOOK-FORM
   // watch es una funcion de react-hook-form, necesito watchear estos elementos para que cada vez que cambien, se reactualicen precios, etc.
   const fechaInicio = watch("fecha_entrega");
   const fechaDevolucion = watch("fecha_devolucion");
@@ -132,17 +130,12 @@ export default function AlquilerForm() {
         alert("La fecha de devolución debe ser posterior a la de entrega.");
         return;
       }
-      //const dias = calcularDias(fechaInicio, fechaDevolucion);
-      //setDiasCalculados(dias);
       const precio = calcularPrecio(diasCalculados, formData.categoria_vehiculo);
       setPrecioEstimado(precio);
-      if (diasCalculados > 0 && formData.categoria_vehiculo) {
-      }
     }
-    data['client_id'] = user.clientId;
-    console.log(data, 'INFOFORM');
+    data['cliente'] = user.clientId;
+    console.log(data, 'INFO QUE SE ENVIA');
     try {
-      // console.log(user,'UYSER')
       // ACA VA LA LOGICA DEL PAGO.
       // CUANDO SEA SUCCESS, SE HACE EL POST.
       //await axios.post('http://localhost:8000/alquilapp/api/v1/alquileres/', data);
@@ -158,16 +151,21 @@ export default function AlquilerForm() {
     const start = new Date(inicio);
     const end = new Date(fin);
     const diffTime = end - start;
-  
     if (diffTime <= 0) return 'Fecha inválida';
-  
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
 
-  // cada vez que se cambie la fecha de inicio, devolucion, o categoría seleccionada se vuelve a ejecutar:
-  // La cantidad de días del alquiler.
-  // El precio estimado.
+  const getNowForInput = () => {
+    const now = new Date();
+    now.setSeconds(0, 0); // limpiamos segundos y milisegundos
+    now.setHours(now.getHours() - 3); // retorna una hora en un timezone raro, tengo que restarle 3 para que se acople a la local.
+    return now.toISOString().slice(0, 16); // formato: 'YYYY-MM-DDTHH:MM'
+  };
+
+  // cada vez que se cambie la fecha de inicio, devolucion, categoría o paquetesSeleccionados se vuelve a ejecutar:
+  // La cantidad de días del alquiler calculada.
+  // El precio estimado según paquetes seleccionados, categoria seleccionada y cantidad de dias determinado.
   useEffect(() => {
     if (fechaInicio && fechaDevolucion) {
       const dias = calcularDias(fechaInicio, fechaDevolucion);
@@ -176,32 +174,23 @@ export default function AlquilerForm() {
     if (diasCalculados > 0 && categoriaVehiculo) {
       const precio = calcularPrecio(diasCalculados, categoriaVehiculo, paquetesSeleccionados);
       setPrecioEstimado(precio);
+      setValue("precio_total", precio);
     }
   }, [fechaInicio, fechaDevolucion, categoriaVehiculo, paquetesSeleccionados]);
 
   const calcularPrecio = (dias, categoria, paquetesSeleccionados = []) => {
-  // Buscar la categoría en el array de categorías fetcheado
-  const categoriaSeleccionada = categorias.find((c) => c.id == categoria);
-  // Si no se encontró, usamos 0 como precio por día (o podrías lanzar error)
-  const precioPorDia = categoriaSeleccionada ? parseFloat(categoriaSeleccionada.precio) : 0;
-  // console.log(precioPorDia,'COSTO DIARIO DE CATEGORIA');
-  const precioBase = Number(dias) * precioPorDia;
-  const precioPaquetes = paquetes
-    .filter((p) => paquetesSeleccionados.includes(p.id))
-    .reduce((acc, p) => acc + parseFloat(p.costo), 0);
-  console.log('PRECIO PAQEUTES SELECCIONADOS ', precioPaquetes);
-  console.log(precioBase + precioPaquetes, 'PRECIO TOTAL');
-  return precioBase + precioPaquetes;
+    // Buscar la categoría en el array de categorías fetcheado
+    const categoriaSeleccionada = categorias.find((c) => c.id == categoria);
+    // Si no se encontró, usamos 0 como precio por día (o lanzar error)
+    const precioPorDia = categoriaSeleccionada ? parseFloat(categoriaSeleccionada.precio) : 0;
+    const precioBase = Number(dias) * precioPorDia;
+    // FILTRA TODOS LOS PAQUETES SELECCIONADOS, Y SUMA TODO EN PRECIOPAQUETES, LUEGO SE SUMA AL PRECIO BASE CALCULADO.
+    const precioPaquetes = paquetes
+      .filter((p) => paquetesSeleccionados.includes(p.id))
+      .reduce((acc, p) => acc + parseFloat(p.costo), 0);
+    return precioBase + precioPaquetes;
   };
-
-  // Necesito hacer una funcion que calcule un mínimo para deshabilitar fechas viejas en el input de fecha_entrega.
-  const getNowForInput = () => {
-    const now = new Date();
-    now.setSeconds(0, 0); // limpiamos segundos y milisegundos
-    now.setHours(now.getHours() - 3); // retorna una hora en un timezone raro, tengo que restarle 3 para que se acople a la local.
-    return now.toISOString().slice(0, 16); // formato: 'YYYY-MM-DDTHH:MM'
-  };
-  //if(!isAuthenticated) return 'No estas logueado'
+  
   return (
     <div className="bg-[url(/../commons/obi-aZKJEvydrNM-unsplash.jpg)] min-h-screen bg-cover flex items-center relative">
       <div className="absolute top-0 left-0 w-full h-full bg-black/40 " />
@@ -215,7 +204,7 @@ export default function AlquilerForm() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Fecha Inicio</label>
+                <label className="block text-sm font-medium mb-1">Fecha Inicio<RequiredIcon/></label>
                 <Input type="datetime-local" min={getNowForInput()} {...register("fecha_entrega", { required: true,
                   validate: value => {
                     const now = new Date();
@@ -224,12 +213,12 @@ export default function AlquilerForm() {
                   },
                  })} />
                 {errors.fecha_entrega && (
-                  <span className="text-red-500 text-sm">Este campo es requerido</span>
+                  <span className="text-red-500 text-sm">Seleccioná una fecha inicial.</span>
                 )}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Fecha Devolución
+                  Fecha Devolución<RequiredIcon/>
                 </label>
                 <Input type="datetime-local" min={fechaInicio} disabled={!fechaInicio} className={!fechaInicio ? "opacity-50 cursor-not-allowed" : ""} {...register("fecha_devolucion", { required: true, 
                   validate: value => {
@@ -239,13 +228,13 @@ export default function AlquilerForm() {
                   }
                 })}/>
                 {errors.fecha_devolucion && (
-                  <span className="text-red-500 text-sm">Este campo es requerido</span>
+                  <span className="text-red-500 text-sm">Seleccioná una fecha de devolución válida.</span>
                 )}
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Sucursal de Retiro</label>
-                <Select size="sm" {...register("sucursal", { required: true })} aria-label="Seleccionar sucursal" label="Seleccione una sucursal">
+              <label className="block text-sm font-medium mb-1">Sucursal de Retiro<RequiredIcon/></label>
+                <Select size="sm" {...register("sucursal_retiro", { required: true })} aria-label="Seleccionar sucursal" label="Seleccione una sucursal">
                   {sucursales.map((s)=>{
                       const value = `${s.direccion}, ${s.localidad.nombre}`;
                     return <SelectItem key={s.id} value={s.id}>{value}</SelectItem>
@@ -253,11 +242,11 @@ export default function AlquilerForm() {
                   )}
                 </Select>
               {errors.sucursal && (
-              <span className="text-red-500 text-sm">Este campo es requerido</span>
+              <span className="text-red-500 text-sm">Es necesario que indique una sucursal de retiro.</span>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Categoría de Vehículo</label>
+              <label className="block text-sm font-medium mb-1">Categoría de Vehículo<RequiredIcon/></label>
               <Select size="sm" {...register("categoria_vehiculo", { required: true })} aria-label="Seleccionar categoría" label="Seleccione una categoría preferencial">
                 {categorias.map((c)=>{
                   return <SelectItem key={c.id} value={Number(c.id)}>{c.nombre}</SelectItem>
@@ -265,7 +254,7 @@ export default function AlquilerForm() {
                 )}
               </Select>
               {errors.categoria_vehiculo && (
-                <span className="text-red-500 text-sm">Este campo es requerido</span>
+                <span className="text-red-500 text-sm">Es necesario que indique una categoría preferencial.</span>
               )}
             </div>
           <div>
