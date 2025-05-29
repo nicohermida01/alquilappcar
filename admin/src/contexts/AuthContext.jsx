@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 			const token = JSON.parse(storedAccessToken)
 
 			setUser({
-				empleadoId: user.id,
+				empleadoId: user.empleadoId,
 				email: user.email,
 				accessToken: token,
 			})
