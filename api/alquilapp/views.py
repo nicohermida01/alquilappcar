@@ -6,9 +6,8 @@ from datetime import datetime, timedelta
 from rest_framework.views import APIView
 from django.conf import settings
 import jwt
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action, api_view
 from django.core.mail import send_mail
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 # Create your views here.
@@ -81,6 +80,7 @@ class CategoriaVehiculoViewSet(viewsets.ModelViewSet):
 
 class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
+    queryset = Cliente.objects.all()
     
     def create(self, request):
         # validar que haya un body en la request
@@ -203,10 +203,3 @@ class LoginAPIView(APIView):
 
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
         return Response({'accessToken': token, 'clientId': client.id, 'email': client.email}, status=200)
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_user_data(request, user_id):
-    client = Cliente.objects.get(pk=user_id)
-    serializer = ClienteSerializer(client)
-    return Response(serializer.data)
