@@ -15,8 +15,9 @@ function UserAlquileres() {
         <div className="mt-16 ml-[25%] justify-center">
             <ul>
                 {results.map(user => (
-                <FieldCard field={user.id} value={user.name}/>
-                ))}
+                <FieldCard field={user.id} value={`Alquiler de ${user.name}`}/>
+                ))
+                }
             </ul>
         </div>
     )

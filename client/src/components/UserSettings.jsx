@@ -10,7 +10,7 @@ function UserSettings() {
                 <li><EditFieldCard field="Editar e-mail" pHolder="email"/></li>
                 <li><EditFieldCard field="Editar informacion de contacto" pHolder="contact"/></li>
             </ul>
-            <Button color="primary" className="text-white ml-[45it%]">Guardar cambios</Button>
+            <Button color="primary" className="text-white ml-[45%]">Guardar cambios</Button>
         </div>
     )
 }
