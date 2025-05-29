@@ -29,20 +29,6 @@ class Alquiler(models.Model):
     @property
     def cantidad_dias_totales(self):
         return (self.fecha_devolucion - self.fecha_inicio).days
-
-    # Esta func dijimos que la hace el frontend asi que la comento
-    #def calcular_precio_total(self):
-    #    dias = self.cantidad_dias_totales
-        # campo de prueba hasta que esté la entidad categoria
-    #    costo_categoria = 5000  # valor fijo de prueba
-        # cuando esté la entidad va la linea de abajo y no la de arriba.
-        # costo_categoria = self.categoria_vehiculo.costo_por_dia
-    #    costo_paquetes = sum([p.paquete.costo for p in self.paquetealquiler_set.all()])
-    #    return (costo_categoria * dias) + costo_paquetes
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
         # # Validar que fecha_inicio sea al menos mañana
         # if self.fecha_inicio <= now():
         #     raise ValidationError({'fecha_inicio': 'La fecha de inicio debe ser al menos mañana.'})

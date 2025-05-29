@@ -23,6 +23,10 @@ class PaqueteAlquilerSerializer(serializers.ModelSerializer):
 class AlquilerSerializer(serializers.ModelSerializer):
     paquetealquiler_set = PaqueteAlquilerSerializer(many=True, read_only=True)
 
+    paquetes = serializers.ListField(
+        child=serializers.IntegerField(), write_only=True, required=False)
+    paquetealquiler_set = PaqueteAlquilerSerializer(many=True, read_only=True)
+
     class Meta:
         model = Alquiler
         # no se si vayan todos o haya que especificar alguno que no, en todo caso se reemplaza con __all__
@@ -36,10 +40,10 @@ class AlquilerSerializer(serializers.ModelSerializer):
             'vehiculo_asignado',
             'precio_total',
             'cliente',
-            'paquetealquiler_set',
-            'activo'
+            'paquetes', # campo virtual para crear relaciones
+            'paquetealquiler_set',  # campo real que devuelve los relacionados
         ]
-        read_only_fields = ['cantidad_dias_totales', 'precio_total']
+        read_only_fields = ['cantidad_dias_totales', 'activo', 'paquetealquiler_set']
         
     def validate(self, data):
         fecha_inicio = data.get('fecha_inicio')
@@ -55,6 +59,15 @@ class AlquilerSerializer(serializers.ModelSerializer):
                 'fecha_devolucion': 'La fecha de devolución debe ser posterior a la fecha de inicio.'
             })
         return data
+
+    def create(self, validated_data):
+        paquetes_ids = validated_data.pop('paquetes', [])
+        alquiler = Alquiler.objects.create(**validated_data)
+
+        for paquete_id in paquetes_ids:
+            PaqueteAlquiler.objects.create(alquiler=alquiler, paquete_id=paquete_id)
+
+        return alquiler
 
 class VehiculoSerializer(serializers.ModelSerializer):
     class Meta:
