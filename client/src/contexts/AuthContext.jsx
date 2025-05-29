@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 			const token = JSON.parse(storedAccessToken)
 
 			setUser({
-				clientId: user.id,
+				clientId: user.clientId,
 				email: user.email,
 				accessToken: token,
 			})
@@ -33,7 +33,6 @@ export const AuthProvider = ({ children }) => {
 				email: userData.email,
 			})
 		)
-    console.log(userData);
 		setUser(userData)
 	}
 

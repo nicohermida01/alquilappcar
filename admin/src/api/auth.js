@@ -5,6 +5,14 @@ const login = async credentials => {
 	return response.data
 }
 
+const confirm2FA = async (code, userId) => {
+	const response = await api.post(`login/admin/2fa/${userId}/`, {
+		code2FA: code,
+	})
+	return response.data
+}
+
 export const authService = {
 	login,
+	confirm2FA,
 }

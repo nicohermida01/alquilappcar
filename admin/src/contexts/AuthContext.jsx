@@ -17,8 +17,9 @@ export const AuthProvider = ({ children }) => {
 			const token = JSON.parse(storedAccessToken)
 
 			setUser({
-				empleadoId: user.id,
+				userId: user.userId,
 				email: user.email,
+				isAdmin: user.isAdmin,
 				accessToken: token,
 			})
 		}
@@ -29,7 +30,11 @@ export const AuthProvider = ({ children }) => {
 		localStorage.setItem('access-token', JSON.stringify(userData.accessToken))
 		localStorage.setItem(
 			'user',
-			JSON.stringify({ empleadoId: userData.empleadoId, email: userData.email })
+			JSON.stringify({
+				userId: userData.userId,
+				email: userData.email,
+				isAdmin: userData.isAdmin,
+			})
 		)
 
 		setUser(userData)
