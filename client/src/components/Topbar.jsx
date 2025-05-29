@@ -27,15 +27,6 @@ function Topbar() {
 				</Link>
 			</NavbarBrand>
 			<NavbarContent className='hidden sm:flex gap-14' justify='start'>
-				{/* <NavbarItem>
-					<Link to='/'>Home</Link>
-				</NavbarItem> */}
-				<NavbarItem>
-					<Link to='/flota'>Flota</Link>
-				</NavbarItem>
-				<NavbarItem>
-					<Link to='/sucursales'>Sucursales</Link>
-				</NavbarItem>
 			</NavbarContent>
 			<NavbarContent justify='end'>
 				<NavbarItem>

@@ -12,13 +12,10 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Chip,
-    User,
     Pagination,
     useDisclosure,
     Tooltip,
 } from "@heroui/react";
-import { vehiclesApi } from "../api/vehicles.api";
 import {
     SearchIcon,
     PlusIcon,
@@ -26,123 +23,69 @@ import {
     EyeIcon,
     EditIcon,
     DeleteIcon,
-} from "../assets/icons";
-import CreateVehicleModal from "./CreateVehicleModal";
-import ViewVehicleModal from "./ViewVehicleModal";
-import ModifyVehicleModal from "./ModifyVehicleModal";
+} from "../../assets/icons";
+import CreateItemModal from "./CreateItemModal";
+import ModifyItemModal from "./ModifyItemModal";
+import ViewItemModal from "./ViewItemModal";
+import DeleteItemModal from "./DeleteItemModal";
 
-const columns = [
-    { name: "ID", uid: "id", sortable: true },
-    { name: "MODELO", uid: "modelo", sortable: true },
-    { name: "PATENTE", uid: "patente", sortable: true },
-    { name: "MARCA", uid: "marca", sortable: true },
-    { name: "AÑO", uid: "año", sortable: true },
-    { name: "ACCIONES", uid: "actions" },
-];
-
-const statusOptions = [
-    { name: "Active", uid: "active" },
-    { name: "Paused", uid: "paused" },
-    { name: "Vacation", uid: "vacation" },
-];
-
-const statusColorMap = {
-    active: "success",
-    paused: "warning",
-    vacation: "danger",
-};
-
-const INITIAL_VISIBLE_COLUMNS = ["marca", "modelo", "patente", "actions"];
-
-export default function ListVehicles() {
-    const [vehicles, setVehicles] = React.useState([]);
-    const [brands, setBrands] = React.useState([]);
-    const [sucursales, setSucursales] = React.useState([]);
-    const [categorias, setCategorias] = React.useState([]);
-    const [cancelaciones, setCancelaciones] = React.useState([]);
-
-    const [selectedVehicle, setSelectedVehicle] = React.useState();
+export default function ListItems({
+    columns,
+    INITIAL_VISIBLE_COLUMNS,
+    registerForm,
+    infoShow,
+    deleteItem,
+    itemList,
+    databaseInfo,
+    fetchInfo,
+    itemName,
+}) {
+    const [selectedItem, setSelectedItem] = React.useState();
 
     const {
-        isOpen: isOpenCreateVehicle,
-        onOpen: onOpenCreateVehicle,
-        onOpenChange: onOpenChangeCreateVehicle,
+        isOpen: isOpenCreateItem,
+        onOpen: onOpenCreateItem,
+        onOpenChange: onOpenChangeCreateItem,
     } = useDisclosure();
 
     const {
-        isOpen: isOpenViewVehicle,
-        onOpen: onOpenViewVehicle,
-        onOpenChange: onOpenChangeViewVehicle,
+        isOpen: isOpenViewItem,
+        onOpen: onOpenViewItem,
+        onOpenChange: onOpenChangeViewItem,
     } = useDisclosure();
 
     const {
-        isOpen: isOpenModifyVehicle,
-        onOpen: onOpenModifyVehicle,
-        onOpenChange: onOpenChangeModifyVehicle,
+        isOpen: isOpenModifyItem,
+        onOpen: onOpenModifyItem,
+        onOpenChange: onOpenChangeModifyItem,
     } = useDisclosure();
 
-    function onOpenVehicleView(vehicle) {
-        setSelectedVehicle(vehicle);
-        onOpenViewVehicle();
+    const {
+        isOpen: isOpenDeleteItem,
+        onOpen: onOpenDeleteItem,
+        onOpenChange: onOpenChangeDeleteItem,
+    } = useDisclosure();
+
+    function onOpenItemDelete(item) {
+        setSelectedItem(item);
+        onOpenDeleteItem();
     }
 
-    function onOpenVehicleModify(vehicle) {
-        setSelectedVehicle(vehicle);
-        onOpenModifyVehicle();
+    function onOpenItemView(item) {
+        setSelectedItem(item);
+        onOpenViewItem();
     }
 
-    React.useEffect(() => {
-        vehiclesApi
-            .getAllVehicles()
-            .then((res) => {
-                setVehicles(res);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-
-        vehiclesApi
-            .getAllBrands()
-            .then((res) => {
-                setBrands(res);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-
-        vehiclesApi
-            .getAllSucursales()
-            .then((res) => {
-                setSucursales(res);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-
-        vehiclesApi
-            .getAllCategorias()
-            .then((res) => {
-                setCategorias(res);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-
-        vehiclesApi
-            .getAllCancelaciones()
-            .then((res) => {
-                setCancelaciones(res);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-    }, []);
+    function onOpenItemModify(item) {
+        setSelectedItem(item);
+        onOpenModifyItem();
+    }
 
     const [filterValue, setFilterValue] = React.useState("");
     const [visibleColumns, setVisibleColumns] = React.useState(
         new Set(INITIAL_VISIBLE_COLUMNS)
     );
-    const [statusFilter, setStatusFilter] = React.useState("all");
+
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState({
         column: "age",
@@ -161,26 +104,18 @@ export default function ListVehicles() {
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredVehicles = [...vehicles];
+        let filteredItems = [...itemList];
 
         if (hasSearchFilter) {
-            filteredVehicles = filteredVehicles.filter((vehicle) =>
-                vehicle.patente
+            filteredItems = filteredItems.filter((item) =>
+                item[Object.keys(item)[1]]
                     .toLowerCase()
                     .includes(filterValue.toLowerCase())
             );
         }
-        if (
-            statusFilter !== "all" &&
-            Array.from(statusFilter).length !== statusOptions.length
-        ) {
-            filteredVehicles = filteredVehicles.filter((vehicle) =>
-                Array.from(statusFilter).includes(vehicle.status)
-            );
-        }
 
-        return filteredVehicles;
-    }, [vehicles, filterValue, statusFilter]);
+        return filteredItems;
+    }, [itemList, filterValue]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage) || 1;
 
@@ -201,61 +136,37 @@ export default function ListVehicles() {
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = React.useCallback((vehicle, columnKey) => {
-        const cellValue = vehicle[columnKey];
+    const renderCell = React.useCallback((item, columnKey) => {
+        const cellValue = item[columnKey];
 
         switch (columnKey) {
-            case "marca":
-                return (
-                    <User
-                        avatarProps={{ radius: "lg", src: vehicle.avatar }}
-                        name={brands.find((b) => b.id === vehicle.marca)?.name}
-                        description={vehicle.marca}
-                    ></User>
-                );
-            case "modelo":
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">
-                            {cellValue}
-                        </p>
-                        <p className="text-bold text-tiny capitalize text-default-400">
-                            {vehicle.modelo}
-                        </p>
-                    </div>
-                );
-            case "patente":
-                return (
-                    <Chip
-                        className="capitalize"
-                        color={statusColorMap[vehicle.status]}
-                        size="sm"
-                        variant="flat"
-                    >
-                        {cellValue}
-                    </Chip>
-                );
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
                         <Tooltip content="Detalles">
                             <span
                                 className="text-lg text-default-400  active:opacity-50"
-                                onClick={() => onOpenVehicleView(vehicle)}
+                                onClick={() => onOpenItemView(item)}
                             >
                                 <EyeIcon />
                             </span>
                         </Tooltip>
-                        <Tooltip content="Editar vehículo">
+                        <Tooltip content={"Editar " + itemName}>
                             <span
                                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                                onClick={() => onOpenVehicleModify(vehicle)}
+                                onClick={() => onOpenItemModify(item)}
                             >
                                 <EditIcon />
                             </span>
                         </Tooltip>
-                        <Tooltip color="danger" content="Eliminar vehículo">
-                            <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                        <Tooltip
+                            color="danger"
+                            content={"Eliminar " + itemName}
+                        >
+                            <span
+                                className="text-lg text-danger cursor-pointer active:opacity-50"
+                                onClick={() => onOpenItemDelete(item)}
+                            >
                                 <DeleteIcon />
                             </span>
                         </Tooltip>
@@ -300,11 +211,11 @@ export default function ListVehicles() {
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4 ">
-                <div className="flex justify-between gap-3 items-end">
+                <div className="flex justify-between gap-3">
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Buscar por patente..."
+                        placeholder="Buscar por nombre..."
                         startContent={<SearchIcon />}
                         value={filterValue}
                         onClear={() => onClear()}
@@ -319,36 +230,7 @@ export default function ListVehicles() {
                                     }
                                     variant="flat"
                                 >
-                                    Status
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setStatusFilter}
-                            >
-                                {statusOptions.map((status) => (
-                                    <DropdownItem
-                                        key={status.uid}
-                                        className="capitalize"
-                                    >
-                                        {status.name}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button
-                                    endContent={
-                                        <ChevronDownIcon className="text-small" />
-                                    }
-                                    variant="flat"
-                                >
-                                    Columns
+                                    Columnas
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
@@ -371,19 +253,19 @@ export default function ListVehicles() {
                         </Dropdown>
                         <Button
                             color="primary"
-                            onPress={onOpenCreateVehicle}
+                            onPress={onOpenCreateItem}
                             endContent={<PlusIcon />}
                         >
-                            Add New
+                            Crear nuevo
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total {vehicles.length} vehicles
+                        Total {itemList.length} {itemName}s
                     </span>
                     <label className="flex items-center text-default-400 text-small">
-                        Rows per page:
+                        Filas por página:
                         <select
                             className="bg-transparent outline-none text-default-400 text-small"
                             onChange={onRowsPerPageChange}
@@ -398,10 +280,9 @@ export default function ListVehicles() {
         );
     }, [
         filterValue,
-        statusFilter,
         visibleColumns,
         onRowsPerPageChange,
-        vehicles.length,
+        itemList.length,
         onSearchChange,
         hasSearchFilter,
     ]);
@@ -426,7 +307,7 @@ export default function ListVehicles() {
                         variant="flat"
                         onPress={onPreviousPage}
                     >
-                        Previous
+                        Siguiente
                     </Button>
                     <Button
                         isDisabled={pages === 1}
@@ -434,40 +315,43 @@ export default function ListVehicles() {
                         variant="flat"
                         onPress={onNextPage}
                     >
-                        Next
+                        Anterior
                     </Button>
                 </div>
             </div>
         );
-    }, [items.length, page, pages, hasSearchFilter]);
+    }, [itemList.length, page, pages, hasSearchFilter]);
 
     return (
         <>
-            <CreateVehicleModal
-                onOpenChange={onOpenChangeCreateVehicle}
-                isOpen={isOpenCreateVehicle}
-                databaseInfo={{
-                    brands,
-                    sucursales,
-                    categorias,
-                    cancelaciones,
-                }}
+            <CreateItemModal
+                onOpenChange={onOpenChangeCreateItem}
+                isOpen={isOpenCreateItem}
+                updateItemList={fetchInfo}
+                registerForm={registerForm}
+                databaseInfo={databaseInfo}
             />
-            <ViewVehicleModal
-                onOpenChange={onOpenChangeViewVehicle}
-                isOpen={isOpenViewVehicle}
-                vehicle={selectedVehicle}
+            <ModifyItemModal
+                itemInfo={selectedItem}
+                isOpen={isOpenModifyItem}
+                onOpenChange={onOpenChangeModifyItem}
+                updateItemList={fetchInfo}
+                registerForm={registerForm}
+                databaseInfo={databaseInfo}
             />
-            <ModifyVehicleModal
-                onOpenChange={onOpenChangeModifyVehicle}
-                isOpen={isOpenModifyVehicle}
-                vehicleInfo={selectedVehicle}
-                databaseInfo={{
-                    brands,
-                    sucursales,
-                    categorias,
-                    cancelaciones,
-                }}
+            <ViewItemModal
+                isOpen={isOpenViewItem}
+                onOpenChange={onOpenChangeViewItem}
+                infoShow={infoShow}
+                itemInfo={selectedItem}
+                databaseInfo={databaseInfo}
+            />
+            <DeleteItemModal
+                onOpenChange={onOpenChangeDeleteItem}
+                isOpen={isOpenDeleteItem}
+                itemInfo={selectedItem}
+                updateItemList={fetchInfo}
+                deleteItem={deleteItem}
             />
             <Table
                 isHeaderSticky
@@ -497,7 +381,7 @@ export default function ListVehicles() {
                     )}
                 </TableHeader>
                 <TableBody
-                    emptyContent={"No vehicles found"}
+                    emptyContent={"No se encontraron " + itemName + "s"}
                     items={sortedItems}
                 >
                     {(item) => (

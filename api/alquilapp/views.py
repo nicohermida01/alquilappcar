@@ -6,9 +6,8 @@ from datetime import datetime, timedelta
 from rest_framework.views import APIView
 from django.conf import settings
 import jwt
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action
 from django.core.mail import send_mail
-from rest_framework.response import Response
 
 # Create your views here.
 
