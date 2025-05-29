@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useLocation } from "react-router-dom";
 import axios from 'axios';
 import { useState, useEffect } from 'react'
@@ -10,12 +10,24 @@ import {
   Input,
   Button,
   SelectItem,
-  Select
+  Select,
+  Checkbox,
+  cn,
+  CheckboxGroup
 } from '@heroui/react';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function AlquilerForm() {
   const [sucursales, setSucursales] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [paquetes, setPaquetes] = useState([]);
+  // CREO QEU NO ES NECESARIO
+  // const [paquetesSeleccionados, setPaquetesSeleccionados] = useState([]);
+  // const togglePaquete = (id) => {
+  //   setSelectedPaquetes((prev) =>
+  //     prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
+  //   );
+  // };
   const [isFetching, setIsFetching] = useState(true);
   const { isAuthenticated, user } = useAuth();
 
@@ -32,17 +44,51 @@ export default function AlquilerForm() {
     }
   };
 
- useEffect(() => {
-  const cargarSucursales = async () => {
+  const fetchCategorias = async () => {
     try {
-      const data = await fetchSucursales();
-      setSucursales(data);
-      console.log(data, 'HOLA')
+      setIsFetching(true);
+      const response = await axios.get('http://localhost:8000/alquilapp/api/v1/categorias/');
+      return response.data;
     } catch (error) {
-      alert('Error al cargar las sucursales.');
+      console.error('Error al obtener paquetes:', error);
+      throw error;
+    } finally {
+      setIsFetching(false);
     }
   };
-  cargarSucursales();
+
+  const fetchPaquetes = async () => {
+    try {
+      setIsFetching(true);
+      const response = await axios.get('http://localhost:8000/alquilapp/api/v1/paquetes/');
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener paquetes:', error);
+      throw error;
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+ useEffect(() => {
+  const cargarDatos = async () => {
+    try {
+      const [sucursalesData, categoriasData, paquetesData] = await Promise.all([
+        fetchSucursales(),
+        fetchCategorias(),
+        fetchPaquetes()
+      ]);
+      setSucursales(sucursalesData);
+      setCategorias(categoriasData);
+      setPaquetes(paquetesData);
+    } catch (error) {
+      console.log(error)
+      alert('Ocurrió un error al cargar los datos.');
+    } finally {
+      setIsFetching(false); // Solo se oculta el loader cuando todo termina
+    }
+  };
+  cargarDatos();
 }, []);
 
   // En caso de haberse submiteado el formulario de Home, se obtiene la data, Pero si se apretó en el botón de la topbar, no hay data que obtener.
@@ -57,18 +103,20 @@ export default function AlquilerForm() {
 
   // Si formData tiene valores definidos los setea default el useForm (a partir de aca ya se usa el react-hook-form, formData es sólo la parte "anterior")
   // y sino los deja vacíos.
-  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+  const { register, handleSubmit, watch, control, formState: { errors } } = useForm({
     defaultValues: {
       fecha_entrega: formData.fecha_entrega || "",
       fecha_devolucion: formData.fecha_devolucion || "",
       sucursal: formData.sucursal || "",
-      categoria_vehiculo: ""
+      categoria_vehiculo: "",
+      paquetes: [],
     }});
   
   // watch es una funcion de react-hook-form, necesito watchear estos elementos para que cada vez que cambien, se reactualicen precios, etc.
   const fechaInicio = watch("fecha_entrega");
   const fechaDevolucion = watch("fecha_devolucion");
   const categoriaVehiculo = watch("categoria_vehiculo");
+  const paquetesSeleccionados = watch("paquetes");
 
   // se submitea.
   const onSubmit = async (data) => {
@@ -91,12 +139,10 @@ export default function AlquilerForm() {
       if (diasCalculados > 0 && formData.categoria_vehiculo) {
       }
     }
-    //console.log(data, 'INFO FORM')
-    // TRAER EL ID DE LA SESION Y PONERLO EN DATA.
-    console.log(user,'UYSER')
     data['client_id'] = user.clientId;
     console.log(data, 'INFOFORM');
     try {
+      // console.log(user,'UYSER')
       // ACA VA LA LOGICA DEL PAGO.
       // CUANDO SEA SUCCESS, SE HACE EL POST.
       //await axios.post('http://localhost:8000/alquilapp/api/v1/alquileres/', data);
@@ -125,28 +171,27 @@ export default function AlquilerForm() {
   useEffect(() => {
     if (fechaInicio && fechaDevolucion) {
       const dias = calcularDias(fechaInicio, fechaDevolucion);
-      console.log(dias, 'DIAS CALCULADOS')
       setDiasCalculados(dias);
     }
     if (diasCalculados > 0 && categoriaVehiculo) {
-      const precio = calcularPrecio(diasCalculados, categoriaVehiculo);
-      console.log(precio, 'HOLAAA')
+      const precio = calcularPrecio(diasCalculados, categoriaVehiculo, paquetesSeleccionados);
       setPrecioEstimado(precio);
     }
-  }, [fechaInicio, fechaDevolucion, categoriaVehiculo]);
+  }, [fechaInicio, fechaDevolucion, categoriaVehiculo, paquetesSeleccionados]);
 
-  const calcularPrecio = (dias, categoria = "economico") => {
-    // EJEMPLO DE PRECIOS, HAY QUE FETCHEAR PRECIO DE CATEGORIA.
-    // HAY QUE FETCHEAR Y CALCULAR TAMBIEN PAQUETES EXTRA.
-    const preciosBase = {
-      economico: 5000,
-      intermedio: 7500,
-      suv: 10000,
-      lujo: 15000
-    };
-  
-    const precioPorDia = preciosBase[categoria] || 5000;
-    return diasCalculados * precioPorDia;
+  const calcularPrecio = (dias, categoria, paquetesSeleccionados = []) => {
+  // Buscar la categoría en el array de categorías fetcheado
+  const categoriaSeleccionada = categorias.find((c) => c.id == categoria);
+  // Si no se encontró, usamos 0 como precio por día (o podrías lanzar error)
+  const precioPorDia = categoriaSeleccionada ? parseFloat(categoriaSeleccionada.precio) : 0;
+  // console.log(precioPorDia,'COSTO DIARIO DE CATEGORIA');
+  const precioBase = Number(dias) * precioPorDia;
+  const precioPaquetes = paquetes
+    .filter((p) => paquetesSeleccionados.includes(p.id))
+    .reduce((acc, p) => acc + parseFloat(p.costo), 0);
+  console.log('PRECIO PAQEUTES SELECCIONADOS ', precioPaquetes);
+  console.log(precioBase + precioPaquetes, 'PRECIO TOTAL');
+  return precioBase + precioPaquetes;
   };
 
   // Necesito hacer una funcion que calcule un mínimo para deshabilitar fechas viejas en el input de fecha_entrega.
@@ -161,7 +206,7 @@ export default function AlquilerForm() {
     <div className="bg-[url(/../commons/obi-aZKJEvydrNM-unsplash.jpg)] min-h-screen bg-cover flex items-center relative">
       <div className="absolute top-0 left-0 w-full h-full bg-black/40 " />
       <Topbar />
-      {isAuthenticated ? (<Card className="max-w-2xl mx-auto mt-10 bg-background/60 p-6" isBlurred>
+      {isAuthenticated ? isFetching ? ('cargando'):(<Card className="min-w-[500px] max-w-4xl mx-auto mt-[82px] mb-[28px] bg-background/60 p-3" isBlurred>
         <CardHeader>
           {/* Si formData estaba cargado, Se muestra mostrar alquiler, sino se muestra otro titulo más acorde. */}
           <h2 className="text-xl font-semibold">{formData.fecha_entrega ? 'Confirmar Alquiler' : 'Solicitar Alquiler'}</h2>
@@ -200,51 +245,76 @@ export default function AlquilerForm() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Sucursal de Retiro</label>
-              {/* <Select {...register("sucursal", { required: true })} aria-label="Seleccionar sucursal">
-                <SelectItem key="Tolosa" value="Tolosa">Tolosa</SelectItem>
-                <SelectItem key="Avellaneda" value="Avellaneda">Avellaneda</SelectItem>
-                <SelectItem key="Mar del Plata" value="Mar del Plata">Mar del Plata</SelectItem>
-              </Select> */}
-               <Select {...register("sucursal", { required: true })} aria-label="Seleccionar sucursal" label="Seleccione una sucursal" selectedKeys={formData.sucursal}>
-                {sucursales.map((s)=>{
-                  console.log(s.id == formData.sucursal, 'AAA');
-                    const value = `${s.direccion}, ${s.localidad.nombre}`;
-                  return <SelectItem key={s.id} value={s.id}>{value}</SelectItem>
-                }
-                )}
-                <SelectItem value="hola">test</SelectItem>
-          </Select>
+                <Select size="sm" {...register("sucursal", { required: true })} aria-label="Seleccionar sucursal" label="Seleccione una sucursal">
+                  {sucursales.map((s)=>{
+                      const value = `${s.direccion}, ${s.localidad.nombre}`;
+                    return <SelectItem key={s.id} value={s.id}>{value}</SelectItem>
+                  }
+                  )}
+                </Select>
               {errors.sucursal && (
-                <span className="text-red-500 text-sm">Este campo es requerido</span>
+              <span className="text-red-500 text-sm">Este campo es requerido</span>
               )}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Categoría de Vehículo</label>
-              <Select {...register("categoria_vehiculo", { required: true })} aria-label="Seleccionar categoría">
-                <SelectItem key="chico" value="Chico">Chico</SelectItem>
-                <SelectItem key="mediano" value="Mediano">Mediano</SelectItem>
-                <SelectItem key="suv" value="SUV">SUV</SelectItem>
-                <SelectItem key="deportivo" value="Deportivo">Deportivo</SelectItem>
+              <Select size="sm" {...register("categoria_vehiculo", { required: true })} aria-label="Seleccionar categoría" label="Seleccione una categoría preferencial">
+                {categorias.map((c)=>{
+                  return <SelectItem key={c.id} value={Number(c.id)}>{c.nombre}</SelectItem>
+                }
+                )}
               </Select>
               {errors.categoria_vehiculo && (
                 <span className="text-red-500 text-sm">Este campo es requerido</span>
               )}
             </div>
-            <div className="flex gap-2 justify-content-between">
-              <div className="w-full">
-                <label className="block text-sm font-medium mb-1">Cantidad de días</label>
-                <p className="text-lg font-semibold">{diasCalculados}</p>
-              </div>
-              <div className="w-full">
-                <label className="block text-sm font-medium mb-1">Precio estimado</label>
-                <p className="text-lg font-semibold">{precioEstimado}</p>
-              </div>
+          <div>
+            <div className="flex flex-col gap-3">
+              <Controller
+                control={control}
+                name="paquetes"
+                defaultValue={[]} // array de IDs seleccionados
+                render={({ field }) => (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Paquetes opcionales</label>
+                    <CheckboxGroup
+                      color="secondary"
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      className="space-y-2"
+                    >
+                      {paquetes.map((paquete) => (
+                        <Checkbox size="sm" key={paquete.id} value={paquete.id} classNames={{
+                          base: cn(
+                            "font-semibold",
+                          ),
+                          label: "w-full",
+                        }}>
+                          {paquete.nombre} (${paquete.costo})
+                          <p className="text-sm font-normal text-gray-800 pl-5">{paquete.descripcion}</p>
+                        </Checkbox>
+                      ))}
+                    </CheckboxGroup>
+                  </div>
+                )}
+              />
             </div>
-              <Button className='text-white w-full' color='secondary' type='submit'>
-                Confirmar Alquiler
-              </Button>
-          </form>
-        </CardBody>
+          </div>
+          <div className="flex gap-2 justify-content-between">
+            <div className="w-full">
+              <label className="block text-sm font-medium mb-1">Cantidad de días</label>
+              <p className="text-lg font-semibold">{diasCalculados ? diasCalculados : '-'}</p>
+            </div>
+            <div className="w-full">
+              <label className="block text-sm font-medium mb-1">Precio estimado</label>
+              <p className="text-lg font-semibold">{precioEstimado ? `$${precioEstimado}` : '-'}</p>
+            </div>
+          </div>
+          <Button className='text-white w-full' color='secondary' type='submit'>
+            Confirmar Alquiler
+          </Button>
+        </form>
+      </CardBody>
       </Card>):(<Card className="p-5">No tenes permisos</Card>)}
     </div>
   );
