@@ -63,7 +63,9 @@ function Topbar() {
 									<p className='font-semibold'>Sesión de:</p>
 									<p className='font-semibold'>{user.email}</p>
 								</DropdownItem>
-								<DropdownItem key='settings'>Ver perfil</DropdownItem>
+								<DropdownItem key='settings'>
+									<Link to="/mi-perfil">Ver perfil</Link>
+								</DropdownItem>
 								<DropdownItem key='logout' color='danger' onClick={logout}>
 									Cerrar sesión
 								</DropdownItem>

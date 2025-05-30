@@ -3,6 +3,7 @@ import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import CreateAlquiler from './pages/CreateAlquiler'
+import UserProfile from './pages/UserProfile'
 import { AuthProvider } from './contexts/AuthContext'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
 					<Route path='/login' element={<LoginPage />} />
 					<Route path='/register' element={<RegisterPage />} />
 					<Route path='/alquiler' element={<CreateAlquiler />} />
+					<Route path='/mi-perfil' element={<UserProfile />} />
 				</Routes>
 			</BrowserRouter>
 		</AuthProvider>

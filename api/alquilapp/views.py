@@ -15,6 +15,12 @@ class AlquilerViewSet(viewsets.ModelViewSet):
     queryset = Alquiler.objects.all()
     serializer_class = AlquilerSerializer
 
+    @action(detail=False, url_path='cliente/(?P<cliente_id>[^/.]+)', methods=['get'])
+    def by_client_id(self, request, cliente_id=None):
+        alquileres = self.queryset.filter(cliente=cliente_id)
+        serializer = self.get_serializer(alquileres, many=True)
+        return Response(serializer.data)
+
 class PaqueteExtraViewSet(viewsets.ModelViewSet):
     queryset = PaqueteExtra.objects.all()
     serializer_class = PaqueteExtraSerializer
@@ -79,6 +85,7 @@ class CategoriaVehiculoViewSet(viewsets.ModelViewSet):
 
 class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
+    queryset = Cliente.objects.all()
     
     def create(self, request):
         # validar que haya un body en la request

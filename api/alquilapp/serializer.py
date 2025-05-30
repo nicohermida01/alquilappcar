@@ -161,6 +161,7 @@ class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
         fields = '__all__'
+        public_fields = ['nombre', 'apellido', 'email', 'fecha_de_nacimiento']
         read_only_fields = []
 
     def create(self, validated_data):
