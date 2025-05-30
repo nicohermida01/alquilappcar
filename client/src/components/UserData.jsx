@@ -9,7 +9,7 @@ function UserData() {
     const [clientData, setClientData] = React.useState(null);
 
     React.useEffect(() => {
-            usersApi.getUserById(1)
+            usersApi.getUserById(user.clientId)
             .then((res) => {setClientData(res)})
             .catch((error) => console.error(error))
         }, []

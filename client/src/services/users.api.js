@@ -6,6 +6,13 @@ const getUserById = async (userId) => {
     return response.data;
 }
 
+const getAlquileresByUserId = async (userId) => {
+    const response = await api.get(`alquileres/cliente/${userId}`);
+
+    return response.data;
+}
+
 export const usersApi = {
-    getUserById
+    getUserById,
+    getAlquileresByUserId
 };

@@ -1,26 +1,27 @@
 import FieldCard from "./FieldCard"
+import { usersApi } from "../services/users.api"
+import { useState, useEffect } from 'react'
+import { useAuth } from "../contexts/AuthContext"
 
 function UserAlquileres() {
-    const results = [
-        { id: 1, name: 'Alice', email: 'alice@example.com' },
-        { id: 2, name: 'Bob', email: 'bob@example.com' },
-        { id: 3, name: 'Bab', email: 'bab@example.com' },
-        { id: 4, name: 'Beb', email: 'beb@example.com' },
-        { id: 4, name: 'Beb', email: 'beb@example.com' },
-        { id: 4, name: 'Beb', email: 'beb@example.com' },
-        { id: 4, name: 'Beb', email: 'beb@example.com' },
-    ];
+    const { user } = useAuth();
+    const [alquileres, setAlquileres] = useState([]);
+
+    useEffect(() => {
+        usersApi.getAlquileresByUserId(user.clientId)
+        .then((response) => setAlquileres(response))
+        .catch((error) => console.error(error))
+    }, []);
 
     return (
         <div className="mt-16 ml-[25%] justify-center">
             <ul>
-                {results.map(user => (
-                <FieldCard field={user.id} value={`Alquiler de ${user.name}`}/>
-                ))
-                }
+                {alquileres.length > 0 ? alquileres.map(alquiler => (
+                <FieldCard field={alquiler.id} value={`Alquiler de ${user.email}`}/>
+                )) : <p>no ay nada xD</p>}
             </ul>
         </div>
-    )
+    );
 }
 
 export default UserAlquileres;
