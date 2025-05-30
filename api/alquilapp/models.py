@@ -53,7 +53,6 @@ class Vehiculo(models.Model):
     año = models.IntegerField()
     max_pasajeros = models.IntegerField()
     aptitud_discapacidad = models.BooleanField(default=False)
-    precio_dia = models.DecimalField(max_digits=10, decimal_places=2)
     min_dias_alquiler = models.IntegerField(default=1)
 
     marca = models.ForeignKey('Marca', on_delete=models.CASCADE)
