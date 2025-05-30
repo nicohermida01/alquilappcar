@@ -5,10 +5,12 @@ import RegisterPage from './pages/RegisterPage'
 import CreateAlquiler from './pages/CreateAlquiler'
 import UserProfile from './pages/UserProfile'
 import { AuthProvider } from './contexts/AuthContext'
+import { ToastProvider } from '@heroui/react'
 
 function App() {
 	return (
 		<AuthProvider>
+			<ToastProvider placement='top-center' />
 			<BrowserRouter>
 				<Routes>
 					<Route path='/' element={<HomePage />} />

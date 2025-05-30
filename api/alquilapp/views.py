@@ -87,15 +87,11 @@ class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
     queryset = Cliente.objects.all()
     
-    def create(self, request):
-        # validar que haya un body en la request
-        if not request.data:
-            return Response({"error": "No data provided"}, status=400)
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=201)
+    #def create(self, request):
+    #    serializer = self.get_serializer(data=request.data)
+    #    serializer.is_valid(raise_exception=True)
+    #    serializer.save()
+    #    return Response(serializer.data, status=201)
     
 class LoginAdminAPIView(APIView):
     # Esta view maneja el login en la app admin -Nico
