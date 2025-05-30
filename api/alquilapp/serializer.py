@@ -172,18 +172,10 @@ class ClienteSerializer(serializers.ModelSerializer):
 
         return cliente
 
-    
-    def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
-        
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+    def validate_fecha_de_nacimiento(self, value):
+        """Este metodo valida que la fecha de nacimiento sea al menos 18 años antes de la fecha actual."""
+        # Cuando se usa serializer.is_valid(), django internamente llama a este método para validar el campo fecha_de_nacimiento
 
-        if password:
-            instance.set_password(password) 
-
-        instance.save()
-
-        return instance
-# TODO: Creo que hay que tocar una cosa mas con el tema del email. Hay que ver que no este registrado.
-#       No se si se hace aca o en otro lado. -Valen
+        if value > now().date() - timedelta(days=365 * 18):
+            raise serializers.ValidationError("El cliente debe ser mayor de 18 años.")
+        return value
