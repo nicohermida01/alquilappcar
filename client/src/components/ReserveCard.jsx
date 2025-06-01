@@ -58,6 +58,7 @@ function ReserveCard() {
       const now = new Date();
       now.setSeconds(0, 0); // limpiamos segundos y milisegundos
       now.setHours(now.getHours() - 3); // retorna una hora en un timezone raro, tengo que restarle 3 para que se acople a la local.
+      //console.log(now);
       return now.toISOString().slice(0, 16); // formato: 'YYYY-MM-DDTHH:MM'
     };
 
@@ -74,7 +75,6 @@ function ReserveCard() {
           onSubmit={(e) => {
             e.preventDefault();
             let data = Object.fromEntries(new FormData(e.currentTarget));
-            console.log(data, 'HOLA')
             if (isAuthenticated) {
               navigate("/alquiler", { state: { formData: data } });
             } else {
@@ -91,7 +91,7 @@ function ReserveCard() {
           </Select>
 
           <div className="grid grid-cols-2 gap-4 w-full">
-          <Input onChange={(e) => setFechaEntrega(e.target.value)} name="fecha_entrega" isRequired errorMessage="Ingrese una fecha válida" label={"Fecha y hora de entrega"} labelPlacement="outside" placeholder="Ingrese una fecha" type="datetime-local" min={getNowForInput()} />     
+          <Input onChange={(e) => setFechaEntrega(e.target.value)} name="fecha_entrega" isRequired errorMessage="Ingrese una fecha válida." label={"Fecha y hora de entrega"} labelPlacement="outside" placeholder="Ingrese una fecha" type="datetime-local" min={getNowForInput()} />     
           <Input min={fechaEntrega} disabled={!fechaEntrega} name="fecha_devolucion" className={!fechaEntrega ? "opacity-50 cursor-not-allowed" : ""} isRequired errorMessage="La fecha debe ser válida y posterior a la de inicio." label="Fecha y hora de devolucion" labelPlacement="outside" placeholder="Ingrese una fecha" type="datetime-local"/>     
           </div>
 

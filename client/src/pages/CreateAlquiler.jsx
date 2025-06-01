@@ -39,8 +39,8 @@ export default function AlquilerForm() {
     defaultValues: {
       fecha_entrega: formData.fecha_entrega || "",
       fecha_devolucion: formData.fecha_devolucion || "",
-      sucursal_retiro: '', // LA SUCURSAL SE CARGA MANUALMENTE CON EL FORMDATA UNA VEZ HECHO EL GET DE SUCURSALES.
-      categoria_vehiculo: "",
+      sucursal_retiro_id: '', // LA SUCURSAL SE CARGA MANUALMENTE CON EL FORMDATA UNA VEZ HECHO EL GET DE SUCURSALES.
+      categoria_vehiculo_id: "",
       paquetes: [],
       precio_total: ""
     }});
@@ -94,7 +94,7 @@ export default function AlquilerForm() {
       setSucursales(sucursalesData);
       if (formData?.sucursal) {
         // Espera a que estén cargadas las sucursales y luego setea el valor
-        setValue("sucursal_retiro", formData?.sucursal);
+        setValue("sucursal_retiro_id", formData?.sucursal);
       }
       setCategorias(categoriasData);
       setPaquetes(paquetesData);
@@ -113,32 +113,33 @@ export default function AlquilerForm() {
   // watch es una funcion de react-hook-form, necesito watchear estos elementos para que cada vez que cambien, se reactualicen precios, etc.
   const fechaInicio = watch("fecha_entrega");
   const fechaDevolucion = watch("fecha_devolucion");
-  const categoriaVehiculo = watch("categoria_vehiculo");
+  const categoriaVehiculo = watch("categoria_vehiculo_id");
   const paquetesSeleccionados = watch("paquetes");
 
   // se submitea.
   const onSubmit = async (data) => {
-    const now = new Date();
-    const start = new Date(data.fecha_entrega);
-    const end = new Date(data.fecha_devolucion);
-    if (start && end) {
-      if (start < now) {
-        alert("La fecha de entrega no puede ser anterior a la fecha actual.");
-        return;
-      }
-      if (end <= start) {
-        alert("La fecha de devolución debe ser posterior a la de entrega.");
-        return;
-      }
-      const precio = calcularPrecio(diasCalculados, formData.categoria_vehiculo);
-      setPrecioEstimado(precio);
-    }
+    // ESTA VALIDACION NO SE SI ANDA, PERO EVALUA LA VALIDEZ DE LAS FECHAS, EL TEMA ES QUE ES "IMPOSIBLE" QUE SE ENVÍEN MAL LAS FECHAS.
+    // const now = new Date();
+    // const start = new Date(data.fecha_entrega);
+    // const end = new Date(data.fecha_devolucion);
+    // if (start && end) {
+    //   if (start < now) {
+    //     alert("La fecha de entrega no puede ser anterior a la fecha actual.");
+    //     return;
+    //   }
+    //   if (end <= start) {
+    //     alert("La fecha de devolución debe ser posterior a la de entrega.");
+    //     return;
+    //   }
+    // }
+    const precio = calcularPrecio(diasCalculados, formData.categoria_vehiculo);
+    setPrecioEstimado(precio);
     data['cliente'] = user.clientId;
     console.log(data, 'INFO QUE SE ENVIA');
     try {
       // ACA VA LA LOGICA DEL PAGO.
       // CUANDO SEA SUCCESS, SE HACE EL POST.
-      //await axios.post('http://localhost:8000/alquilapp/api/v1/alquileres/', data);
+      await axios.post('http://localhost:8000/alquilapp/api/v1/alquileres/', data);
       alert('Alquiler creado exitosamente');
     } catch (error) {
       console.error('Error al crear alquiler', error);
@@ -234,26 +235,26 @@ export default function AlquilerForm() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Sucursal de Retiro<RequiredIcon/></label>
-                <Select size="sm" {...register("sucursal_retiro", { required: true })} aria-label="Seleccionar sucursal" label="Seleccione una sucursal">
+                <Select size="sm" {...register("sucursal_retiro_id", { required: true })} aria-label="Seleccionar sucursal" label="Seleccione una sucursal">
                   {sucursales.map((s)=>{
                       const value = `${s.direccion}, ${s.localidad.nombre}`;
                     return <SelectItem key={s.id} value={s.id}>{value}</SelectItem>
                   }
                   )}
                 </Select>
-              {errors.sucursal && (
+              {errors.sucursal_retiro_id && (
               <span className="text-red-500 text-sm">Es necesario que indique una sucursal de retiro.</span>
               )}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Categoría de Vehículo<RequiredIcon/></label>
-              <Select size="sm" {...register("categoria_vehiculo", { required: true })} aria-label="Seleccionar categoría" label="Seleccione una categoría preferencial">
+              <Select size="sm" {...register("categoria_vehiculo_id", { required: true })} aria-label="Seleccionar categoría" label="Seleccione una categoría preferencial">
                 {categorias.map((c)=>{
                   return <SelectItem key={c.id} value={Number(c.id)}>{c.nombre}</SelectItem>
                 }
                 )}
               </Select>
-              {errors.categoria_vehiculo && (
+              {errors.categoria_vehiculo_id && (
                 <span className="text-red-500 text-sm">Es necesario que indique una categoría preferencial.</span>
               )}
             </div>

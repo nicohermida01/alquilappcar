@@ -27,9 +27,9 @@ function App() {
 export default App
 
 /* ACLARACIONES DEL CABESAURIO: 
-En la página createAlquiler NO hay validaciones establecidas o testeadas. Si existe el formData (osea que se lleno el form de la pagina de Home y se submiteó), no se si haya o no
-que dejar como inválidos (que no pueda volver a modificar el cliente) aquellos values de los inputs del Home y sólo dejar modificables los nuevos (como categoría). 
-
-En la página de createAlquiler todavía NO se calcula el precio del alquiler, esta escrito re crudo, no se muy bien como era la fórmula a tener en cuenta
-creo que dependía de la categoría y el tiempo o algo así, pero no implemente nada.
+EN LA PAGINA DE CREATEALQUILER EN EL SUBMIT HAY QUE AGREGAR LA LOGICA DEL MODULO DE PAGO.
+EN LA PAGINA DE USERALQUILERES HAY QUE HACER EL MODAL A MODO DE DETAIL MOSTRANDO LA DATA, HAY COMENTADAS COSAS QUE DEJÉ PARA MOSTRAR CÓMO ACCEDER A LA DATA.
+AGREGUE UN CONDICIONAL EN AL TOPBAR PARA QEU SOLO SE MUESTRE EL BOTON DE RESEVAR SI ESTAS LOGUEADO.
+EN LA PAGINA DE USER ALQUILERES YA ESTA FUNCIONAL EL DAR DE BAJA.
+EN LA PAGINA DE CREATEALQUILER YA SE MUESTRA EL ERORR AL NO SELECCIONAR SUCURSAL.
 */

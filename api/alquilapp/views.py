@@ -14,7 +14,7 @@ from django.core.mail import send_mail
 class AlquilerViewSet(viewsets.ModelViewSet):
     queryset = Alquiler.objects.all()
     serializer_class = AlquilerSerializer
-
+    
     @action(detail=False, url_path='cliente/(?P<cliente_id>[^/.]+)', methods=['get'])
     def by_client_id(self, request, cliente_id=None):
         alquileres = self.queryset.filter(cliente=cliente_id)

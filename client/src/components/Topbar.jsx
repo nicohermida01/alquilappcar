@@ -29,13 +29,22 @@ function Topbar() {
 			<NavbarContent className='hidden sm:flex gap-14' justify='start'>
 			</NavbarContent>
 			<NavbarContent justify='end'>
-				<NavbarItem>
+      {isAuthenticated && (
+					<NavbarItem>
 					<Link to='/alquiler'>
 						<Button className='text-white' color='secondary' type='submit'>
 							Reserve ahora
 						</Button>
 					</Link>
 				</NavbarItem>
+				)}
+				{/* <NavbarItem>
+					<Link to='/alquiler'>
+						<Button className='text-white' color='secondary' type='submit'>
+							Reserve ahora
+						</Button>
+					</Link>
+				</NavbarItem> */}
 				{!isAuthenticated && (
 					<NavbarItem>
 						<Button className='text-white' color='primary'>
