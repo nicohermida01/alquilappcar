@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Cliente, Vehiculo, Cancelacion, Admin, Empleado, Sucursal, Alquiler, PaqueteExtra, PaqueteAlquiler, Localidad, CategoriaVehiculo, Marca
 from django.utils.timezone import now
 from datetime import timedelta
+from .managers import ActivosManager
 
 class PaqueteExtraSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,55 +20,6 @@ class PaqueteAlquilerSerializer(serializers.ModelSerializer):
         model = PaqueteAlquiler
         fields = ['id', 'alquiler', 'paquete', 'paquete_id']
 
-
-class AlquilerSerializer(serializers.ModelSerializer):
-    paquetealquiler_set = PaqueteAlquilerSerializer(many=True, read_only=True)
-
-    paquetes = serializers.ListField(
-        child=serializers.IntegerField(), write_only=True, required=False)
-    paquetealquiler_set = PaqueteAlquilerSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Alquiler
-        # no se si vayan todos o haya que especificar alguno que no, en todo caso se reemplaza con __all__
-        fields = [
-            'id',
-            'fecha_inicio',
-            'fecha_devolucion',
-            'cantidad_dias_totales',
-            'categoria_vehiculo',
-            'sucursal_retiro',
-            'vehiculo_asignado',
-            'precio_total',
-            'cliente',
-            'paquetes', # campo virtual para crear relaciones
-            'paquetealquiler_set',  # campo real que devuelve los relacionados
-        ]
-        read_only_fields = ['cantidad_dias_totales', 'activo', 'paquetealquiler_set']
-        
-    def validate(self, data):
-        fecha_inicio = data.get('fecha_inicio')
-        fecha_devolucion = data.get('fecha_devolucion')
-
-        if fecha_inicio and fecha_inicio <= now() - timedelta(minutes=1):
-            raise serializers.ValidationError({
-                'fecha_inicio': 'La fecha de inicio debe ser igual o posterior al momento actual.'
-            })
-
-        if fecha_inicio and fecha_devolucion and fecha_devolucion <= fecha_inicio:
-            raise serializers.ValidationError({
-                'fecha_devolucion': 'La fecha de devolución debe ser posterior a la fecha de inicio.'
-            })
-        return data
-
-    def create(self, validated_data):
-        paquetes_ids = validated_data.pop('paquetes', [])
-        alquiler = Alquiler.objects.create(**validated_data)
-
-        for paquete_id in paquetes_ids:
-            PaqueteAlquiler.objects.create(alquiler=alquiler, paquete_id=paquete_id)
-
-        return alquiler
 
 class VehiculoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -137,15 +89,17 @@ class EmpleadoSerializer(serializers.ModelSerializer):
         employee.save()
         return employee
 
-class SucursalSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Sucursal
-        fields = '__all__'
-        read_only_fields = ['id']
-
 class LocalidadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Localidad
+        fields = '__all__'
+        read_only_fields = ['id']
+
+class SucursalSerializer(serializers.ModelSerializer):
+    localidad = LocalidadSerializer(read_only=True)
+
+    class Meta:
+        model = Sucursal
         fields = '__all__'
         read_only_fields = ['id']
 
@@ -179,3 +133,66 @@ class ClienteSerializer(serializers.ModelSerializer):
         if value > now().date() - timedelta(days=365 * 18):
             raise serializers.ValidationError("El cliente debe ser mayor de 18 años.")
         return value
+
+class AlquilerSerializer(serializers.ModelSerializer):
+    # Devuelve los objetos completos
+    sucursal_retiro = SucursalSerializer(read_only=True)
+    categoria_vehiculo = CategoriaVehiculoSerializer(read_only=True)
+
+    # Acepta solo IDs para escritura
+    sucursal_retiro_id = serializers.PrimaryKeyRelatedField(
+        queryset=Sucursal.objects.all(), write_only=True, source='sucursal_retiro'
+    )
+    categoria_vehiculo_id = serializers.PrimaryKeyRelatedField(
+        queryset=CategoriaVehiculo.objects.all(), write_only=True, source='categoria_vehiculo'
+    )
+
+    paquetes = serializers.ListField(
+        child=serializers.IntegerField(), write_only=True, required=False
+    )
+    paquetealquiler_set = PaqueteAlquilerSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Alquiler
+        fields = [
+            'id',
+            'fecha_inicio',
+            'fecha_devolucion',
+            'cantidad_dias_totales',
+            'categoria_vehiculo',        # read-only (objeto)
+            'categoria_vehiculo_id',     # write-only (ID)
+            'sucursal_retiro',           # read-only (objeto)
+            'sucursal_retiro_id',        # write-only (ID)
+            'vehiculo_asignado',
+            'precio_total',
+            'activo',
+            'cliente',
+            'paquetes',                  # campo virtual para crear relaciones
+            'paquetealquiler_set',       # campo real que devuelve los relacionados
+        ]
+        read_only_fields = ['cantidad_dias_totales', 'paquetealquiler_set']
+
+    def validate(self, data):
+        fecha_inicio = data.get('fecha_inicio')
+        fecha_devolucion = data.get('fecha_devolucion')
+
+        if fecha_inicio and fecha_inicio <= now() - timedelta(minutes=1):
+            raise serializers.ValidationError({
+                'fecha_inicio': 'La fecha de inicio debe ser igual o posterior al momento actual.'
+            })
+
+        if fecha_inicio and fecha_devolucion and fecha_devolucion <= fecha_inicio:
+            raise serializers.ValidationError({
+                'fecha_devolucion': 'La fecha de devolución debe ser posterior a la fecha de inicio.'
+            })
+
+        return data
+
+    def create(self, validated_data):
+        paquetes_ids = validated_data.pop('paquetes', [])
+        alquiler = Alquiler.objects.create(**validated_data)
+
+        for paquete_id in paquetes_ids:
+            PaqueteAlquiler.objects.create(alquiler=alquiler, paquete_id=paquete_id)
+
+        return alquiler
