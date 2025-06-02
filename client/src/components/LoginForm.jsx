@@ -5,9 +5,11 @@ import { InputPassword } from './InputPassword'
 import { authService } from '../services/auth.service'
 import { useAuth } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import { useRent } from '../contexts/RentContext'
 
 export function LoginForm() {
 	const { login } = useAuth()
+	const { haveRentBasic } = useRent()
 
 	let navigate = useNavigate()
 
@@ -24,7 +26,7 @@ export function LoginForm() {
 					color: 'success',
 				})
 				reset()
-				navigate('/')
+				navigate(`${haveRentBasic ? '/alquiler' : '/'}`)
 			})
 			.catch(err => {
 				addToast({

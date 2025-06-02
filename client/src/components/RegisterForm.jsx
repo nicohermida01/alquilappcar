@@ -1,5 +1,5 @@
 import { Input, Button, Textarea, addToast } from '@heroui/react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { InputPassword } from './InputPassword'
 import { authService } from '../services/auth.service'
@@ -12,18 +12,15 @@ const InputField = ({ children }) => {
 }
 
 export function RegisterForm() {
-	const [matchPasswords, setMatchPasswords] = useState(true)
-
 	var navigate = useNavigate()
 
-	const { register, handleSubmit, reset, getValues } = useForm()
+	const { register, handleSubmit, reset } = useForm()
 
 	const onSubmit = data => {
-		const { confirmPassword: _confirmPassword, ...dataWithoutConfirm } = data
-		let userData = dataWithoutConfirm
+		let userData = data
 
-		if (dataWithoutConfirm.contacto === '') {
-			const { contacto: _contacto, ...dataWithoutContact } = dataWithoutConfirm
+		if (data.contacto === '') {
+			const { contacto: _contacto, ...dataWithoutContact } = data
 			userData = dataWithoutContact
 		}
 
@@ -63,16 +60,6 @@ export function RegisterForm() {
 	useEffect(() => {
 		reset()
 	}, [reset])
-
-	const validatePassword = () => {
-		const password = getValues('password')
-		const confirmPassword = getValues('confirmPassword')
-
-		const isValid = password === confirmPassword
-		setMatchPasswords(isValid)
-
-		return isValid
-	}
 
 	return (
 		<form
@@ -139,27 +126,10 @@ export function RegisterForm() {
 					register={{
 						...register('password', {
 							required: true,
-							validate: validatePassword,
-						}),
-					}}
-				/>
-
-				<InputPassword
-					label='Confirmar contraseña'
-					register={{
-						...register('confirmPassword', {
-							required: true,
-							validate: validatePassword,
 						}),
 					}}
 				/>
 			</InputField>
-
-			{!matchPasswords && (
-				<span className='text-error text-sm bg-red-100 w-max px-4 py-2 rounded-md'>
-					Las contraseñas no coinciden
-				</span>
-			)}
 
 			<Button type='submit' color='primary' className='text-white'>
 				Confirmar

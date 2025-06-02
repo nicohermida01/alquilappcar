@@ -6,20 +6,23 @@ import CreateAlquiler from './pages/CreateAlquiler'
 import UserProfile from './pages/UserProfile'
 import { AuthProvider } from './contexts/AuthContext'
 import { ToastProvider } from '@heroui/react'
+import { RentProvider } from './contexts/RentContext'
 
 function App() {
 	return (
 		<AuthProvider>
-			<ToastProvider placement='top-center' />
-			<BrowserRouter>
-				<Routes>
-					<Route path='/' element={<HomePage />} />
-					<Route path='/login' element={<LoginPage />} />
-					<Route path='/register' element={<RegisterPage />} />
-					<Route path='/alquiler' element={<CreateAlquiler />} />
-					<Route path='/mi-perfil' element={<UserProfile />} />
-				</Routes>
-			</BrowserRouter>
+			<RentProvider>
+				<ToastProvider placement='top-center' />
+				<BrowserRouter>
+					<Routes>
+						<Route path='/' element={<HomePage />} />
+						<Route path='/login' element={<LoginPage />} />
+						<Route path='/register' element={<RegisterPage />} />
+						<Route path='/alquiler' element={<CreateAlquiler />} />
+						<Route path='/mi-perfil' element={<UserProfile />} />
+					</Routes>
+				</BrowserRouter>
+			</RentProvider>
 		</AuthProvider>
 	)
 }
