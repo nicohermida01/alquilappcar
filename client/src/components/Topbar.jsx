@@ -26,17 +26,19 @@ function Topbar() {
 					<img src='/alquilappcar_logo.png' alt='Logo' style={{ width: 72 }} />
 				</Link>
 			</NavbarBrand>
-			<NavbarContent className='hidden sm:flex gap-14' justify='start'>
-			</NavbarContent>
+			<NavbarContent
+				className='hidden sm:flex gap-14'
+				justify='start'
+			></NavbarContent>
 			<NavbarContent justify='end'>
-      {isAuthenticated && (
+				{isAuthenticated && (
 					<NavbarItem>
-					<Link to='/alquiler'>
-						<Button className='text-white' color='secondary' type='submit'>
-							Reserve ahora
-						</Button>
-					</Link>
-				</NavbarItem>
+						<Link to={`${isAuthenticated ? '/alquiler' : '/login'}`}>
+							<Button className='text-white' color='secondary' type='submit'>
+								Reserve ahora
+							</Button>
+						</Link>
+					</NavbarItem>
 				)}
 				{/* <NavbarItem>
 					<Link to='/alquiler'>
@@ -73,7 +75,7 @@ function Topbar() {
 									<p className='font-semibold'>{user.email}</p>
 								</DropdownItem>
 								<DropdownItem key='settings'>
-									<Link to="/mi-perfil">Ver perfil</Link>
+									<Link to='/mi-perfil'>Ver perfil</Link>
 								</DropdownItem>
 								<DropdownItem key='logout' color='danger' onClick={logout}>
 									Cerrar sesión
