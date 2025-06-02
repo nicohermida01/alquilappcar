@@ -79,10 +79,7 @@ function RegisterVehicleForm({
             onSubmit={handleSubmit(onSubmit, onError)}
         >
             <div className="text-center mb-4">
-                <h2
-                    className="text-3xl font-bold text-center"
-                    onClick={() => console.log(vehicleInfo)}
-                >
+                <h2 className="text-3xl font-bold text-center">
                     {vehicleInfo ? "Modificar vehículo" : "Registrar vehículo"}
                 </h2>
             </div>

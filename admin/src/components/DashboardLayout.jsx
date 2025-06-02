@@ -4,12 +4,14 @@ import { Outlet, Link, useNavigate } from "react-router";
 
 import { useEffect, useState } from "react";
 import { Topbar } from "./Topbar";
-import { Accordion, AccordionItem, Button } from "@heroui/react";
+import { Accordion, AccordionItem, Button, useDisclosure } from "@heroui/react";
 import SidebarLink from "./SidebarLink";
+import RegisterLeaseForm from "./RegisterLeaseForm";
 
 export function DashboardLayout() {
     const { isAuthenticated, loadingAuth } = useAuth();
-    const [selected, setSelected] = useState();
+
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const navigate = useNavigate();
 
@@ -44,6 +46,7 @@ export function DashboardLayout() {
 
     return (
         <div>
+            <RegisterLeaseForm isOpen={isOpen} onOpenChange={onOpenChange} />
             <Topbar />
             <div className="flex h-[calc(100vh-70px)]">
                 <Sidebar>
@@ -98,7 +101,9 @@ export function DashboardLayout() {
                                 </div>
                             </AccordionItem>
                         </Accordion>
-                        <Button color="primary">Registrar alquiler</Button>
+                        <Button color="primary" onPress={onOpen}>
+                            Registrar alquiler
+                        </Button>
                     </Menu>
                 </Sidebar>
                 <Outlet />

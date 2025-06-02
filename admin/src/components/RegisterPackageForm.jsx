@@ -34,7 +34,7 @@ export default function RegisterPackageForm({
                   .createPackage(data)
                   .then(() => {
                       addToast({
-                          title: "Paquete creada",
+                          title: "Paquete creado",
                           description:
                               "El paquete ha sido creado correctamente",
                           color: "success",
