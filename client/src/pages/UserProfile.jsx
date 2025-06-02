@@ -5,6 +5,7 @@ import UserAlquileres from "../components/UserAlquileres"
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from "../contexts/AuthContext"
+import UserEditSettings from "../components/UserEditSettings"
 
 function UserProfile() {
     const { isAuthenticated, loadingAuth } = useAuth();
@@ -30,6 +31,7 @@ function UserProfile() {
                 <div className="flex-grow">
                     {activeSection === 'myinfo' && <UserData />}
                     {activeSection === 'alquileres' && <UserAlquileres />}
+                    {activeSection === 'settings' && <UserEditSettings />}
                 </div>
             </div>
         </PageLayout>
