@@ -432,7 +432,7 @@ export default function AlquilerForm() {
                                                                     >
                                                                         {
                                                                             paquete.nombre
-                                                                        }{" "}
+                                                                        }
                                                                         ($
                                                                         {
                                                                             paquete.costo

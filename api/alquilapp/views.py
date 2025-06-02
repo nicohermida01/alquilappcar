@@ -79,6 +79,7 @@ class CategoriaVehiculoViewSet(viewsets.ModelViewSet):
 
 class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
+    queryset = Cliente.objects.all()
     
     def create(self, request):
         # validar que haya un body en la request

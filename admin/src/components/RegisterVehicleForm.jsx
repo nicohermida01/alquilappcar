@@ -79,7 +79,10 @@ function RegisterVehicleForm({
             onSubmit={handleSubmit(onSubmit, onError)}
         >
             <div className="text-center mb-4">
-                <h2 className="text-3xl font-bold text-center">
+                <h2
+                    className="text-3xl font-bold text-center"
+                    onClick={() => console.log(vehicleInfo)}
+                >
                     {vehicleInfo ? "Modificar vehículo" : "Registrar vehículo"}
                 </h2>
             </div>
@@ -162,6 +165,7 @@ function RegisterVehicleForm({
                         required: true,
                         valueAsNumber: true,
                     })}
+                    isRequired
                 />
 
                 <Input
@@ -173,20 +177,23 @@ function RegisterVehicleForm({
                         required: true,
                         valueAsNumber: true,
                     })}
+                    isRequired
                 />
             </InputField>
 
             <Select
-                label="Localidad"
-                defaultSelectedKeys={[vehicleInfo?.localidad.toString()]}
-                {...register("localidad", {
+                label="Sucursal"
+                defaultSelectedKeys={[vehicleInfo?.sucursal.toString()]}
+                {...register("sucursal", {
                     required: true,
                     valueAsNumber: true,
                 })}
                 isRequired
             >
                 {sucursales.map((sucursal) => (
-                    <SelectItem key={sucursal.id}>{sucursal.nombre}</SelectItem>
+                    <SelectItem key={sucursal.id}>
+                        {sucursal.direccion + ", " + sucursal.localidad.nombre}
+                    </SelectItem>
                 ))}
             </Select>
 

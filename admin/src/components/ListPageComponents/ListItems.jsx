@@ -140,6 +140,28 @@ export default function ListItems({
         const cellValue = item[columnKey];
 
         switch (columnKey) {
+            case "sucursal":
+                return (
+                    <p>
+                        {databaseInfo?.sucursales[cellValue - 1]?.localidad
+                            .nombre +
+                            ", " +
+                            databaseInfo?.sucursales[cellValue - 1]?.direccion}
+                    </p>
+                );
+            case "marca":
+                return <p>{databaseInfo?.brands[cellValue - 1]?.nombre}</p>;
+            case "categoria":
+                return <p>{databaseInfo?.categorias[cellValue - 1]?.nombre}</p>;
+            case "cancelacion":
+                return (
+                    <p>
+                        {
+                            databaseInfo?.cancelaciones[cellValue - 1]
+                                ?.descripcion
+                        }
+                    </p>
+                );
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">

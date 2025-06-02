@@ -56,7 +56,7 @@ class Vehiculo(models.Model):
     min_dias_alquiler = models.IntegerField(default=1)
 
     marca = models.ForeignKey('Marca', on_delete=models.CASCADE)
-    localidad = models.ForeignKey('Localidad', on_delete=models.CASCADE)
+    sucursal = models.ForeignKey('Sucursal', on_delete=models.CASCADE, null=True, blank=True)
 
     #FK a tabla de cancelacion, notar que puse default=1 para que no rompa la base de datos
     cancelacion = models.ForeignKey('Cancelacion', on_delete=models.CASCADE, default=1) 
@@ -142,9 +142,9 @@ class CategoriaVehiculo(models.Model):
 #       Hay que sacar el campo precio de esta entidad pero no se como se hace. ENVIEN APOYO. -Valen
     
 class Cliente(models.Model):
-    dni = models.IntegerField(unique=True)
-    nombre = models.CharField(max_length=16)
     apellido = models.CharField(max_length=16)
+    nombre = models.CharField(max_length=16)
+    dni = models.IntegerField(unique=True)
     fecha_de_nacimiento = models.DateField()
     contacto = models.CharField(max_length=64, blank=True, null=True)
     email = models.EmailField(unique=True)
