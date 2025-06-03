@@ -5,43 +5,60 @@ import { useAuth } from "../contexts/AuthContext"
 import { useState, useEffect } from 'react'
 import { usersApi } from '../services/users.api'
 import axios from 'axios'
+import { addToast } from '@heroui/toast'
 
 function UserEditSettings() {
     const { user } = useAuth();
     const [clientInfo, setClientInfo] = useState([]);
-    const [newClientInfo, setNewClientInfo] = useState({
-        nombre: '',
-        apellido: '',
-        email: '',
-        contacto: ''
-    })
-    const [submitted, switchSubmitted] = useState(false);
+    const [newClientInfo, setNewClientInfo] = useState(null);
 
     useEffect(() => {
         usersApi.getUserById(user.clientId)
         .then((ret) => setClientInfo(ret))
-        .catch(error => alert(error))
+        .catch(error => alert(error));
     }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        setFormData((prev) => ({
+        setClientInfo((prev) => ({
             ...prev,
             [name]: value
-        }))
+        }));
+
+        setNewClientInfo((prev) => ({
+            ...prev,
+            [name]: value
+        }));
     }
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        console.log(newClientInfo);
+
+        if (newClientInfo === null) {
+            addToast({
+                title: "No se realizaron cambios."
+            });
+            return;
+        }
 
         try {
             await axios.patch(`http://localhost:8000/alquilapp/api/v1/clientes/${user.clientId}/`,
                 newClientInfo
             );
+            addToast({ 
+                title: "Se actualizo la informacion.",
+                color: "success"
+            })
         }
         catch (error) {
-            console.error("No se pudo actualizar la info del cliente: ", error);
+            if (error.response.data.email)
+                addToast({
+                    title: "Error al actualizar el email.",
+                    description: "El email especificado ya esta en uso.",
+                    color: "danger"
+            });
         }
     }
 
@@ -54,29 +71,33 @@ function UserEditSettings() {
                 label="Nombre"
                 labelPlacement="outside-left"
                 onChange={handleChange}
-                defaultValue={clientInfo.nombre}
+                value={clientInfo.nombre}
+                name="nombre"
                 className="p-2 ml-32 mr-32"
             />
             <Input
                 label="Apellido"
                 labelPlacement="outside-left"
                 onChange={handleChange}
-                defaultValue={clientInfo.apellido}
+                value={clientInfo.apellido}
+                name="apellido"
                 className="p-2 ml-32 mr-32"
             />
             <Input
                 label="E-mail"
                 labelPlacement="outside-left"
                 onChange={handleChange}
-                defaultValue={clientInfo.email}
+                value={clientInfo.email}
                 className="p-2 ml-32 mr-32"
+                name="email"
                 type="email"
             />
             <Input
                 label="Contacto"
                 labelPlacement="outside-left"
                 onChange={handleChange}
-                defaultValue={clientInfo.contacto}
+                value={clientInfo.contacto}
+                name="contacto"
                 className="p-2 ml-32 mr-32"
             />
             </div>
