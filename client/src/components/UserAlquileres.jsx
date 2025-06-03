@@ -55,21 +55,14 @@ function UserAlquileres() {
                   <div key={alquiler.id}>
                     <div className="flex flex-col rounded-2xl p-4 bg-white">
                       <div className="flex gap-2 items-center text-lg">
-                      <h3 className="font-semibold">{`${tipo} para la fecha ${fechaFormateadaInicio}hs`}</h3>
-                      <button
-      className="text-blue-600 underline"
-      onClick={() => alert('MODAL')} // reemplazá con navegación o modal
-    >
-      Ver más
-    </button>
-    <button
-      className="text-red-600 underline"
-      onClick={() => handleDarDeBaja(alquiler.id)}
-    >
-      Dar de baja alquiler
-    </button>
+                        <h3 className="font-semibold">{`${tipo} para la fecha ${fechaFormateadaInicio}hs`}</h3>
+                        <button className="text-blue-600 underline" onClick={() => alert('MODAL')}>
+                          Ver más
+                        </button>
+                        { esReserva && (<button className="text-red-600 underline" onClick={() => handleDarDeBaja(alquiler.id)}>
+                          Dar de baja alquiler
+                        </button>)}
                       </div>
-                      
                       <div className="flex flex-col gap-1">
                         <div className="flex gap-5">
                           <div className="flex gap-1 items-center">

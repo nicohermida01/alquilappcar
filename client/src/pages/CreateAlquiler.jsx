@@ -46,7 +46,7 @@ export default function AlquilerForm() {
 		setValue,
 	} = useForm({
 		defaultValues: {
-			fecha_entrega: '',
+			fecha_inicio: '',
 			fecha_devolucion: '',
 			sucursal_retiro_id: '', // LA SUCURSAL SE CARGA MANUALMENTE CON EL FORMDATA UNA VEZ HECHO EL GET DE SUCURSALES.
 			categoria_vehiculo_id: '',
@@ -101,9 +101,10 @@ export default function AlquilerForm() {
 	// _______ CARGA DE DATOS USANDO LOS FETCH PREVIOS.
 	useEffect(() => {
 		if (haveRentBasic) {
-			setValue('fecha_entrega', rentBasic.fecha_entrega || '')
+			setValue('fecha_inicio', rentBasic.fecha_entrega || '')
 			setValue('fecha_devolucion', rentBasic.fecha_devolucion || '')
 		}
+    
 
 		const cargarDatos = async () => {
 			try {
@@ -133,7 +134,7 @@ export default function AlquilerForm() {
 	// YA SE FETCHEO LO NECESARIO, Y YA SE SETEARON EN REACT-HOOK-FORMS LOS VALORES PREVIOS SI ES QUE LOS HUBO, A PARTIR DE AHORA SE REGISTRAN Y SE MANEJAN
 	// CAMPOS DE REACT-HOOK-FORM
 	// watch es una funcion de react-hook-form, necesito watchear estos elementos para que cada vez que cambien, se reactualicen precios, etc.
-	const fechaInicio = watch('fecha_entrega')
+	const fechaInicio = watch('fecha_inicio')
 	const fechaDevolucion = watch('fecha_devolucion')
 	const categoriaVehiculo = watch('categoria_vehiculo_id')
 	const paquetesSeleccionados = watch('paquetes')
@@ -256,7 +257,7 @@ export default function AlquilerForm() {
 										<Input
 											type='datetime-local'
 											min={getNowForInput()}
-											{...register('fecha_entrega', {
+											{...register('fecha_inicio', {
 												required: true,
 												validate: value => {
 													const now = new Date()
