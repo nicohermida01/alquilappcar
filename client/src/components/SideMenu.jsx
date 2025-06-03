@@ -8,6 +8,9 @@ function SideMenu({ onSelect }) {
 				<li className="bg-color-5 hover:bg-color-4 p-2 rounded cursor-pointer" onClick={() => onSelect('alquileres')}>
 					<p>Mis alquileres</p>
 				</li>
+				<li className="bg-color-5 hover:bg-color-4 p-2 rounded cursor-pointer" onClick={() => onSelect('settings')}>
+					<p>Editar informacion</p>
+				</li>
 			</ul>
 		</div>
 	);

@@ -5,6 +5,7 @@ import UserAlquileres from "../components/UserAlquileres"
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from "../contexts/AuthContext"
+import UserEditSettings from "../components/UserEditSettings"
 
 function UserProfile() {
     const { isAuthenticated, loadingAuth } = useAuth();
@@ -27,9 +28,10 @@ function UserProfile() {
         <PageLayout>
             <div className="flex bg-gray-100 mt-16 h-full">
                 <SideMenu onSelect={setActiveSection}/>
-                <div className="flex-grow">
+                <div className="h-full w-[70%]">
                     {activeSection === 'myinfo' && <UserData />}
                     {activeSection === 'alquileres' && <UserAlquileres />}
+                    {activeSection === 'settings' && <UserEditSettings />}
                 </div>
             </div>
         </PageLayout>
