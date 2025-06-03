@@ -63,46 +63,44 @@ function UserEditSettings() {
     }
 
     return (
-        <Form className="ml-[35%] mt-[10%] w-max"
+        <Form className="ml-[300px] mt-[10%] w-[1000px] h-[500px]"
             onSubmit={onSubmit}
         >
-            <div className="border border-grey rounded-xl w-fit space-y-16 bg-white">
+            <div className="p-4 flex flex-col justify-center gap-6 h-full w-full items-center border border-grey rounded-xl bg-white">
+            <h2 className="font-bold text-3xl">Editar informacion</h2>
+            <div className="w-full flex gap-10 justify-between">
             <Input
                 label="Nombre"
-                labelPlacement="outside-left"
                 onChange={handleChange}
                 value={clientInfo.nombre}
                 name="nombre"
-                className="p-2 ml-32 mr-32"
+                size="lg"
             />
             <Input
                 label="Apellido"
-                labelPlacement="outside-left"
                 onChange={handleChange}
                 value={clientInfo.apellido}
                 name="apellido"
-                className="p-2 ml-32 mr-32"
             />
+            </div>
+            <div className="w-full flex gap-10 justify-between">
             <Input
                 label="E-mail"
-                labelPlacement="outside-left"
                 onChange={handleChange}
                 value={clientInfo.email}
-                className="p-2 ml-32 mr-32"
                 name="email"
                 type="email"
             />
             <Input
                 label="Contacto"
-                labelPlacement="outside-left"
                 onChange={handleChange}
                 value={clientInfo.contacto}
                 name="contacto"
-                className="p-2 ml-32 mr-32"
             />
             </div>
-            <div className="flex ml-auto">
-                <Button color="secondary" type="submit">Guardar</Button>
+            </div>
+            <div className="flex justify-end w-full">
+                <Button color="secondary" type="submit" className="text-white">Guardar</Button>
             </div>
         </Form>
     )

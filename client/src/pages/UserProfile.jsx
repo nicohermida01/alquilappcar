@@ -28,7 +28,7 @@ function UserProfile() {
         <PageLayout>
             <div className="flex bg-gray-100 mt-16 h-full">
                 <SideMenu onSelect={setActiveSection}/>
-                <div className="flex-grow">
+                <div className="h-full w-[70%]">
                     {activeSection === 'myinfo' && <UserData />}
                     {activeSection === 'alquileres' && <UserAlquileres />}
                     {activeSection === 'settings' && <UserEditSettings />}
