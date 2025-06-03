@@ -22,6 +22,7 @@ import { useRent } from '../contexts/RentContext'
 export default function AlquilerForm() {
 	const [sucursales, setSucursales] = useState([])
 	const [categorias, setCategorias] = useState([])
+  //const [sucursalPrecargada, setSucursalPrecargada] = useState(null)
 	const [paquetes, setPaquetes] = useState([])
 	const [isFetching, setIsFetching] = useState(true)
 	const { isAuthenticated, user } = useAuth()
@@ -44,7 +45,8 @@ export default function AlquilerForm() {
 		control,
 		formState: { errors },
 		setValue,
-	} = useForm({
+	} = useForm(
+    {
 		defaultValues: {
 			fecha_inicio: '',
 			fecha_devolucion: '',
@@ -53,7 +55,8 @@ export default function AlquilerForm() {
 			paquetes: [],
 			precio_total: '',
 		},
-	})
+	}
+)
 
 	// ______ FUNCIONES DE FETCH
 	const fetchSucursales = async () => {
@@ -98,39 +101,35 @@ export default function AlquilerForm() {
 			setIsFetching(false)
 		}
 	}
+  const sucursalRetiro = watch('sucursal_retiro_id')
 	// _______ CARGA DE DATOS USANDO LOS FETCH PREVIOS.
 	useEffect(() => {
 		if (haveRentBasic) {
+      //console.log(rentBasic,'RENT')
 			setValue('fecha_inicio', rentBasic.fecha_entrega || '')
-			setValue('fecha_devolucion', rentBasic.fecha_devolucion || '')
+			setValue('fecha_devolucion', rentBasic.fecha_devolucion || '')  
 		}
-    
-
-		const cargarDatos = async () => {
-			try {
-				const [sucursalesData, categoriasData, paquetesData] =
-					await Promise.all([
-						fetchSucursales(),
-						fetchCategorias(),
-						fetchPaquetes(),
-					])
-				setSucursales(sucursalesData)
-				if (rentBasic?.sucursal) {
-					// Espera a que estén cargadas las sucursales y luego setea el valor
-					setValue('sucursal_retiro_id', rentBasic.sucursal)
-				}
-				setCategorias(categoriasData)
-				setPaquetes(paquetesData)
-			} catch (error) {
-				console.log(error)
+    const valorSucursal = watch('sucursal_retiro_id');
+      Promise.all([
+        fetchSucursales(),
+        fetchCategorias(),
+        fetchPaquetes(),
+      ]).then((values)=>{
+        setSucursales(values[0]);
+        setCategorias(values[1]);
+        setPaquetes(values[2]);
+        setValue('sucursal_retiro_id', rentBasic.sucursal || '')
+       // console.log(rentBasic.sucursal, 'VALUE DEL RENTBASIC')
+        //console.log(sucursalRetiro, 'VALUE DEL USEFORM')
+      })
+      .catch((error)=>{
+        console.log(error)
 				alert('Ocurrió un error al cargar los datos.')
-			} finally {
-				setIsFetching(false) // Solo se oculta el loader cuando todo termina
-			}
-		}
-		cargarDatos()
+      }).
+      finally(()=>{
+        setIsFetching(false)
+      })
 	}, [])
-
 	// YA SE FETCHEO LO NECESARIO, Y YA SE SETEARON EN REACT-HOOK-FORMS LOS VALORES PREVIOS SI ES QUE LOS HUBO, A PARTIR DE AHORA SE REGISTRAN Y SE MANEJAN
 	// CAMPOS DE REACT-HOOK-FORM
 	// watch es una funcion de react-hook-form, necesito watchear estos elementos para que cada vez que cambien, se reactualicen precios, etc.
@@ -141,25 +140,8 @@ export default function AlquilerForm() {
 
 	// se submitea.
 	const onSubmit = async data => {
-		// ESTA VALIDACION NO SE SI ANDA, PERO EVALUA LA VALIDEZ DE LAS FECHAS, EL TEMA ES QUE ES "IMPOSIBLE" QUE SE ENVÍEN MAL LAS FECHAS.
-		// const now = new Date();
-		// const start = new Date(data.fecha_entrega);
-		// const end = new Date(data.fecha_devolucion);
-		// if (start && end) {
-		//   if (start < now) {
-		//     alert("La fecha de entrega no puede ser anterior a la fecha actual.");
-		//     return;
-		//   }
-		//   if (end <= start) {
-		//     alert("La fecha de devolución debe ser posterior a la de entrega.");
-		//     return;
-		//   }
-		// }
-
-		//const precio = calcularPrecio(diasCalculados, formData.categoria_vehiculo)
-		//setPrecioEstimado(precio)
 		data['cliente'] = user.clientId
-		console.log(data, 'INFO QUE SE ENVIA')
+		//console.log(data, 'INFO QUE SE ENVIA')
 		try {
 			// ACA VA LA LOGICA DEL PAGO.
 			// CUANDO SEA SUCCESS, SE HACE EL POST.
@@ -269,7 +251,7 @@ export default function AlquilerForm() {
 												},
 											})}
 										/>
-										{errors.fecha_entrega && (
+										{errors.fecha_inicio && (
 											<span className='text-red-500 text-sm'>
 												Seleccioná una fecha inicial.
 											</span>
@@ -316,6 +298,10 @@ export default function AlquilerForm() {
 										{...register('sucursal_retiro_id', { required: true })}
 										aria-label='Seleccionar sucursal'
 										label='Seleccione una sucursal'
+                    // onChange={(e)=>{
+                    //   console.log(e)
+                    // }}
+                    defaultSelectedKeys={[rentBasic?.sucursal.toString()]}
 									>
 										{sucursales.map(s => {
 											const value = `${s.direccion}, ${s.localidad.nombre}`
