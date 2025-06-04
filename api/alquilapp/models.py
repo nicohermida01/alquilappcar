@@ -61,7 +61,7 @@ class Vehiculo(models.Model):
     #FK a tabla de cancelacion, notar que puse default=1 para que no rompa la base de datos
     cancelacion = models.ForeignKey('Cancelacion', on_delete=models.CASCADE, default=1) 
 
-    categoria = models.ForeignKey('CategoriaVehiculo', on_delete=models.CASCADE)
+    categoria = models.ForeignKey('CategoriaVehiculo', on_delete=models.CASCADE, default=0)
 
     def __str__(self):
         return f"{self.patente} {self.marca} {self.modelo} ({self.año})"

@@ -14,6 +14,12 @@ from django.core.mail import send_mail
 class AlquilerViewSet(viewsets.ModelViewSet):
     queryset = Alquiler.objects.all()
     serializer_class = AlquilerSerializer
+    
+    @action(detail=False, url_path='cliente/(?P<cliente_id>[^/.]+)', methods=['get'])
+    def by_client_id(self, request, cliente_id=None):
+        alquileres = self.queryset.filter(cliente=cliente_id)
+        serializer = self.get_serializer(alquileres, many=True)
+        return Response(serializer.data)
 
 class PaqueteExtraViewSet(viewsets.ModelViewSet):
     queryset = PaqueteExtra.objects.all()
@@ -81,15 +87,11 @@ class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
     queryset = Cliente.objects.all()
     
-    def create(self, request):
-        # validar que haya un body en la request
-        if not request.data:
-            return Response({"error": "No data provided"}, status=400)
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=201)
+    #def create(self, request):
+    #    serializer = self.get_serializer(data=request.data)
+    #    serializer.is_valid(raise_exception=True)
+    #    serializer.save()
+    #    return Response(serializer.data, status=201)
     
 class LoginAdminAPIView(APIView):
     # Esta view maneja el login en la app admin -Nico

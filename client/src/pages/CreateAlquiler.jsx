@@ -19,17 +19,20 @@ import {
 } from "@heroui/react";
 import { useAuth } from "../contexts/AuthContext";
 import PaymentForm from "../components/PaymentForm";
+import { useRent } from "../contexts/RentContext";
 
 export default function AlquilerForm() {
     const [sucursales, setSucursales] = useState([]);
     const [categorias, setCategorias] = useState([]);
+    //const [sucursalPrecargada, setSucursalPrecargada] = useState(null)
     const [paquetes, setPaquetes] = useState([]);
     const [isFetching, setIsFetching] = useState(true);
     const { isAuthenticated, user } = useAuth();
     // En caso de haberse submiteado el formulario de Home, se obtiene la data, Pero si se apretó en el botón de la topbar, no hay data que obtener.
     // Si location.state esta definido lo retorna sino devuelve un objeto vacio, y si no hay un formData dentro del mismo entonces es vacío.
-    const location = useLocation();
-    const { formData = {} } = location.state || {};
+
+    const { rentBasic, haveRentBasic, setRentBasic } = useRent();
+
     // Numero de días entre fecha de inicio y devolucion (esto es únicamente a modo de info para el cliente).
     // Además, calcula el precio estimado según categoria de vehículo, paquetes seleccionados (FALTA), y cantidad de días calculados.
     const [diasCalculados, setDiasCalculados] = useState(null);
@@ -48,10 +51,10 @@ export default function AlquilerForm() {
         setValue,
     } = useForm({
         defaultValues: {
-            fecha_entrega: formData.fecha_entrega || "",
-            fecha_devolucion: formData.fecha_devolucion || "",
-            sucursal_retiro: "", // LA SUCURSAL SE CARGA MANUALMENTE CON EL FORMDATA UNA VEZ HECHO EL GET DE SUCURSALES.
-            categoria_vehiculo: "",
+            fecha_inicio: "",
+            fecha_devolucion: "",
+            sucursal_retiro_id: "", // LA SUCURSAL SE CARGA MANUALMENTE CON EL FORMDATA UNA VEZ HECHO EL GET DE SUCURSALES.
+            categoria_vehiculo_id: "",
             paquetes: [],
             precio_total: "",
         },
@@ -100,74 +103,54 @@ export default function AlquilerForm() {
             setIsFetching(false);
         }
     };
+    const sucursalRetiro = watch("sucursal_retiro_id");
     // _______ CARGA DE DATOS USANDO LOS FETCH PREVIOS.
     useEffect(() => {
-        const cargarDatos = async () => {
-            try {
-                const [sucursalesData, categoriasData, paquetesData] =
-                    await Promise.all([
-                        fetchSucursales(),
-                        fetchCategorias(),
-                        fetchPaquetes(),
-                    ]);
-                setSucursales(sucursalesData);
-                if (formData?.sucursal) {
-                    // Espera a que estén cargadas las sucursales y luego setea el valor
-                    setValue("sucursal_retiro", formData?.sucursal);
-                }
-                setCategorias(categoriasData);
-                setPaquetes(paquetesData);
-            } catch (error) {
+        if (haveRentBasic) {
+            //console.log(rentBasic,'RENT')
+            setValue("fecha_inicio", rentBasic.fecha_entrega || "");
+            setValue("fecha_devolucion", rentBasic.fecha_devolucion || "");
+        }
+        const valorSucursal = watch("sucursal_retiro_id");
+        Promise.all([fetchSucursales(), fetchCategorias(), fetchPaquetes()])
+            .then((values) => {
+                setSucursales(values[0]);
+                setCategorias(values[1]);
+                setPaquetes(values[2]);
+                setValue("sucursal_retiro_id", rentBasic.sucursal || "");
+                // console.log(rentBasic.sucursal, 'VALUE DEL RENTBASIC')
+                //console.log(sucursalRetiro, 'VALUE DEL USEFORM')
+            })
+            .catch((error) => {
                 console.log(error);
                 alert("Ocurrió un error al cargar los datos.");
-            } finally {
-                setIsFetching(false); // Solo se oculta el loader cuando todo termina
-            }
-        };
-        cargarDatos();
+            })
+            .finally(() => {
+                setIsFetching(false);
+            });
     }, []);
-
     // YA SE FETCHEO LO NECESARIO, Y YA SE SETEARON EN REACT-HOOK-FORMS LOS VALORES PREVIOS SI ES QUE LOS HUBO, A PARTIR DE AHORA SE REGISTRAN Y SE MANEJAN
     // CAMPOS DE REACT-HOOK-FORM
     // watch es una funcion de react-hook-form, necesito watchear estos elementos para que cada vez que cambien, se reactualicen precios, etc.
-    const fechaInicio = watch("fecha_entrega");
+    const fechaInicio = watch("fecha_inicio");
     const fechaDevolucion = watch("fecha_devolucion");
-    const categoriaVehiculo = watch("categoria_vehiculo");
+    const categoriaVehiculo = watch("categoria_vehiculo_id");
     const paquetesSeleccionados = watch("paquetes");
-
-    const [alquilerData, setAlquilerData] = useState();
 
     // se submitea.
     const onSubmit = async (data) => {
-        const now = new Date();
-        const start = new Date(data.fecha_entrega);
-        const end = new Date(data.fecha_devolucion);
-        if (start && end) {
-            if (start < now) {
-                alert(
-                    "La fecha de entrega no puede ser anterior a la fecha actual."
-                );
-                return;
-            }
-            if (end <= start) {
-                alert(
-                    "La fecha de devolución debe ser posterior a la de entrega."
-                );
-                return;
-            }
-            const precio = calcularPrecio(
-                diasCalculados,
-                formData.categoria_vehiculo
-            );
-            setPrecioEstimado(precio);
-        }
         data["cliente"] = user.clientId;
         setAlquilerData(data);
+        //console.log(data, 'INFO QUE SE ENVIA')
         try {
             // ACA VA LA LOGICA DEL PAGO.
             // CUANDO SEA SUCCESS, SE HACE EL POST.
-            //await axios.post('http://localhost:8000/alquilapp/api/v1/alquileres/', data);
-            onOpen();
+            await axios.post(
+                "http://localhost:8000/alquilapp/api/v1/alquileres/",
+                data
+            );
+            alert("Alquiler creado exitosamente");
+            setRentBasic(null);
         } catch (error) {
             console.error("Error al crear alquiler", error);
             alert("Error al crear alquiler");
@@ -251,7 +234,7 @@ export default function AlquilerForm() {
                             <CardHeader>
                                 {/* Si formData estaba cargado, Se muestra mostrar alquiler, sino se muestra otro titulo más acorde. */}
                                 <h2 className="text-xl font-semibold">
-                                    {formData.fecha_entrega
+                                    {rentBasic?.fecha_entrega
                                         ? "Confirmar Alquiler"
                                         : "Solicitar Alquiler"}
                                 </h2>
@@ -270,7 +253,7 @@ export default function AlquilerForm() {
                                             <Input
                                                 type="datetime-local"
                                                 min={getNowForInput()}
-                                                {...register("fecha_entrega", {
+                                                {...register("fecha_inicio", {
                                                     required: true,
                                                     validate: (value) => {
                                                         const now = new Date();
@@ -283,7 +266,7 @@ export default function AlquilerForm() {
                                                     },
                                                 })}
                                             />
-                                            {errors.fecha_entrega && (
+                                            {errors.fecha_inicio && (
                                                 <span className="text-red-500 text-sm">
                                                     Seleccioná una fecha
                                                     inicial.
@@ -338,11 +321,17 @@ export default function AlquilerForm() {
                                         </label>
                                         <Select
                                             size="sm"
-                                            {...register("sucursal_retiro", {
+                                            {...register("sucursal_retiro_id", {
                                                 required: true,
                                             })}
                                             aria-label="Seleccionar sucursal"
                                             label="Seleccione una sucursal"
+                                            // onChange={(e)=>{
+                                            //   console.log(e)
+                                            // }}
+                                            defaultSelectedKeys={[
+                                                rentBasic?.sucursal.toString(),
+                                            ]}
                                         >
                                             {sucursales.map((s) => {
                                                 const value = `${s.direccion}, ${s.localidad.nombre}`;
@@ -356,7 +345,7 @@ export default function AlquilerForm() {
                                                 );
                                             })}
                                         </Select>
-                                        {errors.sucursal && (
+                                        {errors.sucursal_retiro_id && (
                                             <span className="text-red-500 text-sm">
                                                 Es necesario que indique una
                                                 sucursal de retiro.
@@ -370,9 +359,10 @@ export default function AlquilerForm() {
                                         </label>
                                         <Select
                                             size="sm"
-                                            {...register("categoria_vehiculo", {
-                                                required: true,
-                                            })}
+                                            {...register(
+                                                "categoria_vehiculo_id",
+                                                { required: true }
+                                            )}
                                             aria-label="Seleccionar categoría"
                                             label="Seleccione una categoría preferencial"
                                         >
@@ -387,7 +377,7 @@ export default function AlquilerForm() {
                                                 );
                                             })}
                                         </Select>
-                                        {errors.categoria_vehiculo && (
+                                        {errors.categoria_vehiculo_id && (
                                             <span className="text-red-500 text-sm">
                                                 Es necesario que indique una
                                                 categoría preferencial.
@@ -432,7 +422,7 @@ export default function AlquilerForm() {
                                                                     >
                                                                         {
                                                                             paquete.nombre
-                                                                        }
+                                                                        }{" "}
                                                                         ($
                                                                         {
                                                                             paquete.costo
