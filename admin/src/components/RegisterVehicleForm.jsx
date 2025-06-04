@@ -8,7 +8,6 @@ import {
 } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { vehiclesApi } from "../api/vehicles.api";
-import { use, useEffect } from "react";
 
 const InputField = ({ children }) => {
     return <fieldset className="flex items-center gap-3">{children}</fieldset>;
@@ -25,6 +24,7 @@ function RegisterVehicleForm({
     const { register, handleSubmit, reset, getValues } = useForm();
 
     const onSubmit = (data) => {
+        console.log(data);
         vehicleInfo
             ? vehiclesApi
                   .updateVehicle(data, vehicleInfo.id)
@@ -156,52 +156,49 @@ function RegisterVehicleForm({
                 <Input
                     type="number"
                     label="Año"
+                    min={1900}
                     defaultValue={vehicleInfo?.año}
                     {...register("año", {
                         required: true,
                         valueAsNumber: true,
                     })}
+                    isRequired
                 />
 
                 <Input
                     type="number"
                     label="Pasajeros"
+                    min={1}
                     defaultValue={vehicleInfo?.max_pasajeros}
                     {...register("max_pasajeros", {
                         required: true,
                         valueAsNumber: true,
                     })}
+                    isRequired
                 />
             </InputField>
 
             <Select
-                label="Localidad"
-                defaultSelectedKeys={[vehicleInfo?.localidad.toString()]}
-                {...register("localidad", {
+                label="Sucursal"
+                defaultSelectedKeys={[vehicleInfo?.sucursal.toString()]}
+                {...register("sucursal", {
                     required: true,
                     valueAsNumber: true,
                 })}
                 isRequired
             >
                 {sucursales.map((sucursal) => (
-                    <SelectItem key={sucursal.id}>{sucursal.nombre}</SelectItem>
+                    <SelectItem key={sucursal.id}>
+                        {sucursal.direccion + ", " + sucursal.localidad.nombre}
+                    </SelectItem>
                 ))}
             </Select>
 
             <InputField>
                 <Input
-                    label="Precio"
-                    type="number"
-                    defaultValue={vehicleInfo?.precio_dia}
-                    {...register("precio_dia", {
-                        required: true,
-                        valueAsNumber: true,
-                    })}
-                    isRequired
-                />
-                <Input
                     label="Días minimos de alquiler"
                     type="number"
+                    min={0}
                     defaultValue={vehicleInfo?.min_dias_alquiler}
                     {...register("min_dias_alquiler", {
                         required: true,

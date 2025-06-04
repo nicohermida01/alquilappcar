@@ -40,8 +40,18 @@ const deleteBrand = async (id) => {
     return response.data;
 };
 
+const getBrandById = async (id) => {
+    const response = await api.get(`marcas/${id}/`);
+    return response.data;
+};
+
 const getAllSucursales = async () => {
     const response = await api.get("localidades/");
+    return response.data;
+};
+
+const getSucursalById = async (id) => {
+    const response = await api.get(`sucursales/${id}/`);
     return response.data;
 };
 
@@ -65,6 +75,11 @@ const deleteCategoria = async (id) => {
     return response.data;
 };
 
+const getCategoriaById = async (id) => {
+    const response = await api.get(`categorias/${id}/`);
+    return response.data;
+};
+
 const getAllCancelaciones = async () => {
     const response = await api.get("cancelaciones/");
     return response.data;
@@ -85,6 +100,26 @@ const deleteCancelacion = async (id) => {
     return response.data;
 };
 
+const getCancelacionById = async (id) => {
+    const response = await api.get(`cancelaciones/${id}/`);
+    return response.data;
+};
+
+const getAllPackages = async () => {
+    const response = await api.get("paquetes/");
+    return response.data;
+};
+
+const createPackage = async (packageData) => {
+    const response = await api.post("paquetes/", packageData);
+    return response.data;
+};
+
+const updatePackage = async (packageData, id) => {
+    const response = await api.put(`paquetes/${id}/`, packageData);
+    return response.data;
+};
+
 export const vehiclesApi = {
     getAllVehicles,
     createVehicle,
@@ -94,13 +129,20 @@ export const vehiclesApi = {
     updateBrand,
     createBrand,
     deleteBrand,
+    getBrandById,
     getAllSucursales,
+    getSucursalById,
     getAllCategorias,
     updateCategoria,
     createCategoria,
     deleteCategoria,
+    getCategoriaById,
     getAllCancelaciones,
     createCancelacion,
     updateCancelacion,
     deleteCancelacion,
+    getCancelacionById,
+    getAllPackages,
+    createPackage,
+    updatePackage,
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import ListItems from "../components/ListPageComponents/ListItems";
 import { vehiclesApi } from "../api/vehicles.api";
+import { subsidiariesApi } from "../api/subsidiaries.api";
 import RegisterVehicleForm from "../components/RegisterVehicleForm";
 import ShowVehicle from "../components/ShowVehicle";
 
@@ -11,6 +12,7 @@ function VehiclesPage() {
         { name: "MARCA", uid: "marca", sortable: true },
         { name: "MODELO", uid: "modelo", sortable: true },
         { name: "CATEGORÍA", uid: "categoria", sortable: true },
+        { name: "SUCURSAL", uid: "sucursal", sortable: true },
         { name: "ACCIONES", uid: "actions" },
     ];
 
@@ -45,8 +47,8 @@ function VehiclesPage() {
                 console.error("Error fetching data:", error);
             });
 
-        vehiclesApi
-            .getAllSucursales()
+        subsidiariesApi
+            .getSubsidiariesPopulated()
             .then((res) => {
                 let aux = databaseInfo;
                 aux.sucursales = res;
@@ -85,10 +87,7 @@ function VehiclesPage() {
 
     return (
         <section className="w-full py-[135px] flex flex-col items-center justify-center bg-gray-100 gap-10">
-            <h2
-                className="text-3xl font-bold text-center"
-                onClick={() => console.log(databaseInfo)}
-            >
+            <h2 className="text-3xl font-bold text-center">
                 Lista de vehículos
             </h2>
             <ListItems
@@ -101,7 +100,6 @@ function VehiclesPage() {
                 itemList={itemList}
                 itemName={"vehículo"}
                 databaseInfo={databaseInfo}
-                updateItemList={fetchInfo}
             />
         </section>
     );
