@@ -5,6 +5,7 @@ import { InputPassword } from "./InputPassword";
 import toast, { Toaster } from "react-hot-toast";
 import { format } from "date-fns";
 import { clientApi } from "../api/client.api";
+import { handleApiError } from "../utils/handleApiError";
 
 const InputField = ({ children }) => {
     return <fieldset className="flex items-center gap-3">{children}</fieldset>;
@@ -42,10 +43,11 @@ export function RegisterClientForm({
                       updateItemList();
                   })
                   .catch((err) => {
-                      toast.error(
-                          "Parece que hubo un error al actualizar el cliente"
-                      );
-                      console.error(err);
+                      addToast({
+                          title: "Error",
+                          description: handleApiError(err),
+                          color: "danger",
+                      });
                   })
             : clientApi
                   .createClient(clientData)
@@ -61,10 +63,11 @@ export function RegisterClientForm({
                       reset();
                   })
                   .catch((err) => {
-                      toast.error(
-                          "Parece que hubo un error al registrar el cliente"
-                      );
-                      console.error(err);
+                      addToast({
+                          title: "Error",
+                          description: handleApiError(err),
+                          color: "danger",
+                      });
                   });
     };
 

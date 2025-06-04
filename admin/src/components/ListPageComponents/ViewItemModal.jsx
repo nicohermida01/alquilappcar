@@ -13,6 +13,7 @@ export default function ViewItemModal({
     infoShow,
     itemInfo,
     databaseInfo,
+    itemName,
 }) {
     const newProps = {
         itemInfo: itemInfo,
@@ -25,7 +26,7 @@ export default function ViewItemModal({
                 {(onClose) => (
                     <>
                         <ModalHeader className="flex flex-col gap-1">
-                            Detalles del elemento
+                            {"Detalles de " + itemName}
                         </ModalHeader>
                         <ModalBody>
                             {React.cloneElement(infoShow, {

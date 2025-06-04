@@ -359,6 +359,7 @@ export default function ListItems({
 				infoShow={infoShow}
 				itemInfo={selectedItem}
 				databaseInfo={databaseInfo}
+				itemName={itemName}
 			/>
 			<DeleteItemModal
 				onOpenChange={onOpenChangeDeleteItem}
