@@ -39,7 +39,6 @@ export default function AlquilerForm() {
 	// Además, calcula el precio estimado según categoria de vehículo, paquetes seleccionados (FALTA), y cantidad de días calculados.
 	const [diasCalculados, setDiasCalculados] = useState(null)
 	const [precioEstimado, setPrecioEstimado] = useState(null)
-	const [alquilerData, setAlquilerData] = useState()
 
 	const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
