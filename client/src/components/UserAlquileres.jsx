@@ -11,19 +11,26 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  Spinner
 } from "@heroui/react";
+import {addToast } from "@heroui/react";
+
 import ModalAlquiler from '../components/ModalAlquiler'
 
 function UserAlquileres() {
+  // const { toast } = useToast();
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const { user } = useAuth();
   const [alquileres, setAlquileres] = useState([]);
   const [alquilerSeleccionado, setAlquilerSeleccionado] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
+    setIsLoading(true);
     usersApi.getAlquileresByUserId(user.clientId)
     .then((response) => setAlquileres(response))
     .catch((error) => console.error(error))
+    .finally(() => setIsLoading(false));
   }, []);
   const ahora = new Date();
   const opcionesFecha = {
@@ -36,69 +43,80 @@ function UserAlquileres() {
     timeZone: 'America/Argentina/Buenos_Aires'
   };
   
-  const handleDarDeBaja = async (idAlquiler) => {
+  const handleDarDeBaja = async (alquiler) => {
     try {
-      await axios.patch(`http://localhost:8000/alquilapp/api/v1/alquileres/${idAlquiler}/`, {
+      await axios.patch(`http://localhost:8000/alquilapp/api/v1/alquileres/${alquiler.id}/`, {
         activo: false,
       });
-
-      alert('Alquiler dado de baja correctamente, DEBERIA HABER UN MODAL DE HEROUI');
-      setAlquileres(prev => prev.filter(alq => alq.id !== idAlquiler));
+      setAlquileres(prev => prev.filter(alq => alq.id !== alquiler.id));
+      let fechaInicio = new Date(alquiler.fecha_inicio);
+      let fechaFormateada = fechaInicio.toLocaleString('es-AR', opcionesFecha);
+      addToast({
+        title: `Reserva del día ${fechaFormateada} cancelada correctamente.`,
+        variant: 'bordered',
+        description: `Se han devuelto $${alquiler.precio_total}`,
+        color: 'success',
+        duration:4000
+      });
     } catch (error) {
       console.error('Error al dar de baja el alquiler', error);
-      alert('Hubo un error al dar de baja el alquiler');
+      addToast({
+        title: "Error al dar de baja la reserva.",
+        description: "No se pudo cancelar la reserva, intente nuevamente.",
+        color: 'danger',
+        duration: 4000
+      });
     }
   };
 
   const handleOpen = (alquiler) => {
-    //console.log(alquiler, 'ALQUILER')
     setAlquilerSeleccionado(alquiler);
     onOpen()
   }
     return (
-        <div className="mt-16 ml-[10%]">
-          <ModalAlquiler alquiler={alquilerSeleccionado} isOpen={isOpen} onOpenChange={onOpenChange} opcionesFecha={opcionesFecha}/>
-            <div className="flex flex-col gap-3">
-                {alquileres.length > 0 ? alquileres.map(alquiler => {
-                    const fechaInicio = new Date(alquiler.fecha_inicio);
-                    const fechaDevolucion = new Date(alquiler.fecha_devolucion);
-                    const esReserva = fechaInicio > ahora;
-                    const tipo = esReserva ? "Reserva" : "Alquiler";
-                    const fechaFormateadaInicio = fechaInicio.toLocaleString('es-AR', opcionesFecha);
-                    const fechaFormateadaDevolucion = fechaDevolucion.toLocaleString('es-AR', opcionesFecha);
-                    return (
-                      <div key={alquiler.id}>
-                        <div className="flex flex-col rounded-2xl p-4 bg-white">
-                          <div className="flex gap-2 items-center text-lg">
-                            <h3 className="font-semibold">{`${tipo} para la fecha ${fechaFormateadaInicio}hs`}</h3>
-                            <Button onPress={()=> handleOpen(alquiler)} color="primary" size="sm" className="text-white font-semibold">Ver detalle</Button>
-                            { esReserva && (
-                              <Button onPress={() => handleDarDeBaja(alquiler.id)} color="danger" size="sm" className="text-white font-semibold">Cancelar reserva</Button>
-                              )}
-                          </div>
-                          <div className="flex flex-col gap-1">
-                            <div className="flex gap-5">
-                              <div className="flex gap-1 items-center">
-                                <p className="font-semibold">Categoría preferencial:</p>
-                                <p className="text-sm">{alquiler.categoria_vehiculo.nombre}</p>
+        isLoading ? (<Spinner />) : 
+        alquileres.length > 0 ? (       
+            <div className="mt-16 ml-[10%]">
+              <ModalAlquiler alquiler={alquilerSeleccionado} isOpen={isOpen} onOpenChange={onOpenChange} opcionesFecha={opcionesFecha}/>
+              <div className="flex flex-col gap-3">
+                  {alquileres.map(alquiler => {
+                      const fechaInicio = new Date(alquiler.fecha_inicio);
+                      const fechaDevolucion = new Date(alquiler.fecha_devolucion);
+                      const esReserva = fechaInicio > ahora;
+                      const tipo = esReserva ? "Reserva" : "Alquiler";
+                      const fechaFormateadaInicio = fechaInicio.toLocaleString('es-AR', opcionesFecha);
+                      const fechaFormateadaDevolucion = fechaDevolucion.toLocaleString('es-AR', opcionesFecha);
+                      return (
+                        <div key={alquiler.id}>
+                          <div className="flex flex-col rounded-2xl p-4 bg-white">
+                            <div className="flex gap-2 items-center text-lg">
+                              <h3 className="font-semibold">{`${tipo} para la fecha ${fechaFormateadaInicio}hs`}</h3>
+                              <Button onPress={()=> handleOpen(alquiler)} color="primary" size="sm" className="text-white font-semibold">Ver detalle</Button>
+                              { esReserva && (
+                                <Button onPress={() => handleDarDeBaja(alquiler)} color="danger" size="sm" className="text-white font-semibold">Cancelar reserva</Button>
+                                )}
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              <div className="flex gap-5">
+                                <div className="flex gap-1 items-center">
+                                  <p className="font-semibold">Categoría preferencial:</p>
+                                  <p className="text-sm">{alquiler.categoria_vehiculo.nombre}</p>
+                                </div>
                               </div>
-                            </div>
-                            <div className="flex gap-1 items-center">
-                                <p className="font-semibold">Fecha de devolucion:</p>
-                                <p className="text-sm">{fechaFormateadaDevolucion}</p>
-                            </div>
-                            <div className="flex gap-1 items-center">
-                                <p className="font-semibold">Sucursal de retiro:</p>
-                                <p className="text-sm">{alquiler.sucursal_retiro.direccion}, {alquiler.sucursal_retiro.localidad.nombre}</p>
+                              <div className="flex gap-1 items-center">
+                                  <p className="font-semibold">Fecha de devolucion:</p>
+                                  <p className="text-sm">{fechaFormateadaDevolucion}</p>
+                              </div>
+                              <div className="flex gap-1 items-center">
+                                  <p className="font-semibold">Sucursal de retiro:</p>
+                                  <p className="text-sm">{alquiler.sucursal_retiro.direccion}, {alquiler.sucursal_retiro.localidad.nombre}</p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                  )})
-                : <p>No se encuentran alquileres realizados.</p>}
+                  )})}
+              </div>
             </div>
-        </div>
-    );
-}
-
+        ):(<p>No se encuentran alquileres realizados.</p>))
+      }
 export default UserAlquileres;

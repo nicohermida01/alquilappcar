@@ -2,9 +2,9 @@ import {Card, CardBody, CardHeader, Divider} from "@heroui/react"
 
 function FieldCard({field, value}) {
     return (
-    <Card className="max-w-[75vh] m-8">
+    <Card className="max-w-[75vh] m-4">
         <CardHeader>
-            <p className="font-bold text-3xl">{field}</p>
+            <p className="font-bold">{field}</p>
         </CardHeader>
         <Divider/>
         <CardBody>
