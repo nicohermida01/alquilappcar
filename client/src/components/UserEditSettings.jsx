@@ -97,7 +97,11 @@ function UserEditSettings() {
                 name="email"
                 type="email"
                 isRequired
-                errorMessage="Este campo no puede estar vacio."
+                errorMessage={(validate) => {
+                    if (validate.validationErrors[0].includes("email"))
+                        return "E-mail invalido."
+                    return "Este campo no puede estar vacio."
+                }}
             />
             <Input
                 label="Contacto"
