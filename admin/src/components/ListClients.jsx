@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     Table,
     TableHeader,
@@ -15,70 +15,37 @@ import {
     Pagination,
     useDisclosure,
     Tooltip,
+    ModalContent,
+    Modal,
+    ModalHeader,
 } from "@heroui/react";
-import {
-    SearchIcon,
-    PlusIcon,
-    ChevronDownIcon,
-    EyeIcon,
-    EditIcon,
-    DeleteIcon,
-} from "../../assets/icons";
-import CreateItemModal from "./CreateItemModal";
-import ModifyItemModal from "./ModifyItemModal";
-import ViewItemModal from "./ViewItemModal";
-import DeleteItemModal from "./DeleteItemModal";
+import { SearchIcon, PlusIcon, ChevronDownIcon } from "../assets/icons";
+import RegisterLeaseForm from "./RegisterLeaseForm";
+import { clientApi } from "../api/client.api";
 
-export default function ListItems({
-    columns,
-    INITIAL_VISIBLE_COLUMNS,
-    registerForm,
-    infoShow,
-    deleteItem,
-    itemList,
-    databaseInfo,
-    fetchInfo,
-    itemName,
-}) {
-    const [selectedItem, setSelectedItem] = React.useState();
+export default function ListClients({ isOpen, onOpenChange }) {
+    const [selectedUser, setSelectedUser] = React.useState();
+    const [itemList, setItemList] = React.useState([]);
+
+    const columns = [
+        { name: "ID", uid: "id", sortable: true },
+        { name: "APELLIDO", uid: "apellido", sortable: true },
+        { name: "NOMBRE", uid: "nombre", sortable: true },
+        { name: "EMAIL", uid: "email", sortable: true },
+        { name: "ACCIONES", uid: "actions" },
+    ];
+
+    const INITIAL_VISIBLE_COLUMNS = ["apellido", "nombre", "email", "actions"];
 
     const {
-        isOpen: isOpenCreateItem,
-        onOpen: onOpenCreateItem,
-        onOpenChange: onOpenChangeCreateItem,
+        isOpen: isOpenLeaseForm,
+        onOpen: onOpenLeaseForm,
+        onOpenChange: onOpenChangeLeaseForm,
     } = useDisclosure();
 
-    const {
-        isOpen: isOpenViewItem,
-        onOpen: onOpenViewItem,
-        onOpenChange: onOpenChangeViewItem,
-    } = useDisclosure();
-
-    const {
-        isOpen: isOpenModifyItem,
-        onOpen: onOpenModifyItem,
-        onOpenChange: onOpenChangeModifyItem,
-    } = useDisclosure();
-
-    const {
-        isOpen: isOpenDeleteItem,
-        onOpen: onOpenDeleteItem,
-        onOpenChange: onOpenChangeDeleteItem,
-    } = useDisclosure();
-
-    function onOpenItemDelete(item) {
-        setSelectedItem(item);
-        onOpenDeleteItem();
-    }
-
-    function onOpenItemView(item) {
-        setSelectedItem(item);
-        onOpenViewItem();
-    }
-
-    function onOpenItemModify(item) {
-        setSelectedItem(item);
-        onOpenModifyItem();
+    function onSelectUser(item) {
+        setSelectedUser(item);
+        onOpenLeaseForm();
     }
 
     const [filterValue, setFilterValue] = React.useState("");
@@ -107,10 +74,17 @@ export default function ListItems({
         let filteredItems = [...itemList];
 
         if (hasSearchFilter) {
-            filteredItems = filteredItems.filter((item) =>
-                item[Object.keys(item)[1]]
-                    .toLowerCase()
-                    .includes(filterValue.toLowerCase())
+            filteredItems = filteredItems.filter(
+                (item) =>
+                    item[Object.keys(item)[1]]
+                        .toLowerCase()
+                        .includes(filterValue.toLowerCase()) ||
+                    item[Object.keys(item)[2]]
+                        .toLowerCase()
+                        .includes(filterValue.toLowerCase()) ||
+                    item[Object.keys(item)[6]]
+                        .toLowerCase()
+                        .includes(filterValue.toLowerCase())
             );
         }
 
@@ -140,47 +114,15 @@ export default function ListItems({
         const cellValue = item[columnKey];
 
         switch (columnKey) {
-            case "sucursal":
-                return (
-                    <p>
-                        {databaseInfo?.sucursales[cellValue - 1]?.localidad
-                            .nombre +
-                            ", " +
-                            databaseInfo?.sucursales[cellValue - 1]?.direccion}
-                    </p>
-                );
-            case "marca":
-                return <p>{databaseInfo?.brands[cellValue - 1]?.nombre}</p>;
-            case "categoria":
-                return <p>{databaseInfo?.categorias[cellValue - 1]?.nombre}</p>;
-            case "cancelacion":
-                return (
-                    <p>
-                        {
-                            databaseInfo?.cancelaciones[cellValue - 1]
-                                ?.descripcion
-                        }
-                    </p>
-                );
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
-                        <Tooltip content="Detalles">
-                            <span
-                                className="text-lg text-default-400  active:opacity-50"
-                                onClick={() => onOpenItemView(item)}
-                            >
-                                <EyeIcon />
-                            </span>
-                        </Tooltip>
-                        <Tooltip content={"Editar " + itemName}>
-                            <span
-                                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                                onClick={() => onOpenItemModify(item)}
-                            >
-                                <EditIcon />
-                            </span>
-                        </Tooltip>
+                        <Button
+                            color="primary"
+                            onPress={() => onSelectUser(item)}
+                        >
+                            Seleccionar usuario
+                        </Button>
                     </div>
                 );
             default:
@@ -217,6 +159,17 @@ export default function ListItems({
     const onClear = React.useCallback(() => {
         setFilterValue("");
         setPage(1);
+    }, []);
+
+    useEffect(() => {
+        clientApi
+            .getAllClients()
+            .then((response) => {
+                setItemList(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching clients:", error);
+            });
     }, []);
 
     const topContent = React.useMemo(() => {
@@ -262,18 +215,11 @@ export default function ListItems({
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button
-                            color="primary"
-                            onPress={onOpenCreateItem}
-                            endContent={<PlusIcon />}
-                        >
-                            Crear nuevo
-                        </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total {itemList.length} {itemName}s
+                        Total {itemList.length} clientes
                     </span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
@@ -334,79 +280,58 @@ export default function ListItems({
     }, [itemList.length, page, pages, hasSearchFilter]);
 
     return (
-        <>
-            <CreateItemModal
-                onOpenChange={onOpenChangeCreateItem}
-                isOpen={isOpenCreateItem}
-                updateItemList={fetchInfo}
-                registerForm={registerForm}
-                databaseInfo={databaseInfo}
-            />
-            <ModifyItemModal
-                itemInfo={selectedItem}
-                isOpen={isOpenModifyItem}
-                onOpenChange={onOpenChangeModifyItem}
-                updateItemList={fetchInfo}
-                registerForm={registerForm}
-                databaseInfo={databaseInfo}
-            />
-            <ViewItemModal
-                isOpen={isOpenViewItem}
-                onOpenChange={onOpenChangeViewItem}
-                infoShow={infoShow}
-                itemInfo={selectedItem}
-                databaseInfo={databaseInfo}
-                itemName={itemName}
-            />
-            <DeleteItemModal
-                onOpenChange={onOpenChangeDeleteItem}
-                isOpen={isOpenDeleteItem}
-                itemInfo={selectedItem}
-                updateItemList={fetchInfo}
-                deleteItem={deleteItem}
-            />
-            <Table
-                isHeaderSticky
-                aria-label="Example table with custom cells, pagination and sorting"
-                bottomContent={bottomContent}
-                bottomContentPlacement="outside"
-                classNames={{
-                    wrapper: "max-h-[382px]",
-                }}
-                className="w-[80%]"
-                sortDescriptor={sortDescriptor}
-                topContent={topContent}
-                topContentPlacement="outside"
-                onSortChange={setSortDescriptor}
-            >
-                <TableHeader columns={headerColumns}>
-                    {(column) => (
-                        <TableColumn
-                            key={column.uid}
-                            align={
-                                column.uid === "actions" ? "center" : "start"
-                            }
-                            allowsSorting={column.sortable}
-                        >
-                            {column.name}
-                        </TableColumn>
-                    )}
-                </TableHeader>
-                <TableBody
-                    emptyContent={"No se encontraron " + itemName + "s"}
-                    items={sortedItems}
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
+            <ModalContent className="py-10 items-center">
+                <RegisterLeaseForm
+                    onOpenChange={onOpenChangeLeaseForm}
+                    isOpen={isOpenLeaseForm}
+                    selectedUser={selectedUser}
+                />
+                <Table
+                    isHeaderSticky
+                    aria-label="Example table with custom cells, pagination and sorting"
+                    bottomContent={bottomContent}
+                    bottomContentPlacement="outside"
+                    classNames={{
+                        wrapper: "max-h-[382px]",
+                    }}
+                    className="w-[80%]"
+                    sortDescriptor={sortDescriptor}
+                    topContent={topContent}
+                    topContentPlacement="outside"
+                    onSortChange={setSortDescriptor}
                 >
-                    {(item) => (
-                        <TableRow key={item.id}>
-                            {(columnKey) => (
-                                <TableCell>
-                                    {renderCell(item, columnKey)}
-                                </TableCell>
-                            )}
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
-        </>
+                    <TableHeader columns={headerColumns}>
+                        {(column) => (
+                            <TableColumn
+                                key={column.uid}
+                                align={
+                                    column.uid === "actions"
+                                        ? "center"
+                                        : "start"
+                                }
+                                allowsSorting={column.sortable}
+                            >
+                                {column.name}
+                            </TableColumn>
+                        )}
+                    </TableHeader>
+                    <TableBody
+                        emptyContent={"No se encontraron clientes"}
+                        items={sortedItems}
+                    >
+                        {(item) => (
+                            <TableRow key={item.id}>
+                                {(columnKey) => (
+                                    <TableCell>
+                                        {renderCell(item, columnKey)}
+                                    </TableCell>
+                                )}
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </ModalContent>
+        </Modal>
     );
 }

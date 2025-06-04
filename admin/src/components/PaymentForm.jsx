@@ -1,4 +1,5 @@
 import {
+    addToast,
     Button,
     DateInput,
     Input,
@@ -8,14 +9,23 @@ import {
     ModalFooter,
     ModalHeader,
 } from "@heroui/react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { leasesApi } from "../api/leases.api";
 
 const InputField = ({ children }) => {
     return <fieldset className="flex items-center gap-3">{children}</fieldset>;
 };
 
-export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
+export default function PaymentForm({
+    isOpen,
+    onOpenChange,
+    alquilerData,
+    closeParentModal,
+}) {
     const { register, handleSubmit, control } = useForm();
+    const [vencimiento, setVencimiento] = useState(false);
+    let closeModal;
 
     const onSubmit = (data) => {
         const now = new Date();
@@ -23,16 +33,39 @@ export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
             data.fechaVencimiento.year < now.getFullYear() ||
             data.fechaVencimiento.month < now.getMonth() + 1
         ) {
-            console.log(
-                "La fecha de vencimiento no puede ser anterior al mes actual"
-            );
+            setVencimiento(true);
             return;
         }
+        setVencimiento(false);
         if (data.numeroTarjeta === "2222222222222222") {
-            console.log("Fondos insuficientes");
+            addToast({
+                title: "Error",
+                description: "Fondos insuficientes",
+                color: "danger",
+            });
             return;
         }
-        console.log("Pago realizado con éxito", data);
+        leasesApi
+            .createLease(alquilerData)
+            .then(() => {
+                addToast({
+                    title: "Pago realizado",
+                    description:
+                        "El pago se ha realizado con éxito. Se ha registrado la confirmación del alquiler.",
+                    color: "success",
+                });
+                closeModal();
+                closeParentModal();
+            })
+            .catch((error) => {
+                addToast({
+                    title: "Error",
+                    description:
+                        "Ocurrió un error al procesar el pago. " +
+                        error.message,
+                    color: "danger",
+                });
+            });
     };
 
     const onError = (errors) => {
@@ -44,6 +77,7 @@ export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
             <ModalContent>
                 {(onClose) => (
                     <>
+                        {(closeModal = onClose)}
                         <ModalHeader>
                             <h2
                                 className="text-xl font-semibold"
@@ -98,6 +132,13 @@ export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
                                     )}
                                 />
 
+                                {vencimiento && (
+                                    <span className="text-error text-xs">
+                                        La fecha de vencimiento no puede ser
+                                        anterior al mes actual
+                                    </span>
+                                )}
+
                                 <InputField>
                                     <Input
                                         type="text"
@@ -122,7 +163,7 @@ export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
                             <Button
                                 color="primary"
                                 type="submit"
-                                onPress={handleSubmit(onSubmit)}
+                                onPress={handleSubmit(onSubmit, onError)}
                                 fullWidth
                             >
                                 Pagar ${alquilerData.precio_total}

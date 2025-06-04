@@ -1,153 +1,164 @@
-import { Input, Button, Select, SelectItem, addToast } from '@heroui/react'
-import { useForm } from 'react-hook-form'
-import { InputPassword } from './InputPassword'
-import { employeeApi } from '../api/employee.api'
-import { handleApiError } from '../utils/handleApiError'
+import { Input, Button, Select, SelectItem, addToast } from "@heroui/react";
+import { useForm } from "react-hook-form";
+import { InputPassword } from "./InputPassword";
+import { employeeApi } from "../api/employee.api";
+import { handleApiError } from "../utils/handleApiError";
 
 const InputField = ({ children }) => {
-	return <fieldset className='flex items-center gap-3'>{children}</fieldset>
-}
+    return <fieldset className="flex items-center gap-3">{children}</fieldset>;
+};
 
 export function RegisterEmployeeForm({
-	itemInfo,
-	databaseInfo,
-	updateItemList,
-	onClose,
+    itemInfo,
+    databaseInfo,
+    updateItemList,
+    onClose,
 }) {
-	const { register, handleSubmit, reset } = useForm()
+    const { register, handleSubmit, reset } = useForm();
 
-	const onSubmit = data => {
-		const { password, ...dataWithoutPassword } = data
+    const onSubmit = (data) => {
+        const { password, ...dataWithoutPassword } = data;
 
-		let employeeData = data
+        let employeeData = data;
 
-		itemInfo
-			? employeeApi
-					.update(itemInfo.id, password ? employeeData : dataWithoutPassword)
-					.then(() => {
-						addToast({
-							title: 'Empleado actualizado',
-							description: 'El empleado ha sido actualizado correctamente',
-							color: 'success',
-						})
-						updateItemList()
-					})
-					.catch(err => {
-						addToast({
-							title: 'Error al actualizar los datos del empleado',
-							description: handleApiError(err),
-							variant: 'flat',
-							color: 'danger',
-						})
-						console.error(err)
-					})
-			: employeeApi
-					.register(employeeData)
-					.then(() => {
-						addToast({
-							title: 'Empleado registrado',
-							description: 'El empleado ha sido registrado correctamente',
-							color: 'success',
-						})
-						updateItemList()
-						onClose()
-						reset()
-					})
-					.catch(err => {
-						addToast({
-							title: 'Error al crear la cuenta de empleado',
-							description: handleApiError(err),
-							variant: 'flat',
-							color: 'danger',
-						})
-						console.error(err)
-					})
-	}
+        itemInfo
+            ? employeeApi
+                  .update(
+                      itemInfo.id,
+                      password ? employeeData : dataWithoutPassword
+                  )
+                  .then(() => {
+                      addToast({
+                          title: "Empleado actualizado",
+                          description:
+                              "El empleado ha sido actualizado correctamente",
+                          color: "success",
+                      });
+                      updateItemList();
+                  })
+                  .catch((err) => {
+                      addToast({
+                          title: "Error",
+                          description: handleApiError(err),
+                          color: "danger",
+                      });
+                  })
+            : employeeApi
+                  .register(employeeData)
+                  .then(() => {
+                      addToast({
+                          title: "Empleado registrado",
+                          description:
+                              "El empleado ha sido registrado correctamente",
+                          color: "success",
+                      });
+                      updateItemList();
+                      onClose();
+                      reset();
+                  })
+                  .catch((err) => {
+                      addToast({
+                          title: "Error",
+                          description: handleApiError(err),
+                          color: "danger",
+                      });
+                  });
+    };
 
-	const onError = errors => {
-		console.error(errors)
-	}
+    const onError = (errors) => {
+        console.error(errors);
+    };
 
-	return (
-		<form
-			className='flex flex-col gap-4 p-8 '
-			onSubmit={handleSubmit(onSubmit, onError)}
-		>
-			<div className='text-center mb-4'>
-				<h2 className='text-3xl font-bold text-center'>
-					{itemInfo ? 'Modificar empleado' : 'Registrar empleado'}
-				</h2>
-			</div>
+    const validatePassword = () => {
+        const password = getValues("password");
+        const confirmPassword = getValues("confirmPassword");
 
-			<InputField>
-				<Input
-					type='text'
-					label='Nombre'
-					defaultValue={itemInfo?.nombre}
-					{...register('nombre', { required: true })}
-					isRequired
-				/>
+        const isValid = password === confirmPassword;
+        setMatchPasswords(isValid);
 
-				<Input
-					type='text'
-					label='Apellido'
-					defaultValue={itemInfo?.apellido}
-					{...register('apellido', { required: true })}
-					isRequired
-				/>
-			</InputField>
+        return isValid;
+    };
 
-			<InputField>
-				<Input
-					type='email'
-					label='Correo electrónico'
-					defaultValue={itemInfo?.email}
-					{...register('email', { required: true })}
-					isRequired
-				/>
+    return (
+        <form
+            className="flex flex-col gap-4 p-8 "
+            onSubmit={handleSubmit(onSubmit, onError)}
+        >
+            <div className="text-center mb-4">
+                <h2 className="text-3xl font-bold text-center">
+                    {itemInfo ? "Modificar empleado" : "Registrar empleado"}
+                </h2>
+            </div>
 
-				<Input
-					type='number'
-					label='DNI'
-					defaultValue={itemInfo?.dni}
-					{...register('dni', {
-						required: true,
-						valueAsNumber: true,
-					})}
-					isRequired
-				/>
-			</InputField>
+            <InputField>
+                <Input
+                    type="text"
+                    label="Nombre"
+                    defaultValue={itemInfo?.nombre}
+                    {...register("nombre", { required: true })}
+                    isRequired
+                />
 
-			<InputField>
-				<Select
-					label='Sucursal'
-					defaultSelectedKeys={[itemInfo?.sucursal.toString()]}
-					{...register('sucursal', { required: true })}
-					isRequired
-				>
-					{databaseInfo.sucursales.map(elem => {
-						return (
-							<SelectItem
-								key={elem.id}
-							>{`${elem.localidad.nombre} - ${elem.direccion}`}</SelectItem>
-						)
-					})}
-				</Select>
+                <Input
+                    type="text"
+                    label="Apellido"
+                    defaultValue={itemInfo?.apellido}
+                    {...register("apellido", { required: true })}
+                    isRequired
+                />
+            </InputField>
 
-				<InputPassword
-					label='Contraseña'
-					register={{
-						...register('password', {
-							required: !itemInfo,
-						}),
-					}}
-					hasItemInfo={!!itemInfo}
-				/>
-			</InputField>
+            <InputField>
+                <Input
+                    type="email"
+                    label="Correo electrónico"
+                    defaultValue={itemInfo?.email}
+                    {...register("email", { required: true })}
+                    isRequired
+                />
 
-			<Button type='submit' color='primary' className='text-white'>
-				Confirmar
-			</Button>
-		</form>
-	)
+                <Input
+                    type="number"
+                    label="DNI"
+                    defaultValue={itemInfo?.dni}
+                    {...register("dni", {
+                        required: true,
+                        valueAsNumber: true,
+                    })}
+                    isRequired
+                />
+            </InputField>
+
+            <InputField>
+                <Select
+                    label="Sucursal"
+                    defaultSelectedKeys={[itemInfo?.sucursal.toString()]}
+                    {...register("sucursal", { required: true })}
+                    isRequired
+                >
+                    {databaseInfo.sucursales.map((elem) => {
+                        return (
+                            <SelectItem
+                                key={elem.id}
+                            >{`${elem.localidad.nombre} - ${elem.direccion}`}</SelectItem>
+                        );
+                    })}
+                </Select>
+
+                <InputPassword
+                    label="Contraseña"
+                    register={{
+                        ...register("password", {
+                            required: !itemInfo,
+                        }),
+                    }}
+                    hasItemInfo={!!itemInfo}
+                />
+            </InputField>
+
+            <Button type="submit" color="primary" className="text-white">
+                Confirmar
+            </Button>
+        </form>
+    );
 }

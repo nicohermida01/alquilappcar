@@ -28,6 +28,8 @@ export default function AlquilerForm() {
     const [paquetes, setPaquetes] = useState([]);
     const [isFetching, setIsFetching] = useState(true);
     const { isAuthenticated, user } = useAuth();
+
+    const [alquilerData, setAlquilerData] = useState();
     // En caso de haberse submiteado el formulario de Home, se obtiene la data, Pero si se apretó en el botón de la topbar, no hay data que obtener.
     // Si location.state esta definido lo retorna sino devuelve un objeto vacio, y si no hay un formData dentro del mismo entonces es vacío.
 
@@ -117,7 +119,7 @@ export default function AlquilerForm() {
                 setSucursales(values[0]);
                 setCategorias(values[1]);
                 setPaquetes(values[2]);
-                setValue("sucursal_retiro_id", rentBasic.sucursal || "");
+                setValue("sucursal_retiro_id", rentBasic?.sucursal || "");
                 // console.log(rentBasic.sucursal, 'VALUE DEL RENTBASIC')
                 //console.log(sucursalRetiro, 'VALUE DEL USEFORM')
             })
@@ -141,15 +143,11 @@ export default function AlquilerForm() {
     const onSubmit = async (data) => {
         data["cliente"] = user.clientId;
         setAlquilerData(data);
-        //console.log(data, 'INFO QUE SE ENVIA')
+        console.log(data, "INFO QUE SE ENVIA");
         try {
             // ACA VA LA LOGICA DEL PAGO.
             // CUANDO SEA SUCCESS, SE HACE EL POST.
-            await axios.post(
-                "http://localhost:8000/alquilapp/api/v1/alquileres/",
-                data
-            );
-            alert("Alquiler creado exitosamente");
+            onOpen();
             setRentBasic(null);
         } catch (error) {
             console.error("Error al crear alquiler", error);

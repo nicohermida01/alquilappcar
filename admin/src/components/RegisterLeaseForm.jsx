@@ -22,15 +22,17 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import RequiredIcon from "../components/RequiredIcon";
-import { useAuth } from "../contexts/AuthContext";
 import PaymentForm from "./PaymentForm";
 
-export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
+export default function RegisterLeaseForm({
+    isOpen,
+    onOpenChange,
+    selectedUser,
+}) {
     const [sucursales, setSucursales] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [paquetes, setPaquetes] = useState([]);
     const [isFetching, setIsFetching] = useState(true);
-    const { isAuthenticated, user } = useAuth();
     // En caso de haberse submiteado el formulario de Home, se obtiene la data, Pero si se apretó en el botón de la topbar, no hay data que obtener.
     // Si location.state esta definido lo retorna sino devuelve un objeto vacio, y si no hay un formData dentro del mismo entonces es vacío.
     const location = useLocation();
@@ -42,7 +44,7 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
 
     const {
         isOpen: paymentIsOpen,
-        onOpen: paymenOnOpen,
+        onOpen: paymentOnOpen,
         onOpenChange: paymentOnOpenChange,
     } = useDisclosure();
 
@@ -57,10 +59,10 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
         setValue,
     } = useForm({
         defaultValues: {
-            fecha_entrega: formData.fecha_entrega || "",
+            fecha_inicio: formData.fecha_inicio || "",
             fecha_devolucion: formData.fecha_devolucion || "",
-            sucursal_retiro: "", // LA SUCURSAL SE CARGA MANUALMENTE CON EL FORMDATA UNA VEZ HECHO EL GET DE SUCURSALES.
-            categoria_vehiculo: "",
+            sucursal_retiro_id: "", // LA SUCURSAL SE CARGA MANUALMENTE CON EL FORMDATA UNA VEZ HECHO EL GET DE SUCURSALES.
+            categoria_vehiculo_id: "",
             paquetes: [],
             precio_total: "",
         },
@@ -122,7 +124,7 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
                 setSucursales(sucursalesData);
                 if (formData?.sucursal) {
                     // Espera a que estén cargadas las sucursales y luego setea el valor
-                    setValue("sucursal_retiro", formData?.sucursal);
+                    setValue("sucursal_retiro_id", formData?.sucursal);
                 }
                 setCategorias(categoriasData);
                 setPaquetes(paquetesData);
@@ -139,9 +141,9 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
     // YA SE FETCHEO LO NECESARIO, Y YA SE SETEARON EN REACT-HOOK-FORMS LOS VALORES PREVIOS SI ES QUE LOS HUBO, A PARTIR DE AHORA SE REGISTRAN Y SE MANEJAN
     // CAMPOS DE REACT-HOOK-FORM
     // watch es una funcion de react-hook-form, necesito watchear estos elementos para que cada vez que cambien, se reactualicen precios, etc.
-    const fechaInicio = watch("fecha_entrega");
+    const fechaInicio = watch("fecha_inicio");
     const fechaDevolucion = watch("fecha_devolucion");
-    const categoriaVehiculo = watch("categoria_vehiculo");
+    const categoriaVehiculo = watch("categoria_vehiculo_id");
     const paquetesSeleccionados = watch("paquetes");
 
     const [alquilerData, setAlquilerData] = useState();
@@ -149,7 +151,7 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
     // se submitea.
     const onSubmit = async (data) => {
         const now = new Date();
-        const start = new Date(data.fecha_entrega);
+        const start = new Date(data.fecha_inicio);
         const end = new Date(data.fecha_devolucion);
         if (start && end) {
             if (start < now) {
@@ -166,17 +168,16 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
             }
             const precio = calcularPrecio(
                 diasCalculados,
-                formData.categoria_vehiculo
+                formData.categoria_vehiculo_id
             );
             setPrecioEstimado(precio);
         }
-        data["cliente"] = user.clientId;
+        data["cliente"] = selectedUser.id;
         setAlquilerData(data);
         try {
             // ACA VA LA LOGICA DEL PAGO.
             // CUANDO SEA SUCCESS, SE HACE EL POST.
-            //await axios.post('http://localhost:8000/alquilapp/api/v1/alquileres/', data);
-            paymenOnOpen();
+            paymentOnOpen();
         } catch (error) {
             console.error("Error al crear alquiler", error);
             alert("Error al crear alquiler");
@@ -241,14 +242,16 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl">
-            <PaymentForm
-                isOpen={paymentIsOpen}
-                onOpenChange={paymentOnOpenChange}
-                alquilerData={alquilerData}
-            />
             <ModalContent>
                 {(onClose) => (
                     <>
+                        {" "}
+                        <PaymentForm
+                            isOpen={paymentIsOpen}
+                            onOpenChange={paymentOnOpenChange}
+                            alquilerData={alquilerData}
+                            closeParentModal={onClose}
+                        />
                         <ModalHeader>
                             <h2 className="text-3xl font-bold text-center">
                                 Registrar alquiler
@@ -271,7 +274,7 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
                                                     type="datetime-local"
                                                     min={getNowForInput()}
                                                     {...register(
-                                                        "fecha_entrega",
+                                                        "fecha_inicio",
                                                         {
                                                             required: true,
                                                             validate: (
@@ -292,7 +295,7 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
                                                         }
                                                     )}
                                                 />
-                                                {errors.fecha_entrega && (
+                                                {errors.fecha_inicio && (
                                                     <span className="text-red-500 text-sm">
                                                         Seleccioná una fecha
                                                         inicial.
@@ -353,7 +356,7 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
                                             <Select
                                                 size="sm"
                                                 {...register(
-                                                    "sucursal_retiro",
+                                                    "sucursal_retiro_id",
                                                     {
                                                         required: true,
                                                     }
@@ -388,7 +391,7 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
                                             <Select
                                                 size="sm"
                                                 {...register(
-                                                    "categoria_vehiculo",
+                                                    "categoria_vehiculo_id",
                                                     {
                                                         required: true,
                                                     }
@@ -407,7 +410,7 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
                                                     );
                                                 })}
                                             </Select>
-                                            {errors.categoria_vehiculo && (
+                                            {errors.categoria_vehiculo_id && (
                                                 <span className="text-red-500 text-sm">
                                                     Es necesario que indique una
                                                     categoría preferencial.

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Topbar } from "./Topbar";
 import { Accordion, AccordionItem, Button, useDisclosure } from "@heroui/react";
 import SidebarLink from "./SidebarLink";
-import RegisterLeaseForm from "./RegisterLeaseForm";
+import ListClients from "./ListClients";
 
 export function DashboardLayout() {
     const { isAuthenticated, loadingAuth } = useAuth();
@@ -46,7 +46,7 @@ export function DashboardLayout() {
 
     return (
         <div>
-            <RegisterLeaseForm isOpen={isOpen} onOpenChange={onOpenChange} />
+            <ListClients isOpen={isOpen} onOpenChange={onOpenChange} />
             <Topbar />
             <div className="flex h-[calc(100vh-70px)]">
                 <Sidebar>
