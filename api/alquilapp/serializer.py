@@ -116,6 +116,8 @@ class SucursalSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 class CategoriaVehiculoSerializer(serializers.ModelSerializer):
+    cancelacion = CancelacionSerializer(read_only=True)
+    
     class Meta:
         model = CategoriaVehiculo
         fields = '__all__'
@@ -150,6 +152,7 @@ class AlquilerSerializer(serializers.ModelSerializer):
     # Devuelve los objetos completos
     sucursal_retiro = SucursalSerializer(read_only=True)
     categoria_vehiculo = CategoriaVehiculoSerializer(read_only=True)
+
 
     # Acepta solo IDs para escritura
     sucursal_retiro_id = serializers.PrimaryKeyRelatedField(

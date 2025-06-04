@@ -1,21 +1,28 @@
-import { api } from "./main";
+import { api } from './main'
 
 const getAllClients = () => {
-    return api.get("/clientes");
-};
+	return api.get('/clientes')
+}
 
-const createClient = (clientData) => {
-    const response = api.post("/clientes/", clientData);
-    return response;
-};
+const createClient = clientData => {
+	const response = api.post('/clientes/', clientData)
+	return response
+}
 
 const updateClient = (clientId, clientData) => {
-    const response = api.patch(`/clientes/${clientId}/`, clientData);
-    return response;
-};
+	const response = api.patch(`/clientes/${clientId}/`, clientData)
+	return response
+}
+
+const getAlquileresByUserId = async userId => {
+	const response = await api.get(`alquileres/cliente/${userId}`)
+
+	return response.data
+}
 
 export const clientApi = {
-    getAllClients,
-    createClient,
-    updateClient,
-};
+	getAllClients,
+	createClient,
+	updateClient,
+	getAlquileresByUserId,
+}
