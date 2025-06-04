@@ -34,12 +34,12 @@ function UserEditSettings() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        console.log(newClientInfo);
 
         if (newClientInfo === null) {
             addToast({
                 title: "No se realizaron cambios."
             });
+
             return;
         }
 
@@ -53,12 +53,14 @@ function UserEditSettings() {
             })
         }
         catch (error) {
-            if (error.response.data.email)
+            if (error.response.data.email) {
                 addToast({
                     title: "Error al actualizar el email.",
                     description: "El email especificado ya esta en uso.",
                     color: "danger"
-            });
+                });
+                console.log(error.response);
+            }
         }
     }
 
@@ -75,12 +77,16 @@ function UserEditSettings() {
                 value={clientInfo.nombre}
                 name="nombre"
                 size="lg"
+                isRequired
+                errorMessage="Este campo no puede estar vacio."
             />
             <Input
                 label="Apellido"
                 onChange={handleChange}
                 value={clientInfo.apellido}
                 name="apellido"
+                isRequired
+                errorMessage="Este campo no puede estar vacio."
             />
             </div>
             <div className="w-full flex gap-10 justify-between">
@@ -90,6 +96,8 @@ function UserEditSettings() {
                 value={clientInfo.email}
                 name="email"
                 type="email"
+                isRequired
+                errorMessage="Este campo no puede estar vacio."
             />
             <Input
                 label="Contacto"

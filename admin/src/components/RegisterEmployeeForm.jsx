@@ -1,9 +1,7 @@
 import { Input, Button, Select, SelectItem, addToast } from "@heroui/react";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { InputPassword } from "./InputPassword";
 import { employeeApi } from "../api/employee.api";
-import toast, { Toaster } from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
 
 const InputField = ({ children }) => {
@@ -16,15 +14,12 @@ export function RegisterEmployeeForm({
     updateItemList,
     onClose,
 }) {
-    const [matchPasswords, setMatchPasswords] = useState(true);
-
-    const { register, handleSubmit, reset, getValues } = useForm();
+    const { register, handleSubmit, reset } = useForm();
 
     const onSubmit = (data) => {
-        const { confirmPassword, ...dataWithoutConfirmPassword } = data;
-        const { password, ...dataWithoutPassword } = dataWithoutConfirmPassword;
+        const { password, ...dataWithoutPassword } = data;
 
-        let employeeData = dataWithoutConfirmPassword;
+        let employeeData = data;
 
         itemInfo
             ? employeeApi
@@ -85,89 +80,56 @@ export function RegisterEmployeeForm({
     };
 
     return (
-        <>
-            <form
-                className="flex flex-col gap-4 p-8 "
-                onSubmit={handleSubmit(onSubmit, onError)}
-            >
-                <div className="text-center mb-4">
-                    <h2 className="text-3xl font-bold text-center">
-                        {itemInfo ? "Modificar empleado" : "Registrar empleado"}
-                    </h2>
-                    <span className="text-error">
-                        Solo para administradores
-                    </span>
-                </div>
+        <form
+            className="flex flex-col gap-4 p-8 "
+            onSubmit={handleSubmit(onSubmit, onError)}
+        >
+            <div className="text-center mb-4">
+                <h2 className="text-3xl font-bold text-center">
+                    {itemInfo ? "Modificar empleado" : "Registrar empleado"}
+                </h2>
+            </div>
 
-                <InputField>
-                    <Input
-                        type="text"
-                        label="Nombre"
-                        defaultValue={itemInfo?.nombre}
-                        {...register("nombre", { required: true })}
-                        isRequired
-                    />
+            <InputField>
+                <Input
+                    type="text"
+                    label="Nombre"
+                    defaultValue={itemInfo?.nombre}
+                    {...register("nombre", { required: true })}
+                    isRequired
+                />
 
-                    <Input
-                        type="text"
-                        label="Apellido"
-                        defaultValue={itemInfo?.apellido}
-                        {...register("apellido", { required: true })}
-                        isRequired
-                    />
-                </InputField>
+                <Input
+                    type="text"
+                    label="Apellido"
+                    defaultValue={itemInfo?.apellido}
+                    {...register("apellido", { required: true })}
+                    isRequired
+                />
+            </InputField>
 
-                <InputField>
-                    <Input
-                        type="email"
-                        label="Correo electrónico"
-                        defaultValue={itemInfo?.email}
-                        {...register("email", { required: true })}
-                        isRequired
-                    />
+            <InputField>
+                <Input
+                    type="email"
+                    label="Correo electrónico"
+                    defaultValue={itemInfo?.email}
+                    {...register("email", { required: true })}
+                    isRequired
+                />
 
-                    <Input
-                        type="number"
-                        label="DNI"
-                        defaultValue={itemInfo?.dni}
-                        {...register("dni", {
-                            required: true,
-                            valueAsNumber: true,
-                        })}
-                        isRequired
-                    />
-                </InputField>
+                <Input
+                    type="number"
+                    label="DNI"
+                    defaultValue={itemInfo?.dni}
+                    {...register("dni", {
+                        required: true,
+                        valueAsNumber: true,
+                    })}
+                    isRequired
+                />
+            </InputField>
 
-                <InputField>
-                    <InputPassword
-                        label="Contraseña"
-                        register={{
-                            ...register("password", {
-                                required: !itemInfo,
-                                validate: validatePassword,
-                            }),
-                        }}
-                        hasItemInfo={!!itemInfo}
-                    />
-
-                    <InputPassword
-                        label="Confirmar contraseña"
-                        register={{
-                            ...register("confirmPassword", {
-                                required: !itemInfo,
-                                validate: validatePassword,
-                            }),
-                        }}
-                        hasItemInfo={!!itemInfo}
-                    />
-                </InputField>
-
-                {!matchPasswords && (
-                    <span className="text-error text-xs">
-                        Las contraseñas no coinciden
-                    </span>
-                )}
-
+            <InputField>
                 <Select
                     label="Sucursal"
                     defaultSelectedKeys={[itemInfo?.sucursal.toString()]}
@@ -183,11 +145,20 @@ export function RegisterEmployeeForm({
                     })}
                 </Select>
 
-                <Button type="submit" color="primary" className="text-white">
-                    Confirmar
-                </Button>
-            </form>
-            <Toaster />
-        </>
+                <InputPassword
+                    label="Contraseña"
+                    register={{
+                        ...register("password", {
+                            required: !itemInfo,
+                        }),
+                    }}
+                    hasItemInfo={!!itemInfo}
+                />
+            </InputField>
+
+            <Button type="submit" color="primary" className="text-white">
+                Confirmar
+            </Button>
+        </form>
     );
 }
