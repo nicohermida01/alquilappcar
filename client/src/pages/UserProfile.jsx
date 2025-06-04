@@ -6,8 +6,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from "../contexts/AuthContext"
 import UserEditSettings from "../components/UserEditSettings"
-import {HeroUIProvider} from '@heroui/react'
-import {ToastProvider} from "@heroui/toast";
 
 function UserProfile() {
     const { isAuthenticated, loadingAuth } = useAuth();
