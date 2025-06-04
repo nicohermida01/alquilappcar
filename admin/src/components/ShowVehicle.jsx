@@ -25,7 +25,12 @@ export default function ShowVehicle({ itemInfo, databaseInfo }) {
             </section>
             <section className="flex gap-2">
                 <p className="font-bold">Sucursal: </p>
-                <p>{databaseInfo.sucursales[itemInfo.localidad - 1].nombre}</p>
+                <p>
+                    {databaseInfo.sucursales[itemInfo.sucursal - 1]?.direccion +
+                        ", " +
+                        databaseInfo.sucursales[itemInfo.sucursal - 1]
+                            ?.localidad.nombre}
+                </p>
             </section>
             <section className="flex gap-2">
                 <p className="font-bold">Aptitud para discapacitados: </p>

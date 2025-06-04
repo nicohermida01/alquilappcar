@@ -2,14 +2,15 @@ import { Input, Button, Select, SelectItem, addToast } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { InputPassword } from "./InputPassword";
-import { employeeApi } from "../api/employee.api";
 import toast, { Toaster } from "react-hot-toast";
+import { format } from "date-fns";
+import { clientApi } from "../api/client.api";
 
 const InputField = ({ children }) => {
     return <fieldset className="flex items-center gap-3">{children}</fieldset>;
 };
 
-export function RegisterEmployeeForm({
+export function RegisterClientForm({
     itemInfo,
     databaseInfo,
     updateItemList,
@@ -21,38 +22,38 @@ export function RegisterEmployeeForm({
 
     const onSubmit = (data) => {
         const { confirmPassword, ...dataWithoutConfirmPassword } = data;
-        const { password, ...dataWithoutPassword } = dataWithoutConfirmPassword;
+        let clientData = dataWithoutConfirmPassword;
 
-        let employeeData = dataWithoutConfirmPassword;
+        clientData.fecha_de_nacimiento = format(
+            clientData.fecha_de_nacimiento,
+            "yyyy-MM-dd"
+        );
 
         itemInfo
-            ? employeeApi
-                  .update(
-                      itemInfo.id,
-                      password ? employeeData : dataWithoutPassword
-                  )
+            ? clientApi
+                  .updateClient(itemInfo.id, clientData)
                   .then(() => {
                       addToast({
-                          title: "Empleado actualizado",
+                          title: "Cliente actualizado",
                           description:
-                              "El empleado ha sido actualizado correctamente",
+                              "El cliente ha sido actualizado correctamente",
                           color: "success",
                       });
                       updateItemList();
                   })
                   .catch((err) => {
                       toast.error(
-                          "Parece que hubo un error al actualizar el empleado"
+                          "Parece que hubo un error al actualizar el cliente"
                       );
                       console.error(err);
                   })
-            : employeeApi
-                  .register(employeeData)
+            : clientApi
+                  .createClient(clientData)
                   .then(() => {
                       addToast({
-                          title: "Empleado registrado",
+                          title: "Cliente registrado",
                           description:
-                              "El empleado ha sido registrado correctamente",
+                              "El cliente ha sido registrado correctamente",
                           color: "success",
                       });
                       updateItemList();
@@ -61,7 +62,7 @@ export function RegisterEmployeeForm({
                   })
                   .catch((err) => {
                       toast.error(
-                          "Parece que hubo un error al registrar el empleado"
+                          "Parece que hubo un error al registrar el cliente"
                       );
                       console.error(err);
                   });
@@ -89,11 +90,8 @@ export function RegisterEmployeeForm({
             >
                 <div className="text-center mb-4">
                     <h2 className="text-3xl font-bold text-center">
-                        {itemInfo ? "Modificar empleado" : "Registrar empleado"}
+                        {itemInfo ? "Modificar cliente" : "Registrar cliente"}
                     </h2>
-                    <span className="text-error">
-                        Solo para administradores
-                    </span>
                 </div>
 
                 <InputField>
@@ -135,50 +133,53 @@ export function RegisterEmployeeForm({
                     />
                 </InputField>
 
-                <InputField>
-                    <InputPassword
-                        label="Contraseña"
-                        register={{
-                            ...register("password", {
-                                required: !itemInfo,
-                                validate: validatePassword,
-                            }),
-                        }}
-                        hasItemInfo={!!itemInfo}
-                    />
+                <Input
+                    type="text"
+                    label="Contacto"
+                    defaultValue={itemInfo?.contacto}
+                    {...register("contacto", {})}
+                />
 
-                    <InputPassword
-                        label="Confirmar contraseña"
-                        register={{
-                            ...register("confirmPassword", {
-                                required: !itemInfo,
-                                validate: validatePassword,
-                            }),
-                        }}
-                        hasItemInfo={!!itemInfo}
-                    />
-                </InputField>
+                <Input
+                    type="date"
+                    label="Fecha de nacimiento"
+                    defaultValue={itemInfo?.fecha_de_nacimiento}
+                    {...register("fecha_de_nacimiento", {
+                        valueAsDate: true,
+                        required: true,
+                    })}
+                    isRequired
+                />
+
+                {!itemInfo && (
+                    <InputField>
+                        <InputPassword
+                            label="Contraseña"
+                            register={{
+                                ...register("password", {
+                                    required: true,
+                                    validate: validatePassword,
+                                }),
+                            }}
+                        />
+
+                        <InputPassword
+                            label="Confirmar contraseña"
+                            register={{
+                                ...register("confirmPassword", {
+                                    required: true,
+                                    validate: validatePassword,
+                                }),
+                            }}
+                        />
+                    </InputField>
+                )}
 
                 {!matchPasswords && (
                     <span className="text-error text-xs">
                         Las contraseñas no coinciden
                     </span>
                 )}
-
-                <Select
-                    label="Sucursal"
-                    defaultSelectedKeys={[itemInfo?.sucursal.toString()]}
-                    {...register("sucursal", { required: true })}
-                    isRequired
-                >
-                    {databaseInfo.sucursales.map((elem) => {
-                        return (
-                            <SelectItem
-                                key={elem.id}
-                            >{`${elem.localidad.nombre} - ${elem.direccion}`}</SelectItem>
-                        );
-                    })}
-                </Select>
 
                 <Button type="submit" color="primary" className="text-white">
                     Confirmar

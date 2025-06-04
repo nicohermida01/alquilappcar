@@ -140,6 +140,28 @@ export default function ListItems({
         const cellValue = item[columnKey];
 
         switch (columnKey) {
+            case "sucursal":
+                return (
+                    <p>
+                        {databaseInfo?.sucursales[cellValue - 1]?.localidad
+                            .nombre +
+                            ", " +
+                            databaseInfo?.sucursales[cellValue - 1]?.direccion}
+                    </p>
+                );
+            case "marca":
+                return <p>{databaseInfo?.brands[cellValue - 1]?.nombre}</p>;
+            case "categoria":
+                return <p>{databaseInfo?.categorias[cellValue - 1]?.nombre}</p>;
+            case "cancelacion":
+                return (
+                    <p>
+                        {
+                            databaseInfo?.cancelaciones[cellValue - 1]
+                                ?.descripcion
+                        }
+                    </p>
+                );
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
@@ -157,17 +179,6 @@ export default function ListItems({
                                 onClick={() => onOpenItemModify(item)}
                             >
                                 <EditIcon />
-                            </span>
-                        </Tooltip>
-                        <Tooltip
-                            color="danger"
-                            content={"Eliminar " + itemName}
-                        >
-                            <span
-                                className="text-lg text-danger cursor-pointer active:opacity-50"
-                                onClick={() => onOpenItemDelete(item)}
-                            >
-                                <DeleteIcon />
                             </span>
                         </Tooltip>
                     </div>
