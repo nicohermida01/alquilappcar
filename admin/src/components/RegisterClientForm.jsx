@@ -151,27 +151,29 @@ export function RegisterClientForm({
                     isRequired
                 />
 
-                <InputField>
-                    <InputPassword
-                        label="Contraseña"
-                        register={{
-                            ...register("password", {
-                                required: true,
-                                validate: validatePassword,
-                            }),
-                        }}
-                    />
+                {!itemInfo && (
+                    <InputField>
+                        <InputPassword
+                            label="Contraseña"
+                            register={{
+                                ...register("password", {
+                                    required: true,
+                                    validate: validatePassword,
+                                }),
+                            }}
+                        />
 
-                    <InputPassword
-                        label="Confirmar contraseña"
-                        register={{
-                            ...register("confirmPassword", {
-                                required: true,
-                                validate: validatePassword,
-                            }),
-                        }}
-                    />
-                </InputField>
+                        <InputPassword
+                            label="Confirmar contraseña"
+                            register={{
+                                ...register("confirmPassword", {
+                                    required: true,
+                                    validate: validatePassword,
+                                }),
+                            }}
+                        />
+                    </InputField>
+                )}
 
                 {!matchPasswords && (
                     <span className="text-error text-xs">

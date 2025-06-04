@@ -101,9 +101,11 @@ export function DashboardLayout() {
                                 </div>
                             </AccordionItem>
                         </Accordion>
-                        <Button color="primary" onPress={onOpen}>
-                            Registrar alquiler
-                        </Button>
+                        <div className="flex p-4">
+                            <Button color="primary" onPress={onOpen} fullWidth>
+                                Registrar alquiler
+                            </Button>
+                        </div>
                     </Menu>
                 </Sidebar>
                 <Outlet />

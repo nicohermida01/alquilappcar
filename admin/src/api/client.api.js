@@ -10,7 +10,7 @@ const createClient = (clientData) => {
 };
 
 const updateClient = (clientId, clientData) => {
-    const response = api.put(`/clientes/${clientId}/`, clientData);
+    const response = api.patch(`/clientes/${clientId}/`, clientData);
     return response;
 };
 

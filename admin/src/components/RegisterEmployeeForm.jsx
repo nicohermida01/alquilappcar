@@ -21,11 +21,16 @@ export function RegisterEmployeeForm({
 
     const onSubmit = (data) => {
         const { confirmPassword, ...dataWithoutConfirmPassword } = data;
+        const { password, ...dataWithoutPassword } = dataWithoutConfirmPassword;
+
         let employeeData = dataWithoutConfirmPassword;
 
         itemInfo
             ? employeeApi
-                  .update(itemInfo.id, employeeData)
+                  .update(
+                      itemInfo.id,
+                      password ? employeeData : dataWithoutPassword
+                  )
                   .then(() => {
                       addToast({
                           title: "Empleado actualizado",
@@ -135,20 +140,22 @@ export function RegisterEmployeeForm({
                         label="Contraseña"
                         register={{
                             ...register("password", {
-                                required: true,
+                                required: !itemInfo,
                                 validate: validatePassword,
                             }),
                         }}
+                        hasItemInfo={!!itemInfo}
                     />
 
                     <InputPassword
                         label="Confirmar contraseña"
                         register={{
                             ...register("confirmPassword", {
-                                required: true,
+                                required: !itemInfo,
                                 validate: validatePassword,
                             }),
                         }}
+                        hasItemInfo={!!itemInfo}
                     />
                 </InputField>
 

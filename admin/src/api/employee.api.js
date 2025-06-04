@@ -6,7 +6,7 @@ const register = async (employeeData) => {
 };
 
 const update = async (id, employeeData) => {
-    const response = await api.put(`empleados/${id}/`, employeeData);
+    const response = await api.patch(`empleados/${id}/`, employeeData);
     return response.data;
 };
 

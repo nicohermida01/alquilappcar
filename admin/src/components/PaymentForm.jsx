@@ -1,21 +1,38 @@
 import {
+    Button,
+    DateInput,
     Input,
     Modal,
     ModalBody,
     ModalContent,
+    ModalFooter,
     ModalHeader,
 } from "@heroui/react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 const InputField = ({ children }) => {
     return <fieldset className="flex items-center gap-3">{children}</fieldset>;
 };
 
 export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
-    const { register, handleSubmit, reset } = useForm();
+    const { register, handleSubmit, control } = useForm();
 
     const onSubmit = (data) => {
-        console.log(data);
+        const now = new Date();
+        if (
+            data.fechaVencimiento.year < now.getFullYear() ||
+            data.fechaVencimiento.month < now.getMonth() + 1
+        ) {
+            console.log(
+                "La fecha de vencimiento no puede ser anterior al mes actual"
+            );
+            return;
+        }
+        if (data.numeroTarjeta === "2222222222222222") {
+            console.log("Fondos insuficientes");
+            return;
+        }
+        console.log("Pago realizado con éxito", data);
     };
 
     const onError = (errors) => {
@@ -68,8 +85,49 @@ export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
                                         isRequired
                                     />
                                 </InputField>
+
+                                <Controller
+                                    name="fechaVencimiento"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <DateInput
+                                            {...field}
+                                            label="Fecha de vencimiento"
+                                            granularity="month"
+                                        />
+                                    )}
+                                />
+
+                                <InputField>
+                                    <Input
+                                        type="text"
+                                        label="Dirección"
+                                        {...register("direccion", {
+                                            required: true,
+                                        })}
+                                        isRequired
+                                    />
+                                    <Input
+                                        type="text"
+                                        label="Código postal"
+                                        {...register("codigoPostal", {
+                                            required: true,
+                                        })}
+                                        isRequired
+                                    />
+                                </InputField>
                             </form>
                         </ModalBody>
+                        <ModalFooter>
+                            <Button
+                                color="primary"
+                                type="submit"
+                                onPress={handleSubmit(onSubmit)}
+                                fullWidth
+                            >
+                                Pagar ${alquilerData.precio_total}
+                            </Button>
+                        </ModalFooter>
                     </>
                 )}
             </ModalContent>

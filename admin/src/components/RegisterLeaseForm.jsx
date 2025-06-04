@@ -247,239 +247,274 @@ export default function RegisterLeaseForm({ isOpen, onOpenChange }) {
                 alquilerData={alquilerData}
             />
             <ModalContent>
-                <ModalHeader>
-                    <h2 className="text-3xl font-bold text-center">
-                        Registrar alquiler
-                    </h2>
-                </ModalHeader>
-                <ModalBody>
-                    <Card className="bg-transparent shadow-none">
-                        <CardBody>
-                            <form
-                                onSubmit={handleSubmit(onSubmit)}
-                                className="space-y-4"
-                            >
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium mb-1">
-                                            Fecha Inicio
-                                            <RequiredIcon />
-                                        </label>
-                                        <Input
-                                            type="datetime-local"
-                                            min={getNowForInput()}
-                                            {...register("fecha_entrega", {
-                                                required: true,
-                                                validate: (value) => {
-                                                    const now = new Date();
-                                                    const selected = new Date(
-                                                        value
-                                                    );
-                                                    return (
-                                                        selected >= now ||
-                                                        "La fecha de entrega no puede ser anterior a hoy"
-                                                    );
-                                                },
-                                            })}
-                                        />
-                                        {errors.fecha_entrega && (
-                                            <span className="text-red-500 text-sm">
-                                                Seleccioná una fecha inicial.
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium mb-1">
-                                            Fecha Devolución
-                                            <RequiredIcon />
-                                        </label>
-                                        <Input
-                                            type="datetime-local"
-                                            min={fechaInicio}
-                                            disabled={!fechaInicio}
-                                            className={
-                                                !fechaInicio
-                                                    ? "opacity-50 cursor-not-allowed"
-                                                    : ""
-                                            }
-                                            {...register("fecha_devolucion", {
-                                                required: true,
-                                                validate: (value) => {
-                                                    const start = new Date(
-                                                        fechaInicio
-                                                    );
-                                                    const end = new Date(value);
-                                                    return (
-                                                        end > start ||
-                                                        "La devolución debe ser posterior a la entrega"
-                                                    );
-                                                },
-                                            })}
-                                        />
-                                        {errors.fecha_devolucion && (
-                                            <span className="text-red-500 text-sm">
-                                                Seleccioná una fecha de
-                                                devolución válida.
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Sucursal de Retiro
-                                        <RequiredIcon />
-                                    </label>
-                                    <Select
-                                        size="sm"
-                                        {...register("sucursal_retiro", {
-                                            required: true,
-                                        })}
-                                        aria-label="Seleccionar sucursal"
-                                        label="Seleccione una sucursal"
+                {(onClose) => (
+                    <>
+                        <ModalHeader>
+                            <h2 className="text-3xl font-bold text-center">
+                                Registrar alquiler
+                            </h2>
+                        </ModalHeader>
+                        <ModalBody>
+                            <Card className="bg-transparent shadow-none">
+                                <CardBody>
+                                    <form
+                                        onSubmit={handleSubmit(onSubmit)}
+                                        className="space-y-4"
                                     >
-                                        {sucursales.map((s) => {
-                                            const value = `${s.direccion}, ${s.localidad.nombre}`;
-                                            return (
-                                                <SelectItem
-                                                    key={s.id}
-                                                    value={s.id}
-                                                >
-                                                    {value}
-                                                </SelectItem>
-                                            );
-                                        })}
-                                    </Select>
-                                    {errors.sucursal && (
-                                        <span className="text-red-500 text-sm">
-                                            Es necesario que indique una
-                                            sucursal de retiro.
-                                        </span>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Categoría de Vehículo
-                                        <RequiredIcon />
-                                    </label>
-                                    <Select
-                                        size="sm"
-                                        {...register("categoria_vehiculo", {
-                                            required: true,
-                                        })}
-                                        aria-label="Seleccionar categoría"
-                                        label="Seleccione una categoría preferencial"
-                                    >
-                                        {categorias.map((c) => {
-                                            return (
-                                                <SelectItem
-                                                    key={c.id}
-                                                    value={Number(c.id)}
-                                                >
-                                                    {c.nombre}
-                                                </SelectItem>
-                                            );
-                                        })}
-                                    </Select>
-                                    {errors.categoria_vehiculo && (
-                                        <span className="text-red-500 text-sm">
-                                            Es necesario que indique una
-                                            categoría preferencial.
-                                        </span>
-                                    )}
-                                </div>
-                                <div>
-                                    <div className="flex flex-col gap-3">
-                                        <Controller
-                                            control={control}
-                                            name="paquetes"
-                                            defaultValue={[]} // array de IDs seleccionados
-                                            render={({ field }) => (
-                                                <div>
-                                                    <label className="block text-sm font-medium mb-2">
-                                                        Paquetes opcionales
-                                                    </label>
-                                                    <CheckboxGroup
-                                                        color="secondary"
-                                                        value={field.value}
-                                                        onValueChange={
-                                                            field.onChange
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium mb-1">
+                                                    Fecha Inicio
+                                                    <RequiredIcon />
+                                                </label>
+                                                <Input
+                                                    type="datetime-local"
+                                                    min={getNowForInput()}
+                                                    {...register(
+                                                        "fecha_entrega",
+                                                        {
+                                                            required: true,
+                                                            validate: (
+                                                                value
+                                                            ) => {
+                                                                const now =
+                                                                    new Date();
+                                                                const selected =
+                                                                    new Date(
+                                                                        value
+                                                                    );
+                                                                return (
+                                                                    selected >=
+                                                                        now ||
+                                                                    "La fecha de entrega no puede ser anterior a hoy"
+                                                                );
+                                                            },
                                                         }
-                                                        className="space-y-2"
-                                                    >
-                                                        {paquetes.map(
-                                                            (paquete) => (
-                                                                <Checkbox
-                                                                    size="sm"
-                                                                    key={
-                                                                        paquete.id
-                                                                    }
-                                                                    value={
-                                                                        paquete.id
-                                                                    }
-                                                                    classNames={{
-                                                                        base: cn(
-                                                                            "font-semibold"
-                                                                        ),
-                                                                        label: "w-full",
-                                                                    }}
-                                                                >
-                                                                    {
-                                                                        paquete.nombre
-                                                                    }
-                                                                    ($
-                                                                    {
-                                                                        paquete.costo
-                                                                    }
-                                                                    )
-                                                                    <p className="text-sm font-normal text-gray-800 pl-5">
-                                                                        {
-                                                                            paquete.descripcion
-                                                                        }
-                                                                    </p>
-                                                                </Checkbox>
-                                                            )
-                                                        )}
-                                                    </CheckboxGroup>
-                                                </div>
+                                                    )}
+                                                />
+                                                {errors.fecha_entrega && (
+                                                    <span className="text-red-500 text-sm">
+                                                        Seleccioná una fecha
+                                                        inicial.
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium mb-1">
+                                                    Fecha Devolución
+                                                    <RequiredIcon />
+                                                </label>
+                                                <Input
+                                                    type="datetime-local"
+                                                    min={fechaInicio}
+                                                    disabled={!fechaInicio}
+                                                    className={
+                                                        !fechaInicio
+                                                            ? "opacity-50 cursor-not-allowed"
+                                                            : ""
+                                                    }
+                                                    {...register(
+                                                        "fecha_devolucion",
+                                                        {
+                                                            required: true,
+                                                            validate: (
+                                                                value
+                                                            ) => {
+                                                                const start =
+                                                                    new Date(
+                                                                        fechaInicio
+                                                                    );
+                                                                const end =
+                                                                    new Date(
+                                                                        value
+                                                                    );
+                                                                return (
+                                                                    end >
+                                                                        start ||
+                                                                    "La devolución debe ser posterior a la entrega"
+                                                                );
+                                                            },
+                                                        }
+                                                    )}
+                                                />
+                                                {errors.fecha_devolucion && (
+                                                    <span className="text-red-500 text-sm">
+                                                        Seleccioná una fecha de
+                                                        devolución válida.
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium mb-1">
+                                                Sucursal de Retiro
+                                                <RequiredIcon />
+                                            </label>
+                                            <Select
+                                                size="sm"
+                                                {...register(
+                                                    "sucursal_retiro",
+                                                    {
+                                                        required: true,
+                                                    }
+                                                )}
+                                                aria-label="Seleccionar sucursal"
+                                                label="Seleccione una sucursal"
+                                            >
+                                                {sucursales.map((s) => {
+                                                    const value = `${s.direccion}, ${s.localidad.nombre}`;
+                                                    return (
+                                                        <SelectItem
+                                                            key={s.id}
+                                                            value={s.id}
+                                                        >
+                                                            {value}
+                                                        </SelectItem>
+                                                    );
+                                                })}
+                                            </Select>
+                                            {errors.sucursal && (
+                                                <span className="text-red-500 text-sm">
+                                                    Es necesario que indique una
+                                                    sucursal de retiro.
+                                                </span>
                                             )}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="flex gap-2 justify-content-between">
-                                    <div className="w-full">
-                                        <label className="block text-sm font-medium mb-1">
-                                            Cantidad de días
-                                        </label>
-                                        <p className="text-lg font-semibold">
-                                            {diasCalculados
-                                                ? diasCalculados
-                                                : "-"}
-                                        </p>
-                                    </div>
-                                    <div className="w-full">
-                                        <label className="block text-sm font-medium mb-1">
-                                            Precio estimado
-                                        </label>
-                                        <p className="text-lg font-semibold">
-                                            {precioEstimado
-                                                ? `$${precioEstimado}`
-                                                : "-"}
-                                        </p>
-                                    </div>
-                                </div>
-                            </form>
-                        </CardBody>
-                    </Card>
-                </ModalBody>
-                <ModalFooter>
-                    <Button
-                        className="text-white w-full"
-                        color="secondary"
-                        type="submit"
-                    >
-                        Proceder al pago
-                    </Button>
-                </ModalFooter>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium mb-1">
+                                                Categoría de Vehículo
+                                                <RequiredIcon />
+                                            </label>
+                                            <Select
+                                                size="sm"
+                                                {...register(
+                                                    "categoria_vehiculo",
+                                                    {
+                                                        required: true,
+                                                    }
+                                                )}
+                                                aria-label="Seleccionar categoría"
+                                                label="Seleccione una categoría preferencial"
+                                            >
+                                                {categorias.map((c) => {
+                                                    return (
+                                                        <SelectItem
+                                                            key={c.id}
+                                                            value={Number(c.id)}
+                                                        >
+                                                            {c.nombre}
+                                                        </SelectItem>
+                                                    );
+                                                })}
+                                            </Select>
+                                            {errors.categoria_vehiculo && (
+                                                <span className="text-red-500 text-sm">
+                                                    Es necesario que indique una
+                                                    categoría preferencial.
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <div className="flex flex-col gap-3">
+                                                <Controller
+                                                    control={control}
+                                                    name="paquetes"
+                                                    defaultValue={[]} // array de IDs seleccionados
+                                                    render={({ field }) => (
+                                                        <div>
+                                                            <label className="block text-sm font-medium mb-2">
+                                                                Paquetes
+                                                                opcionales
+                                                            </label>
+                                                            <CheckboxGroup
+                                                                color="secondary"
+                                                                value={
+                                                                    field.value
+                                                                }
+                                                                onValueChange={
+                                                                    field.onChange
+                                                                }
+                                                                className="space-y-2"
+                                                            >
+                                                                {paquetes.map(
+                                                                    (
+                                                                        paquete
+                                                                    ) => (
+                                                                        <Checkbox
+                                                                            size="sm"
+                                                                            key={
+                                                                                paquete.id
+                                                                            }
+                                                                            value={
+                                                                                paquete.id
+                                                                            }
+                                                                            classNames={{
+                                                                                base: cn(
+                                                                                    "font-semibold"
+                                                                                ),
+                                                                                label: "w-full",
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                paquete.nombre
+                                                                            }
+                                                                            ($
+                                                                            {
+                                                                                paquete.costo
+                                                                            }
+                                                                            )
+                                                                            <p className="text-sm font-normal text-gray-800 pl-5">
+                                                                                {
+                                                                                    paquete.descripcion
+                                                                                }
+                                                                            </p>
+                                                                        </Checkbox>
+                                                                    )
+                                                                )}
+                                                            </CheckboxGroup>
+                                                        </div>
+                                                    )}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-2 justify-content-between">
+                                            <div className="w-full">
+                                                <label className="block text-sm font-medium mb-1">
+                                                    Cantidad de días
+                                                </label>
+                                                <p className="text-lg font-semibold">
+                                                    {diasCalculados
+                                                        ? diasCalculados
+                                                        : "-"}
+                                                </p>
+                                            </div>
+                                            <div className="w-full">
+                                                <label className="block text-sm font-medium mb-1">
+                                                    Precio estimado
+                                                </label>
+                                                <p className="text-lg font-semibold">
+                                                    {precioEstimado
+                                                        ? `$${precioEstimado}`
+                                                        : "-"}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </CardBody>
+                            </Card>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button
+                                className="text-white w-full"
+                                color="secondary"
+                                type="submit"
+                                onPress={handleSubmit(onSubmit)}
+                            >
+                                Proceder al pago
+                            </Button>
+                        </ModalFooter>
+                    </>
+                )}
             </ModalContent>
         </Modal>
     );
