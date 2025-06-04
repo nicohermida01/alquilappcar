@@ -58,9 +58,6 @@ class Vehiculo(models.Model):
     marca = models.ForeignKey('Marca', on_delete=models.CASCADE)
     sucursal = models.ForeignKey('Sucursal', on_delete=models.CASCADE, null=True, blank=True)
 
-    #FK a tabla de cancelacion, notar que puse default=1 para que no rompa la base de datos
-    cancelacion = models.ForeignKey('Cancelacion', on_delete=models.CASCADE, default=1) 
-
     categoria = models.ForeignKey('CategoriaVehiculo', on_delete=models.CASCADE, default=0)
 
     def __str__(self):
@@ -134,6 +131,9 @@ class CategoriaVehiculo(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=32)
     precio = models.DecimalField(max_digits=7, decimal_places=2)
+
+    #FK a tabla de cancelacion, notar que puse default=1 para que no rompa la base de datos
+    cancelacion = models.ForeignKey('Cancelacion', on_delete=models.CASCADE, default=1) 
 
     def __str__(self):
         return f"{self.nombre}"
