@@ -8,6 +8,7 @@ import {
 } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { vehiclesApi } from "../api/vehicles.api";
+import { handleApiError } from "../utils/handleApiError";
 
 const InputField = ({ children }) => {
     return <fieldset className="flex items-center gap-3">{children}</fieldset>;
@@ -40,13 +41,11 @@ function RegisterVehicleForm({
                   .catch((error) => {
                       addToast({
                           title: "Error",
-                          description:
-                              "No se ha podido actualizar el vehículo. " +
-                              error,
+                          description: handleApiError(error),
                           color: "danger",
                       });
                   })
-            : (vehiclesApi
+            : vehiclesApi
                   .createVehicle(data)
                   .then(() => {
                       addToast({
@@ -56,17 +55,16 @@ function RegisterVehicleForm({
                           color: "success",
                       });
                       updateItemList();
+                      reset();
                       onClose();
                   })
                   .catch((error) => {
                       addToast({
                           title: "Error",
-                          description:
-                              "No se ha podido crear el vehículo. " + error,
+                          description: handleApiError(error),
                           color: "danger",
                       });
-                  }),
-              reset());
+                  });
     };
 
     const onError = (errors) => {

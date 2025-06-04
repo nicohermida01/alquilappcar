@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { InputPassword } from "./InputPassword";
 import { employeeApi } from "../api/employee.api";
 import toast, { Toaster } from "react-hot-toast";
+import { handleApiError } from "../utils/handleApiError";
 
 const InputField = ({ children }) => {
     return <fieldset className="flex items-center gap-3">{children}</fieldset>;
@@ -41,10 +42,11 @@ export function RegisterEmployeeForm({
                       updateItemList();
                   })
                   .catch((err) => {
-                      toast.error(
-                          "Parece que hubo un error al actualizar el empleado"
-                      );
-                      console.error(err);
+                      addToast({
+                          title: "Error",
+                          description: handleApiError(err),
+                          color: "danger",
+                      });
                   })
             : employeeApi
                   .register(employeeData)
@@ -60,10 +62,11 @@ export function RegisterEmployeeForm({
                       reset();
                   })
                   .catch((err) => {
-                      toast.error(
-                          "Parece que hubo un error al registrar el empleado"
-                      );
-                      console.error(err);
+                      addToast({
+                          title: "Error",
+                          description: handleApiError(err),
+                          color: "danger",
+                      });
                   });
     };
 
