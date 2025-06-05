@@ -61,18 +61,12 @@ export function DashboardLayout() {
                                     <SidebarLink to="/vehiculos">
                                         Vehículos
                                     </SidebarLink>
-                                    <SidebarLink to="/paquetes">
-                                        Paquetes
-                                    </SidebarLink>
-                                    <SidebarLink to="/marcas">
-                                        Marcas
-                                    </SidebarLink>
-                                    <SidebarLink to="/categorias">
-                                        Categorías
-                                    </SidebarLink>
-                                    <SidebarLink to="/cancelaciones">
-                                        Cancelaciones
-                                    </SidebarLink>
+                                    {/*
+                                    <SidebarLink>Paquetes</SidebarLink>
+                                    <SidebarLink>Marcas</SidebarLink>
+                                    <SidebarLink>Categorías</SidebarLink>
+                                    <SidebarLink>Cancelaciones</SidebarLink>
+                                    */}
                                 </div>
                             </AccordionItem>
                             <AccordionItem
@@ -81,15 +75,16 @@ export function DashboardLayout() {
                                 title="Usuarios"
                             >
                                 <div className="flex flex-col px-4">
-                                    <SidebarLink to="/empleados">
+                                    {/*  <SidebarLink to="/empleados">
                                         Empleados
-                                    </SidebarLink>
+                                    </SidebarLink>*/}
                                     <SidebarLink to="/clientes">
                                         Clientes
                                     </SidebarLink>
-                                    <SidebarLink>Administradores</SidebarLink>
+                                    {/*<SidebarLink>Administradores</SidebarLink>*/}
                                 </div>
                             </AccordionItem>
+                            {/*
                             <AccordionItem
                                 key="3"
                                 aria-label="Sucursales"
@@ -100,6 +95,7 @@ export function DashboardLayout() {
                                     <SidebarLink>Localidades</SidebarLink>
                                 </div>
                             </AccordionItem>
+                            */}
                         </Accordion>
                         <div className="flex p-4">
                             <Button color="primary" onPress={onOpen} fullWidth>

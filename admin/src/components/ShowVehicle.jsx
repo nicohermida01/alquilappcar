@@ -14,6 +14,10 @@ export default function ShowVehicle({ itemInfo, databaseInfo }) {
                 <p>{databaseInfo.brands[itemInfo.marca - 1].nombre}</p>
             </section>
             <section className="flex gap-2">
+                <p className="font-bold">Año: </p>
+                <p>{itemInfo.año}</p>
+            </section>
+            <section className="flex gap-2">
                 <p className="font-bold">Categoría: </p>
                 <p>{databaseInfo.categorias[itemInfo.categoria - 1].nombre}</p>
             </section>

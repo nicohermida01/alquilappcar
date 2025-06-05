@@ -29,8 +29,11 @@ export default function PaymentForm({
 
     const onSubmit = (data) => {
         const now = new Date();
-        if (
-            data.fechaVencimiento.year < now.getFullYear() ||
+        if (data.fechaVencimiento.year < now.getFullYear()) {
+            setVencimiento(true);
+            return;
+        } else if (
+            data.fechaVencimiento.year === now.getFullYear() &&
             data.fechaVencimiento.month < now.getMonth() + 1
         ) {
             setVencimiento(true);
@@ -41,6 +44,14 @@ export default function PaymentForm({
             addToast({
                 title: "Error",
                 description: "Fondos insuficientes",
+                color: "danger",
+            });
+            return;
+        }
+        if (data.numeroTarjeta === "3333333333333333") {
+            addToast({
+                title: "Error",
+                description: "La tarjeta no es de crédito",
                 color: "danger",
             });
             return;

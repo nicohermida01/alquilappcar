@@ -24,8 +24,11 @@ export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
 
     const onSubmit = (data) => {
         const now = new Date();
-        if (
-            data.fechaVencimiento.year < now.getFullYear() ||
+        if (data.fechaVencimiento.year < now.getFullYear()) {
+            setVencimiento(true);
+            return;
+        } else if (
+            data.fechaVencimiento.year === now.getFullYear() &&
             data.fechaVencimiento.month < now.getMonth() + 1
         ) {
             setVencimiento(true);
@@ -36,6 +39,14 @@ export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
             addToast({
                 title: "Error",
                 description: "Fondos insuficientes",
+                color: "danger",
+            });
+            return;
+        }
+        if (data.numeroTarjeta === "3333333333333333") {
+            addToast({
+                title: "Error",
+                description: "La tarjeta no es de crédito",
                 color: "danger",
             });
             return;
@@ -83,6 +94,7 @@ export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
                         <ModalBody>
                             <form
                                 className="flex flex-col gap-4 p-8 "
+                                id="payment-form"
                                 onSubmit={handleSubmit(onSubmit, onError)}
                             >
                                 <Input
@@ -122,14 +134,14 @@ export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
                                             {...field}
                                             label="Fecha de vencimiento"
                                             granularity="month"
+                                            isRequired
                                         />
                                     )}
                                 />
 
                                 {vencimiento && (
                                     <span className="text-error text-xs">
-                                        La fecha de vencimiento no puede ser
-                                        anterior al mes actual
+                                        La tarjeta está vencida.
                                     </span>
                                 )}
 
@@ -157,7 +169,7 @@ export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
                             <Button
                                 color="primary"
                                 type="submit"
-                                onPress={handleSubmit(onSubmit, onError)}
+                                form="payment-form"
                                 fullWidth
                             >
                                 Pagar ${alquilerData.precio_total}
