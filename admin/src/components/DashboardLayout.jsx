@@ -51,7 +51,7 @@ export function DashboardLayout() {
             <div className="flex h-[calc(100vh-70px)]">
                 <Sidebar>
                     <Menu>
-                        <Accordion variant="splitted" selectionMode="multiple">
+                        <Accordion variant="light" selectionMode="multiple">
                             <AccordionItem
                                 key="1"
                                 aria-label="Vehículos"
