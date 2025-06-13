@@ -67,7 +67,7 @@ function UserEditSettings() {
 
     return (
         <Form
-            className="ml-[300px] mt-[10%] w-[1000px] h-[500px]"
+            className="ml-[300px] mt-[10%] w-[600px] h-[500px]"
             onSubmit={onSubmit}
         >
             <div className="p-4 flex flex-col justify-center gap-6 h-full w-full items-center border border-grey rounded-xl bg-white">

@@ -101,6 +101,7 @@ export default function PaymentForm({
                             <form
                                 className="flex flex-col gap-4 p-8 "
                                 onSubmit={handleSubmit(onSubmit, onError)}
+                                id="registrar-pago"
                             >
                                 <Input
                                     type="text"
@@ -139,14 +140,14 @@ export default function PaymentForm({
                                             {...field}
                                             label="Fecha de vencimiento"
                                             granularity="month"
+                                            isRequired
                                         />
                                     )}
                                 />
 
                                 {vencimiento && (
                                     <span className="text-error text-xs">
-                                        La fecha de vencimiento no puede ser
-                                        anterior al mes actual
+                                        La tarjeta está vencida.
                                     </span>
                                 )}
 
@@ -174,8 +175,8 @@ export default function PaymentForm({
                             <Button
                                 color="primary"
                                 type="submit"
-                                onPress={handleSubmit(onSubmit, onError)}
                                 fullWidth
+                                form="registrar-pago"
                             >
                                 Pagar ${alquilerData.precio_total}
                             </Button>

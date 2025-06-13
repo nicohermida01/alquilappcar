@@ -376,7 +376,7 @@ export default function RegisterLeaseForm({
                                                     );
                                                 })}
                                             </Select>
-                                            {errors.sucursal && (
+                                            {errors.sucursal_retiro_id && (
                                                 <span className="text-red-500 text-sm">
                                                     Es necesario que indique una
                                                     sucursal de retiro.
