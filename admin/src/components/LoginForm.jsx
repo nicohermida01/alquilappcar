@@ -84,6 +84,7 @@ export function LoginForm() {
 					className='w-[50%] flex flex-col gap-4 p-8 bg-white rounded-lg shadow-lg'
 					onSubmit={handleSubmit(onSubmit, onError)}
 				>
+					<h2 className='text-3xl font-bold text-center'>Iniciar sesión</h2>
 					<Input
 						type='email'
 						label='Correo electrónico'
