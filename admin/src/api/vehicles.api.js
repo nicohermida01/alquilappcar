@@ -156,6 +156,11 @@ const updatePackage = async (packageData, id) => {
     return response.data;
 };
 
+const deletePackage = async (id) => {
+    const response = await api.delete(`paquetes/${id}/`);
+    return response.data;
+};
+
 export const vehiclesApi = {
     getAllVehicles,
     createVehicle,
@@ -188,4 +193,5 @@ export const vehiclesApi = {
     getAllPackages,
     createPackage,
     updatePackage,
+    deletePackage,
 };

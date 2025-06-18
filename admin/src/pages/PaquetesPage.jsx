@@ -4,6 +4,7 @@ import ListItems from "../components/ListPageComponents/ListItems";
 import { vehiclesApi } from "../api/vehicles.api";
 import RegisterPackageForm from "../components/RegisterPackageForm";
 import ShowPackage from "../components/ShowPackage";
+import { addToast } from "@heroui/react";
 
 export default function PaquetesPage() {
     const { user } = useAuth();
@@ -14,6 +15,28 @@ export default function PaquetesPage() {
         { name: "COSTO", uid: "costo", sortable: true },
         { name: "ACCIONES", uid: "actions" },
     ];
+
+    const deleteFunction = (id) => {
+        vehiclesApi
+            .deletePackage(id)
+            .then(() => {
+                addToast({
+                    title: "Paquete eliminado",
+                    description: "El paquete ha sido eliminado correctamente.",
+                    color: "success",
+                });
+                fetchInfo(); // Refresh the list after deletion
+            })
+            .catch((error) => {
+                console.error("Error deleting package:", error);
+                addToast({
+                    title: "Error al eliminar paquete",
+                    description:
+                        "No se pudo eliminar el paquete. Inténtelo de nuevo.",
+                    color: "danger",
+                });
+            });
+    };
 
     const INITIAL_VISIBLE_COLUMNS = ["nombre", "costo", "actions"];
 
@@ -42,13 +65,13 @@ export default function PaquetesPage() {
             {user.isAdmin && (
                 <ListItems
                     registerForm={<RegisterPackageForm />}
-                    infoShow={<ShowPackage />} // Placeholder for info show component
-                    deleteItem={<></>} // Placeholder for delete item component
+                    infoShow={<ShowPackage />}
                     columns={columns}
                     INITIAL_VISIBLE_COLUMNS={INITIAL_VISIBLE_COLUMNS}
                     fetchInfo={fetchInfo}
                     itemList={itemList}
                     itemName={"paquete"}
+                    deleteFunction={deleteFunction}
                 />
             )}
         </section>
