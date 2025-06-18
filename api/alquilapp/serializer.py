@@ -109,6 +109,9 @@ class LocalidadSerializer(serializers.ModelSerializer):
 
 class SucursalSerializer(serializers.ModelSerializer):
     localidad = LocalidadSerializer(read_only=True)
+    localidad_id = serializers.PrimaryKeyRelatedField(
+        queryset=Localidad.objects.all(), source='localidad', write_only=True
+    )
 
     class Meta:
         model = Sucursal

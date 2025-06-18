@@ -1,3 +1,4 @@
+import { get } from "react-hook-form";
 import { api } from "./main";
 
 const getAllVehicles = async () => {
@@ -45,13 +46,48 @@ const getBrandById = async (id) => {
     return response.data;
 };
 
-const getAllSucursales = async () => {
+const getAllLocalidades = async () => {
     const response = await api.get("localidades/");
+    return response.data;
+};
+
+const createLocalidad = async (localidadData) => {
+    const response = await api.post("localidades/", localidadData);
+    return response.data;
+};
+
+const updateLocalidad = async (localidadData, id) => {
+    const response = await api.put(`localidades/${id}/`, localidadData);
+    return response.data;
+};
+
+const deleteLocalidad = async (id) => {
+    const response = await api.delete(`localidades/${id}/`);
+    return response.data;
+};
+
+const getAllSucursales = async () => {
+    const response = await api.get("sucursales/");
     return response.data;
 };
 
 const getSucursalById = async (id) => {
     const response = await api.get(`sucursales/${id}/`);
+    return response.data;
+};
+
+const createSucursal = async (sucursalData) => {
+    const response = await api.post("sucursales/", sucursalData);
+    return response.data;
+};
+
+const updateSucursal = async (sucursalData, id) => {
+    const response = await api.put(`sucursales/${id}/`, sucursalData);
+    return response.data;
+};
+
+const deleteSucursal = async (id) => {
+    const response = await api.delete(`sucursales/${id}/`);
     return response.data;
 };
 
@@ -130,8 +166,15 @@ export const vehiclesApi = {
     createBrand,
     deleteBrand,
     getBrandById,
+    getAllLocalidades,
+    createLocalidad,
+    updateLocalidad,
+    deleteLocalidad,
     getAllSucursales,
     getSucursalById,
+    createSucursal,
+    updateSucursal,
+    deleteSucursal,
     getAllCategorias,
     updateCategoria,
     createCategoria,

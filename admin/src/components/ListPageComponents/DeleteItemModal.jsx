@@ -1,4 +1,11 @@
-import { Modal, ModalContent, ModalHeader } from "@heroui/react";
+import {
+    Button,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+} from "@heroui/react";
 import React from "react";
 
 export default function DeleteItemModal({
@@ -8,10 +15,10 @@ export default function DeleteItemModal({
     updateItemList,
     deleteItem,
     databaseInfo,
+    deleteFunction,
 }) {
     const newProps = {
         itemInfo: itemInfo,
-        updateItemList: updateItemList,
         databaseInfo: databaseInfo,
     };
 
@@ -24,11 +31,27 @@ export default function DeleteItemModal({
                             Está seguro que desea eliminar el siguiente
                             elemento?
                         </ModalHeader>
-                        {React.cloneElement(deleteItem, {
-                            ...deleteItem.props,
-                            ...newProps,
-                            onClose: onClose,
-                        })}
+                        <ModalBody>
+                            {React.cloneElement(deleteItem, {
+                                ...deleteItem.props,
+                                ...newProps,
+                                onClose: onClose,
+                            })}
+                        </ModalBody>
+                        <ModalFooter className="flex justify-end">
+                            <Button onPress={onClose} variant="light">
+                                Cancelar
+                            </Button>
+                            <Button
+                                onPress={() => {
+                                    deleteFunction(itemInfo.id);
+                                    onClose();
+                                }}
+                                color="danger"
+                            >
+                                Eliminar
+                            </Button>
+                        </ModalFooter>
                     </>
                 )}
             </ModalContent>
