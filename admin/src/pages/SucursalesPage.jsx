@@ -1,50 +1,48 @@
-import React, { useState } from "react";
+import React from "react";
 import ListItems from "../components/ListPageComponents/ListItems";
 import { vehiclesApi } from "../api/vehicles.api";
-import RegisterCategoriaForm from "../components/RegisterCategoriaForm";
+import RegisterSucursalForm from "../components/RegisterSucursalForm";
+import ShowSucursal from "../components/ShowSucursal";
 import { addToast } from "@heroui/react";
-import ShowCategoria from "../components/ShowCategoria";
 
-export default function CategoriasPage() {
+export default function SucursalesPage() {
     const columns = [
         { name: "ID", uid: "id", sortable: true },
-        { name: "NOMBRE", uid: "nombre", sortable: true },
-        { name: "PRECIO", uid: "precio", sortable: true },
-        { name: "CANCELACIÓN", uid: "cancelacion", sortable: true },
+        { name: "LOCALIDAD", uid: "localidad", sortable: true },
+        { name: "DIRECCION", uid: "direccion", sortable: true },
         { name: "ACCIONES", uid: "actions" },
     ];
 
     const deleteFunction = (id) => {
         vehiclesApi
-            .deleteCategoria(id)
+            .deleteSucursal(id)
             .then(() => {
                 addToast({
-                    title: "Categoría eliminada",
-                    description:
-                        "La categoría ha sido eliminada correctamente.",
+                    title: "Sucursal eliminada",
+                    description: "La sucursal ha sido eliminada correctamente.",
                     color: "success",
                 });
-                fetchInfo();
+                fetchInfo(); // Refresh the list after deletion
             })
             .catch((error) => {
+                console.error("Error deleting sucursal:", error);
                 addToast({
-                    title: "Error al eliminar categoría",
+                    title: "Error al eliminar sucursal",
                     description:
-                        "No se pudo eliminar la categoría. Inténtalo de nuevo.",
+                        "No se pudo eliminar la sucursal. Inténtelo de nuevo.",
                     color: "danger",
                 });
-                console.error("Error deleting category:", error);
             });
     };
 
-    const INITIAL_VISIBLE_COLUMNS = ["nombre", "precio", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["localidad", "direccion", "actions"];
 
-    const [itemList, setItemList] = useState([]);
-    const [databaseInfo, setDatabaseInfo] = useState();
+    const [itemList, setItemList] = React.useState([]);
+    const [databaseInfo, setDatabaseInfo] = React.useState();
 
     function fetchInfo() {
         vehiclesApi
-            .getAllCategorias()
+            .getAllSucursales()
             .then((res) => {
                 setItemList(res);
             })
@@ -53,12 +51,12 @@ export default function CategoriasPage() {
             });
 
         vehiclesApi
-            .getAllCancelaciones()
+            .getAllLocalidades()
             .then((res) => {
                 setDatabaseInfo(res);
             })
             .catch((error) => {
-                console.error("Error fetching data:", error);
+                console.error("Error fetching localidades:", error);
             });
     }
 
@@ -69,16 +67,17 @@ export default function CategoriasPage() {
     return (
         <section className="w-full py-[135px] flex flex-col items-center justify-center bg-gray-100 gap-10">
             <h2 className="text-3xl font-bold text-center">
-                Lista de categorías
+                Lista de sucursales
             </h2>
             <ListItems
-                registerForm={<RegisterCategoriaForm />}
-                infoShow={<ShowCategoria />} // Placeholder for info show component
+                registerForm={<RegisterSucursalForm />}
+                infoShow={<ShowSucursal />}
                 columns={columns}
                 INITIAL_VISIBLE_COLUMNS={INITIAL_VISIBLE_COLUMNS}
                 fetchInfo={fetchInfo}
                 itemList={itemList}
-                itemName={"categoría"}
+                itemName={"sucursal"}
+                updateItemList={fetchInfo}
                 databaseInfo={databaseInfo}
                 deleteFunction={deleteFunction}
             />

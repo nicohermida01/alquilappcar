@@ -14,6 +14,8 @@ import CategoriasPage from "./pages/CategoriasPage.jsx";
 import CancelacionesPage from "./pages/CancelacionesPage.jsx";
 import PaquetesPage from "./pages/PaquetesPage.jsx";
 import ClientsPage from "./pages/ClientPage.jsx";
+import LocalidadesPage from "./pages/LocalidadesPage.jsx";
+import SucursalesPage from "./pages/SucursalesPage.jsx";
 
 // Todas las páginas que se agregan dentro de la ruta van a tener el layout definido, está agregado dentro de
 // el componente DashboardLayout.jsx, que es el que se encarga de renderizar el sidebar y el topbar. Si se fijan,
@@ -49,6 +51,14 @@ createRoot(document.getElementById("root")).render(
                                 element={<PaquetesPage />}
                             />
                             <Route path="/clientes" element={<ClientsPage />} />
+                            <Route
+                                path="/localidades"
+                                element={<LocalidadesPage />}
+                            />
+                            <Route
+                                path="/sucursales"
+                                element={<SucursalesPage />}
+                            />
                         </Route>
                         <Route path="/login" element={<LoginPage />} />
                     </Routes>

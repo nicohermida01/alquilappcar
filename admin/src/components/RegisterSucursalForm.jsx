@@ -1,24 +1,24 @@
-import { Input, Button, addToast, Select, SelectItem } from "@heroui/react";
+import { Input, Button, addToast, SelectItem, Select } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { vehiclesApi } from "../api/vehicles.api";
 
-export default function RegisterCategoriaForm({
+export default function RegisterSucursalForm({
     itemInfo,
     updateItemList,
-    onClose,
     databaseInfo,
+    onClose,
 }) {
-    const { register, handleSubmit, reset, getValues } = useForm();
+    const { register, handleSubmit, reset } = useForm();
 
     const onSubmit = (data) => {
         itemInfo
             ? vehiclesApi
-                  .updateCategoria(data, itemInfo.id)
+                  .updateSucursal(data, itemInfo.id)
                   .then(() => {
                       addToast({
-                          title: "Categoría actualizada",
+                          title: "Sucursal actualizada",
                           description:
-                              "La categoría ha sido actualizada correctamente",
+                              "La sucursal ha sido actualizada correctamente",
                           color: "success",
                       });
                       updateItemList();
@@ -27,18 +27,18 @@ export default function RegisterCategoriaForm({
                       addToast({
                           title: "Error",
                           description:
-                              "No se ha podido actualizar la categoría. " +
+                              "No se ha podido actualizar la sucursal. " +
                               error,
                           color: "danger",
                       });
                   })
-            : (vehiclesApi
-                  .createCategoria(data)
+            : vehiclesApi
+                  .createSucursal(data)
                   .then(() => {
                       addToast({
-                          title: "Categoría creada",
+                          title: "Sucursal creada",
                           description:
-                              "La categoría ha sido creada correctamente",
+                              "La sucursal ha sido creada correctamente",
                           color: "success",
                       });
                       updateItemList();
@@ -48,12 +48,10 @@ export default function RegisterCategoriaForm({
                       addToast({
                           title: "Error",
                           description:
-                              "No se ha podido crear la categoría. " + error,
+                              "No se ha podido crear la sucursal. " + error,
                           color: "danger",
                       });
-                      console.error(error);
-                  }),
-              reset());
+                  });
     };
 
     const onError = (errors) => {
@@ -67,38 +65,29 @@ export default function RegisterCategoriaForm({
         >
             <div className="text-center mb-4">
                 <h2 className="text-3xl font-bold text-center">
-                    {itemInfo ? "Modificar categoría" : "Registrar categoría"}
+                    {itemInfo ? "Modificar sucursal" : "Registrar sucursal"}
                 </h2>
             </div>
 
             <Input
                 type="text"
-                label="Nombre"
-                defaultValue={itemInfo?.nombre}
-                {...register("nombre", { required: true })}
-                isRequired
-            />
-
-            <Input
-                type="number"
-                label="Precio"
-                defaultValue={itemInfo?.precio}
-                {...register("precio", { required: true, valueAsNumber: true })}
+                label="Dirección"
+                defaultValue={itemInfo?.direccion}
+                {...register("direccion", { required: true })}
                 isRequired
             />
 
             <Select
-                label="Cancelación"
-                defaultSelectedKeys={[itemInfo?.cancelacion.id.toString()]}
-                {...register("cancelacion_id", {
+                label="Localidad"
+                defaultSelectedKeys={[itemInfo?.localidad.id.toString()]}
+                {...register("localidad_id", {
                     required: true,
                     valueAsNumber: true,
                 })}
-                isRequired
             >
-                {databaseInfo.map((cancelacion) => (
-                    <SelectItem key={cancelacion.id}>
-                        {cancelacion.descripcion}
+                {databaseInfo.map((localidad) => (
+                    <SelectItem key={localidad.id}>
+                        {localidad.nombre}
                     </SelectItem>
                 ))}
             </Select>

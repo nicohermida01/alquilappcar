@@ -109,6 +109,9 @@ class LocalidadSerializer(serializers.ModelSerializer):
 
 class SucursalSerializer(serializers.ModelSerializer):
     localidad = LocalidadSerializer(read_only=True)
+    localidad_id = serializers.PrimaryKeyRelatedField(
+        queryset=Localidad.objects.all(), source='localidad', write_only=True
+    )
 
     class Meta:
         model = Sucursal
@@ -117,6 +120,9 @@ class SucursalSerializer(serializers.ModelSerializer):
 
 class CategoriaVehiculoSerializer(serializers.ModelSerializer):
     cancelacion = CancelacionSerializer(read_only=True)
+    cancelacion_id = serializers.PrimaryKeyRelatedField(
+        queryset=Cancelacion.objects.all(), source='cancelacion', write_only=True
+    )
     
     class Meta:
         model = CategoriaVehiculo

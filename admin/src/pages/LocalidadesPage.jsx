@@ -1,61 +1,49 @@
-import React, { useState } from "react";
+import React from "react";
 import ListItems from "../components/ListPageComponents/ListItems";
 import { vehiclesApi } from "../api/vehicles.api";
-import RegisterCategoriaForm from "../components/RegisterCategoriaForm";
+import RegisterLocalidadForm from "../components/RegisterLocalidadForm";
+import ShowLocalidad from "../components/ShowLocalidad";
 import { addToast } from "@heroui/react";
-import ShowCategoria from "../components/ShowCategoria";
 
-export default function CategoriasPage() {
+export default function LocalidadesPage() {
     const columns = [
         { name: "ID", uid: "id", sortable: true },
         { name: "NOMBRE", uid: "nombre", sortable: true },
-        { name: "PRECIO", uid: "precio", sortable: true },
-        { name: "CANCELACIÓN", uid: "cancelacion", sortable: true },
         { name: "ACCIONES", uid: "actions" },
     ];
 
     const deleteFunction = (id) => {
         vehiclesApi
-            .deleteCategoria(id)
+            .deleteLocalidad(id)
             .then(() => {
                 addToast({
-                    title: "Categoría eliminada",
+                    title: "Localidad eliminada",
                     description:
-                        "La categoría ha sido eliminada correctamente.",
+                        "La localidad ha sido eliminada correctamente.",
                     color: "success",
                 });
-                fetchInfo();
+                fetchInfo(); // Refresh the list after deletion
             })
             .catch((error) => {
+                console.error("Error deleting localidad:", error);
                 addToast({
-                    title: "Error al eliminar categoría",
+                    title: "Error al eliminar localidad",
                     description:
-                        "No se pudo eliminar la categoría. Inténtalo de nuevo.",
+                        "No se pudo eliminar la localidad. Inténtelo de nuevo.",
                     color: "danger",
                 });
-                console.error("Error deleting category:", error);
             });
     };
 
-    const INITIAL_VISIBLE_COLUMNS = ["nombre", "precio", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["nombre", "actions"];
 
-    const [itemList, setItemList] = useState([]);
-    const [databaseInfo, setDatabaseInfo] = useState();
+    const [itemList, setItemList] = React.useState([]);
 
     function fetchInfo() {
         vehiclesApi
-            .getAllCategorias()
+            .getAllLocalidades()
             .then((res) => {
                 setItemList(res);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-
-        vehiclesApi
-            .getAllCancelaciones()
-            .then((res) => {
-                setDatabaseInfo(res);
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
@@ -69,17 +57,17 @@ export default function CategoriasPage() {
     return (
         <section className="w-full py-[135px] flex flex-col items-center justify-center bg-gray-100 gap-10">
             <h2 className="text-3xl font-bold text-center">
-                Lista de categorías
+                Lista de localidades
             </h2>
             <ListItems
-                registerForm={<RegisterCategoriaForm />}
-                infoShow={<ShowCategoria />} // Placeholder for info show component
+                registerForm={<RegisterLocalidadForm />}
+                infoShow={<ShowLocalidad />} // Placeholder for info show component
                 columns={columns}
                 INITIAL_VISIBLE_COLUMNS={INITIAL_VISIBLE_COLUMNS}
                 fetchInfo={fetchInfo}
                 itemList={itemList}
-                itemName={"categoría"}
-                databaseInfo={databaseInfo}
+                itemName={"localidad"}
+                updateItemList={fetchInfo}
                 deleteFunction={deleteFunction}
             />
         </section>
