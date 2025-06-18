@@ -20,7 +20,7 @@ function Topbar() {
 	const { pathname } = useLocation()
 
 	return (
-		<Navbar className='absolute top-0 bg-background/60'>
+		<Navbar className='fixed top-0 bg-background/60 border-b-1 border-gray-200'>
 			<NavbarBrand>
 				<Link to='/'>
 					<img src='/alquilappcar_logo.png' alt='Logo' style={{ width: 72 }} />
@@ -31,22 +31,13 @@ function Topbar() {
 				justify='start'
 			></NavbarContent>
 			<NavbarContent justify='end'>
-				{isAuthenticated && (
-					<NavbarItem>
-						<Link to={`${isAuthenticated ? '/alquiler' : '/login'}`}>
-							<Button className='text-white' color='secondary' type='submit'>
-								Reserve ahora
-							</Button>
-						</Link>
-					</NavbarItem>
-				)}
-				{/* <NavbarItem>
-					<Link to='/alquiler'>
+				<NavbarItem>
+					<Link to={`${isAuthenticated ? '/alquiler' : '/login'}`}>
 						<Button className='text-white' color='secondary' type='submit'>
 							Reserve ahora
 						</Button>
 					</Link>
-				</NavbarItem> */}
+				</NavbarItem>
 				{!isAuthenticated && (
 					<NavbarItem>
 						<Button className='text-white' color='primary'>
