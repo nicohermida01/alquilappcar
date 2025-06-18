@@ -76,12 +76,12 @@ function ReserveCard() {
     };
 
     return (
-        <Card className="bg-background/60" isBlurred>
+        <Card className="bg-background/60 w-full" isBlurred>
             {isFetching ? (
                 <p className="text-gray-500 italic">Cargando sucursales...</p>
             ) : (
-                <CardBody className="gap-4 p-10">
-                    <h2 className="font-bold text-2xl">
+                <CardBody className="gap-4 p-4">
+                    <h2 className="font-bold text-xl mb-2">
                         ¡Alquila tu vehículo ya!
                     </h2>
                     <Form
