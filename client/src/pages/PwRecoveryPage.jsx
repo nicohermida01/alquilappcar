@@ -3,6 +3,7 @@ import { Button } from '@heroui/button'
 import { PageLayout } from '../components/PageLayout.jsx'
 import { useState, useEffect } from 'react'
 import { usersApi } from '../services/users.api.js'
+import { addToast } from '@heroui/toast'
 
 function PwRecoveryPage() {
     const [email, setEmail] = useState();
@@ -15,8 +16,15 @@ function PwRecoveryPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         usersApi.getUserByEmail(email)
-        .then(res => (console.log(res)))
-        .catch(error => (console.error(error)));
+        .then(res => {
+            setPassword(res.password);
+            alert(password);
+        })
+        .catch(error => (addToast({
+            title: "Se ha producido un error.",
+            description: "No se ha encontrado el correo electronico.",
+            color: 'danger'
+        })));
     }
 
     return (
@@ -27,7 +35,7 @@ function PwRecoveryPage() {
 			        onSubmit={handleSubmit}
 		        >
         			<h1 className='text-3xl font-bold text-center'>Recuperar contraseña</h1>
-                    <p>Se enviara una contraseña provisoria al correo especificado. Luego podras cambiarla desde tu perfil.</p>
+                    <p>Ingresa tu correo electronico. Si es valido, en instantes veras la contraseña.</p>
 			        <Input
         				type='email'
 				        label='Correo electrónico'
