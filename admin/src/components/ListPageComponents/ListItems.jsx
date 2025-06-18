@@ -163,16 +163,9 @@ export default function ListItems({
             case "marca":
                 return <p>{databaseInfo?.brands[cellValue - 1]?.nombre}</p>;
             case "categoria":
-                return <p>{databaseInfo?.categorias[cellValue - 1]?.nombre}</p>;
+                return <p>{databaseInfo.categorias[cellValue - 1]?.nombre}</p>;
             case "cancelacion":
-                return (
-                    <p>
-                        {
-                            databaseInfo?.cancelaciones[cellValue - 1]
-                                ?.descripcion
-                        }
-                    </p>
-                );
+                return <p>{item.cancelacion.descripcion}</p>;
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">

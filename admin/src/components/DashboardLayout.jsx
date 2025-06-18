@@ -73,9 +73,15 @@ export function DashboardLayout() {
                                     >
                                         Paquetes
                                     </SidebarLink>
+                                    <SidebarLink
+                                        to="/categorias"
+                                        setSelected={setSelected}
+                                        selected={selected === "categorias"}
+                                    >
+                                        Categorías
+                                    </SidebarLink>
                                     {/*
                                     <SidebarLink>Marcas</SidebarLink>
-                                    <SidebarLink>Categorías</SidebarLink>
                                     <SidebarLink>Cancelaciones</SidebarLink>
                                     */}
                                 </div>
