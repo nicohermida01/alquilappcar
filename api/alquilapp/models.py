@@ -13,6 +13,13 @@ class PaqueteExtra(models.Model):
         return self.nombre
 
 class Alquiler(models.Model):
+    class AlquilerStatus(models.TextChoices):
+        PENDING = 'pending', 'Pendiente'
+        IN_PROGRESS = 'in_progress', 'En Progreso'
+        FINISHED = 'finished', 'Finalizado'
+        CANCELED = 'canceled', 'Cancelado'
+        DELETED = 'deleted', 'Eliminado'
+
     # puede no enviarse la fecha de inicio si resulta que es un alquiler en el momento
     fecha_inicio = models.DateTimeField(default=now)
     fecha_devolucion = models.DateTimeField()
@@ -21,7 +28,9 @@ class Alquiler(models.Model):
     vehiculo_asignado = models.ForeignKey('Vehiculo', on_delete=models.SET_NULL, null=True, blank=True, to_field='patente')
     cliente = models.ForeignKey('Cliente', on_delete=models.PROTECT)
     precio_total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    activo = models.BooleanField(default=True)
+    activo = models.BooleanField(default=True) # este campo ya no se debe usar, lo dejo por las dudas -Nico
+    status = models.CharField(max_length=20, choices=AlquilerStatus.choices, default=AlquilerStatus.PENDING)
+    reembolso = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
 
     objects = ActivosManager()  # solo alquileres activos
     todos = models.Manager()    # acceso a todos los alquileres
@@ -33,11 +42,15 @@ class Alquiler(models.Model):
         # if self.fecha_inicio <= now():
         #     raise ValidationError({'fecha_inicio': 'La fecha de inicio debe ser al menos mañana.'})
 
+    
+    #def __str__(self):
+    #    if self.fecha_inicio > now().date():
+    #        return f"Reserva de {self.cliente} para el día {self.fecha_inicio}"
+    #    else:
+    #        return f"Alquiler en curso del cliente {self.cliente}"
+    
     def __str__(self):
-        if self.fecha_inicio > now().date():
-            return f"Reserva de {self.cliente} para el día {self.fecha_inicio}"
-        else:
-            return f"Alquiler en curso del cliente {self.cliente}"
+        return f"{self.id}"
 
 class PaqueteAlquiler(models.Model):
     alquiler = models.ForeignKey(Alquiler, on_delete=models.CASCADE)

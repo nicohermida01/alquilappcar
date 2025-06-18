@@ -1,165 +1,184 @@
-import FieldCard from './FieldCard'
 import { usersApi } from '../services/users.api'
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import axios from 'axios'
-import {
-	Modal,
-	ModalContent,
-	ModalHeader,
-	ModalBody,
-	ModalFooter,
-	Button,
-	useDisclosure,
-	Spinner,
-} from '@heroui/react'
+import { useDisclosure, Spinner, Accordion, AccordionItem } from '@heroui/react'
 import { addToast } from '@heroui/react'
-
-import ModalAlquiler from '../components/ModalAlquiler'
+import { RentCard } from './RentCard'
+import {
+	CANCELLED_RENT,
+	DELETED_RENT,
+	FINISHED_RENT,
+	IN_PROGRESS_RENT,
+	PENDING_RENT,
+} from '../constants/rentStatus'
+import { ModalConfirmCancelRent } from './ModalConfirmCancelRent'
+import { getFecha } from '../utils/getFecha'
+import { leasesApi } from '../services/leases.api'
+import { formatAmount } from '../utils/formatAmount'
 
 function UserAlquileres() {
-	// const { toast } = useToast();
-	const { isOpen, onOpen, onOpenChange } = useDisclosure()
-	const { user } = useAuth()
-	const [alquileres, setAlquileres] = useState([])
-	const [alquilerSeleccionado, setAlquilerSeleccionado] = useState()
+	const [pendingRents, setPendingRents] = useState([])
+	const [inProgressRents, setInProgressRents] = useState([])
+	const [finishedRents, setFinishedRents] = useState([])
+	const [cancelledRents, setCancelledRents] = useState([])
+	const [deletedRents, setDeletedRents] = useState([])
+	const [selectedRent, setSelectedRent] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
+	const [refreshValue, setRefreshValue] = useState(0)
+
+	const { user } = useAuth()
+	const handleCancelModal = useDisclosure()
+
+	const generateRentCard = rent => {
+		const vehicle = rent.vehiculo_asignado
+			? rent.vehiculo_asignado
+			: 'Sin confirmar'
+		const withdrawalSubsidiary = `${rent.sucursal_retiro.direccion}, ${rent.sucursal_retiro.localidad.nombre}`
+
+		return (
+			<RentCard
+				key={rent.id}
+				startDate={getFecha(rent.fecha_inicio)}
+				status={rent.status}
+				category={rent.categoria_vehiculo.nombre}
+				endDate={getFecha(rent.fecha_devolucion)}
+				amount={rent.precio_total}
+				vehicle={vehicle}
+				withdrawalSubsidiary={withdrawalSubsidiary}
+				id={rent.id}
+				extraPackages={rent.paquetealquiler_set}
+				cancelFunction={() => handleCancelRent(rent)}
+				refundAmount={rent.reembolso}
+			/>
+		)
+	}
+
+	const handleCancelRent = rent => {
+		setSelectedRent(rent)
+		handleCancelModal.onOpen()
+	}
+
+	const confirmCancel = (id, refundAmount) => {
+		leasesApi
+			.cancelLease(id, refundAmount)
+			.then(() => {
+				setRefreshValue(prev => prev + 1) // esto genera que se ejecute el useEffect y se actualicen los alquileres -Nico
+
+				addToast({
+					title: `Reserva #${id} cancelada correctamente.`,
+					variant: 'bordered',
+					description: `Se han devuelto $${formatAmount(refundAmount)}`,
+					color: 'success',
+					duration: 4000,
+				})
+			})
+			.catch(err => {
+				console.error('Error al cancelar el alquiler', err)
+				addToast({
+					title: 'Error al cancelar el alquiler.',
+					description: 'No se pudo cancelar el alquiler, intente nuevamente.',
+					color: 'danger',
+					duration: 4000,
+				})
+			})
+	}
 
 	useEffect(() => {
 		setIsLoading(true)
 		usersApi
 			.getAlquileresByUserId(user.clientId)
-			.then(response => setAlquileres(response))
+			.then(response => {
+				setPendingRents(response.filter(rent => rent.status === PENDING_RENT))
+				setInProgressRents(
+					response.filter(rent => rent.status === IN_PROGRESS_RENT)
+				)
+				setFinishedRents(response.filter(rent => rent.status === FINISHED_RENT))
+				setCancelledRents(
+					response.filter(rent => rent.status === CANCELLED_RENT)
+				)
+				setDeletedRents(response.filter(rent => rent.status === DELETED_RENT))
+			})
 			.catch(error => console.error(error))
 			.finally(() => setIsLoading(false))
-	}, [])
-	const ahora = new Date()
-	const opcionesFecha = {
-		day: '2-digit',
-		month: '2-digit',
-		year: 'numeric',
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: false,
-		timeZone: 'America/Argentina/Buenos_Aires',
-	}
+	}, [user.clientId, refreshValue])
 
-	const handleDarDeBaja = async alquiler => {
-		try {
-			await axios.patch(
-				`http://localhost:8000/alquilapp/api/v1/alquileres/${alquiler.id}/`,
-				{
-					activo: false,
-				}
-			)
-			setAlquileres(prev => prev.filter(alq => alq.id !== alquiler.id))
-			let fechaInicio = new Date(alquiler.fecha_inicio)
-			let fechaFormateada = fechaInicio.toLocaleString('es-AR', opcionesFecha)
+	return (
+		<div className='w-full h-full p-[50px]'>
+			<h2 className='text-3xl font-bold'>Mis alquileres</h2>
 
-			const refundAmount =
-				(alquiler.precio_total *
-					alquiler.categoria_vehiculo.cancelacion.porcentaje) /
-				100
-
-			addToast({
-				title: `Reserva del día ${fechaFormateada} cancelada correctamente.`,
-				variant: 'bordered',
-				description: `Se han devuelto $${refundAmount}`,
-				color: 'success',
-				duration: 4000,
-			})
-		} catch (error) {
-			console.error('Error al dar de baja el alquiler', error)
-			addToast({
-				title: 'Error al dar de baja la reserva.',
-				description: 'No se pudo cancelar la reserva, intente nuevamente.',
-				color: 'danger',
-				duration: 4000,
-			})
-		}
-	}
-
-	const handleOpen = alquiler => {
-		setAlquilerSeleccionado(alquiler)
-		onOpen()
-	}
-	return isLoading ? (
-		<Spinner />
-	) : alquileres.length > 0 ? (
-		<div className='mt-16 ml-[10%]'>
-			<ModalAlquiler
-				alquiler={alquilerSeleccionado}
-				isOpen={isOpen}
-				onOpenChange={onOpenChange}
-				opcionesFecha={opcionesFecha}
+			<ModalConfirmCancelRent
+				isOpen={handleCancelModal.isOpen}
+				onOpenChange={handleCancelModal.onOpenChange}
+				rent={selectedRent}
+				handleConfirm={confirmCancel}
 			/>
-			<div className='flex flex-col gap-3'>
-				{alquileres.map(alquiler => {
-					const fechaInicio = new Date(alquiler.fecha_inicio)
-					const fechaDevolucion = new Date(alquiler.fecha_devolucion)
-					const esReserva = fechaInicio > ahora
-					const tipo = esReserva ? 'Reserva' : 'Alquiler'
-					const fechaFormateadaInicio = fechaInicio.toLocaleString(
-						'es-AR',
-						opcionesFecha
-					)
-					const fechaFormateadaDevolucion = fechaDevolucion.toLocaleString(
-						'es-AR',
-						opcionesFecha
-					)
-					return (
-						<div key={alquiler.id}>
-							<div className='flex flex-col rounded-2xl p-4 bg-white'>
-								<div className='flex gap-2 items-center text-lg'>
-									<h3 className='font-semibold'>{`${tipo} para la fecha ${fechaFormateadaInicio}hs`}</h3>
-									<Button
-										onPress={() => handleOpen(alquiler)}
-										color='primary'
-										size='sm'
-										className='text-white font-semibold'
-									>
-										Ver detalle
-									</Button>
-									{esReserva && (
-										<Button
-											onPress={() => handleDarDeBaja(alquiler)}
-											color='danger'
-											size='sm'
-											className='text-white font-semibold'
-										>
-											Cancelar reserva
-										</Button>
-									)}
-								</div>
-								<div className='flex flex-col gap-1'>
-									<div className='flex gap-5'>
-										<div className='flex gap-1 items-center'>
-											<p className='font-semibold'>Categoría preferencial:</p>
-											<p className='text-sm'>
-												{alquiler.categoria_vehiculo.nombre}
-											</p>
-										</div>
-									</div>
-									<div className='flex gap-1 items-center'>
-										<p className='font-semibold'>Fecha de devolucion:</p>
-										<p className='text-sm'>{fechaFormateadaDevolucion}</p>
-									</div>
-									<div className='flex gap-1 items-center'>
-										<p className='font-semibold'>Sucursal de retiro:</p>
-										<p className='text-sm'>
-											{alquiler.sucursal_retiro.direccion},{' '}
-											{alquiler.sucursal_retiro.localidad.nombre}
-										</p>
-									</div>
-								</div>
-							</div>
+
+			{isLoading && <Spinner />}
+
+			{!isLoading && (
+				<Accordion selectionMode='multiple'>
+					<AccordionItem key='1' title={`Pendientes (${pendingRents.length})`}>
+						<div className='flex gap-4 flex-wrap pb-4'>
+							{pendingRents.length > 0 &&
+								pendingRents.map(rent => generateRentCard(rent))}
+							{pendingRents.length === 0 && <p>No hay alquileres pendientes</p>}
 						</div>
-					)
-				})}
-			</div>
+					</AccordionItem>
+
+					<AccordionItem
+						key='2'
+						title={`En progreso (${inProgressRents.length})`}
+					>
+						<div className='flex gap-4 flex-wrap pb-4'>
+							{inProgressRents.length > 0 &&
+								inProgressRents.map(rent => generateRentCard(rent))}
+							{inProgressRents.length === 0 && (
+								<p>No hay alquileres en curso actualmente</p>
+							)}
+						</div>
+					</AccordionItem>
+
+					<AccordionItem
+						key='3'
+						title={`Finalizados (${finishedRents.length})`}
+					>
+						<div className='flex gap-4 flex-wrap pb-4'>
+							{finishedRents.length > 0 &&
+								finishedRents.map(rent => generateRentCard(rent))}
+							{finishedRents.length === 0 && (
+								<p>No hay alquileres finalizados</p>
+							)}
+						</div>
+					</AccordionItem>
+
+					<AccordionItem
+						key='4'
+						title={`Cancelados (${cancelledRents.length})`}
+					>
+						<div className='flex gap-4 flex-wrap pb-4'>
+							{cancelledRents.length > 0 &&
+								cancelledRents.map(rent => generateRentCard(rent))}
+							{cancelledRents.length === 0 && (
+								<p>No hay alquileres cancelados</p>
+							)}
+						</div>
+					</AccordionItem>
+
+					<AccordionItem
+						key='5'
+						title={`Dados de baja (${deletedRents.length})`}
+					>
+						<div className='flex gap-4 flex-wrap pb-4'>
+							{deletedRents.length > 0 &&
+								deletedRents.map(rent => generateRentCard(rent))}
+							{deletedRents.length === 0 && (
+								<p>No hay alquileres dados de baja</p>
+							)}
+						</div>
+					</AccordionItem>
+				</Accordion>
+			)}
 		</div>
-	) : (
-		<p>No se encuentran alquileres realizados.</p>
 	)
 }
 export default UserAlquileres
