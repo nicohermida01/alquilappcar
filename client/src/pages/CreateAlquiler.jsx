@@ -122,6 +122,7 @@ export default function AlquilerForm() {
 				setValue('sucursal_retiro_id', rentBasic?.sucursal || '')
 				// console.log(rentBasic.sucursal, 'VALUE DEL RENTBASIC')
 				//console.log(sucursalRetiro, 'VALUE DEL USEFORM')
+        console.log(values[1])
 			})
 			.catch(error => {
 				console.log(error)
@@ -129,6 +130,7 @@ export default function AlquilerForm() {
 			})
 			.finally(() => {
 				setIsFetching(false)
+        //console.log(sucursales, categorias)
 			})
 	}, [])
 	// YA SE FETCHEO LO NECESARIO, Y YA SE SETEARON EN REACT-HOOK-FORMS LOS VALORES PREVIOS SI ES QUE LOS HUBO, A PARTIR DE AHORA SE REGISTRAN Y SE MANEJAN
@@ -337,8 +339,9 @@ export default function AlquilerForm() {
 										>
 											{categorias.map(c => {
 												return (
-													<SelectItem key={c.id} value={Number(c.id)}>
-														{c.nombre}
+													<SelectItem key={c.id} value={Number(c.id)} 
+                          description={c.cancelacion.descripcion}>
+														{c.nombre} 
 													</SelectItem>
 												)
 											})}
