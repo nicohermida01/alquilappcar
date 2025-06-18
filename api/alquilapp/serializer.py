@@ -180,7 +180,9 @@ class AlquilerSerializer(serializers.ModelSerializer):
             'sucursal_retiro_id',        # write-only (ID)
             'vehiculo_asignado',
             'precio_total',
+            'reembolso',
             'activo',
+            'status',
             'cliente',
             'paquetes',                  # campo virtual para crear relaciones
             'paquetealquiler_set',       # campo real que devuelve los relacionados
