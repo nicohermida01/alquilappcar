@@ -19,9 +19,13 @@ export default function LoginPage() {
 					<>
 						<LoginForm />
 						<p className='text-center text-gray-600'>
-							No tienes una cuenta?{' '}
+							¿No tienes una cuenta?{' '}
 							<Link to='/register' className='text-blue-600 hover:underline'>
 								Crea una cuenta
+							</Link><br/>
+							¿Olvidaste tu contraseña?{' '}
+							<Link to='/recovery' className='text-blue-600 hover:underline'>
+								Recuperala ahora
 							</Link>
 						</p>
 					</>
