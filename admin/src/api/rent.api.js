@@ -1,7 +1,7 @@
-import { CANCELLED_RENT } from '../constants/rentStatus'
+import { CANCELLED_RENT, DELETED_RENT } from '../constants/rentStatus'
 import { api } from './main'
 
-const cancel = async (id, refundAmount) => {
+const confirmCancel = async (id, refundAmount) => {
 	const response = await api.patch(`/alquileres/${id}/`, {
 		status: CANCELLED_RENT,
 		reembolso: refundAmount,
@@ -9,6 +9,15 @@ const cancel = async (id, refundAmount) => {
 	return response.data
 }
 
+const deleteRent = async (id, refundAmount) => {
+	const response = await api.patch(`/alquileres/${id}/`, {
+		status: DELETED_RENT,
+		activo: 0
+	})
+	return response.data
+}
+
+
 export const rentApi = {
-	cancel,
+	confirmCancel, deleteRent
 }

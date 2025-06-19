@@ -32,7 +32,7 @@ class Alquiler(models.Model):
     status = models.CharField(max_length=20, choices=AlquilerStatus.choices, default=AlquilerStatus.PENDING)
     reembolso = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
 
-    objects = ActivosManager()  # solo alquileres activos
+    #objects = ActivosManager()  # solo alquileres activos
     todos = models.Manager()    # acceso a todos los alquileres
 
     @property
@@ -160,6 +160,7 @@ class Cliente(models.Model):
     dni = models.IntegerField(unique=True)
     fecha_de_nacimiento = models.DateField()
     contacto = models.CharField(max_length=64, blank=True, null=True)
+    activo = models.BooleanField(default=True, null=False)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=64)
 

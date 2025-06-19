@@ -189,6 +189,13 @@ export default function ListItems({
 								<EditIcon />
 							</span>
 						</Tooltip>
+						{itemName === 'cliente' && (
+            <Tooltip content="Eliminar">
+              <span onClick={() => console.log('hola')}>
+                <DeleteIcon className='text-lg text-red-600 cursor-pointer active:opacity-50' />
+              </span>
+            </Tooltip>
+						)}
 					</div>
 				)
 			default:

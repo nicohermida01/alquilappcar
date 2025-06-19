@@ -12,7 +12,7 @@ from django.core.mail import send_mail
 # Create your views here.
 
 class AlquilerViewSet(viewsets.ModelViewSet):
-    queryset = Alquiler.objects.all()
+    queryset = Alquiler.todos.all()
     serializer_class = AlquilerSerializer
     
     @action(detail=False, url_path='cliente/(?P<cliente_id>[^/.]+)', methods=['get'])

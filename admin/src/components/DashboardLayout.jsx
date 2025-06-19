@@ -60,13 +60,11 @@ export function DashboardLayout() {
                                 <div className="flex flex-col px-4">
                                     <SidebarLink to="/vehiculos">
                                         Vehículos
-                                    </SidebarLink>
-                                    {/*
+                                    </SidebarLink>      
                                     <SidebarLink>Paquetes</SidebarLink>
                                     <SidebarLink>Marcas</SidebarLink>
                                     <SidebarLink>Categorías</SidebarLink>
                                     <SidebarLink>Cancelaciones</SidebarLink>
-                                    */}
                                 </div>
                             </AccordionItem>
                             <AccordionItem

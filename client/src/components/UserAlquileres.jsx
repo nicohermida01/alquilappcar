@@ -163,7 +163,7 @@ function UserAlquileres() {
 							)}
 						</div>
 					</AccordionItem>
-
+{/* 
 					<AccordionItem
 						key='5'
 						title={`Dados de baja (${deletedRents.length})`}
@@ -175,7 +175,7 @@ function UserAlquileres() {
 								<p>No hay alquileres dados de baja</p>
 							)}
 						</div>
-					</AccordionItem>
+					</AccordionItem> */}
 				</Accordion>
 			)}
 		</div>
