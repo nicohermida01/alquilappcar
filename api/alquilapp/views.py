@@ -12,7 +12,7 @@ from django.core.mail import send_mail
 # Create your views here.
 
 class AlquilerViewSet(viewsets.ModelViewSet):
-    queryset = Alquiler.todos.all()
+    queryset = Alquiler.objects.all()
     serializer_class = AlquilerSerializer
     
     @action(detail=False, url_path='cliente/(?P<cliente_id>[^/.]+)', methods=['get'])
@@ -114,7 +114,7 @@ class LoginAdminAPIView(APIView):
         
         # En este punto, el user logeado es un empleado o un admin.
 
-        if not user.check_password(password):
+        if not user.password == password:
             return Response({"error": "Invalid email or password"}, status=400)
 
         if isAdmin:
@@ -192,7 +192,7 @@ class LoginAPIView(APIView):
         except Cliente.DoesNotExist:
             return Response({"error": "Invalid email or password"}, status=400)
     
-        if not client.check_password(password):
+        if not client.password == password:
             return Response({"error": "Invalid email or password"}, status=400)
         
         # En este punto, el cliente esta bien logeado. Generamos el token -Nico

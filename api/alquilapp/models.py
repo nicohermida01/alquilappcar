@@ -32,7 +32,7 @@ class Alquiler(models.Model):
     status = models.CharField(max_length=20, choices=AlquilerStatus.choices, default=AlquilerStatus.PENDING)
     reembolso = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
 
-    #objects = ActivosManager()  # solo alquileres activos
+    objects = ActivosManager()  # solo alquileres activos
     todos = models.Manager()    # acceso a todos los alquileres
 
     @property
@@ -97,9 +97,9 @@ class Admin(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
 
-    def set_password(self, password):
-        self.password = make_password(password)
-        self.save()
+    #def set_password(self, password):
+    #    self.password = make_password(password)
+    #    self.save()
 
     def check_password(self, inputPassword):
         return check_password(inputPassword, self.password)
@@ -118,12 +118,12 @@ class Empleado(models.Model):
     def __str__(self):
         return f"{self.nombre} {self.apellido} {self.dni}"
     
-    def set_password(self, password):
-        self.password = make_password(password)
-        self.save()
+    #def set_password(self, password):
+    #    self.password = make_password(password)
+    #    self.save()
 
-    def check_password(self, inputPassword):
-        return check_password(inputPassword, self.password)
+    #def check_password(self, inputPassword):
+    #    return check_password(inputPassword, self.password)
 
 class Sucursal(models.Model):
     id = models.AutoField(primary_key=True)
@@ -167,11 +167,12 @@ class Cliente(models.Model):
     def __str__(self):
         return f"{self.nombre} {self.apellido} ({self.dni})" # Esto solo se usa para mostrar en el admin, no es tan importante -Nico
     
-    def set_password(self, password):
+    
+    #def set_password(self, password):
         # Este método se usa para encriptar la contraseña antes de guardarla en la base de datos -Nico
-        self.password = make_password(password)
-        self.save()
+    #    self.password = make_password(password)
+    #    self.save()
 
-    def check_password(self, inputPassword):
+    #def check_password(self, inputPassword):
         # Este método se usa para verificar la contraseña ingresada por el cliente -Nico
-        return check_password(inputPassword, self.password)
+    #    return check_password(inputPassword, self.password)

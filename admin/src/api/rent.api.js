@@ -11,8 +11,7 @@ const confirmCancel = async (id, refundAmount) => {
 
 const deleteRent = async (id, refundAmount) => {
 	const response = await api.patch(`/alquileres/${id}/`, {
-		status: DELETED_RENT,
-		activo: 0
+		status: DELETED_RENT
 	})
 	return response.data
 }

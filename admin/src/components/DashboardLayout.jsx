@@ -9,6 +9,7 @@ import SidebarLink from "./SidebarLink";
 import ListClients from "./ListClients";
 
 export function DashboardLayout() {
+    const [selected, setSelected] = useState();
     const { isAuthenticated, loadingAuth } = useAuth();
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -58,12 +59,29 @@ export function DashboardLayout() {
                                 title="Vehículos"
                             >
                                 <div className="flex flex-col px-4">
-                                    <SidebarLink to="/vehiculos">
+                                    <SidebarLink
+                                        to="/vehiculos"
+                                        setSelected={setSelected}
+                                        selected={selected === "vehiculos"}
+                                    >
                                         Vehículos
-                                    </SidebarLink>      
-                                    <SidebarLink>Paquetes</SidebarLink>
+                                    </SidebarLink>
+                                    <SidebarLink
+                                        to="/paquetes"
+                                        setSelected={setSelected}
+                                        selected={selected === "paquetes"}
+                                    >
+                                        Paquetes
+                                    </SidebarLink>
+                                    <SidebarLink
+                                        to="/categorias"
+                                        setSelected={setSelected}
+                                        selected={selected === "categorias"}
+                                    >
+                                        Categorías
+                                    </SidebarLink>
+                                    {/*
                                     <SidebarLink>Marcas</SidebarLink>
-                                    <SidebarLink>Categorías</SidebarLink>
                                     <SidebarLink>Cancelaciones</SidebarLink>
                                 </div>
                             </AccordionItem>
@@ -73,27 +91,45 @@ export function DashboardLayout() {
                                 title="Usuarios"
                             >
                                 <div className="flex flex-col px-4">
-                                    {/*  <SidebarLink to="/empleados">
+                                    <SidebarLink
+                                        to="/empleados"
+                                        setSelected={setSelected}
+                                        selected={selected === "empleados"}
+                                    >
                                         Empleados
-                                    </SidebarLink>*/}
-                                    <SidebarLink to="/clientes">
+                                    </SidebarLink>
+                                    <SidebarLink
+                                        to="/clientes"
+                                        setSelected={setSelected}
+                                        selected={selected === "clientes"}
+                                    >
                                         Clientes
                                     </SidebarLink>
                                     {/*<SidebarLink>Administradores</SidebarLink>*/}
                                 </div>
                             </AccordionItem>
-                            {/*
                             <AccordionItem
                                 key="3"
                                 aria-label="Sucursales"
                                 title="Sucursales"
                             >
                                 <div className="flex flex-col px-4">
-                                    <SidebarLink>Sucursales</SidebarLink>
-                                    <SidebarLink>Localidades</SidebarLink>
+                                    <SidebarLink
+                                        to={"/sucursales"}
+                                        setSelected={setSelected}
+                                        selected={selected === "sucursales"}
+                                    >
+                                        Sucursales
+                                    </SidebarLink>
+                                    <SidebarLink
+                                        to={"/localidades"}
+                                        setSelected={setSelected}
+                                        selected={selected === "localidades"}
+                                    >
+                                        Localidades
+                                    </SidebarLink>
                                 </div>
                             </AccordionItem>
-                            */}
                         </Accordion>
                         <div className="flex p-4">
                             <Button color="primary" onPress={onOpen} fullWidth>
