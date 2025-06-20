@@ -100,6 +100,10 @@ export function LoginForm() {
 					<Button type='submit' color='primary' className='text-white'>
 						Ingresar
 					</Button>
+					<p>
+						¿Olvidaste tu contraseña?{' '}
+						<a href="/admrecovery" className='text-blue-600 hover:underline'>Recuperala ahora</a>
+					</p>
 				</form>
 			)}
 			<Toaster />

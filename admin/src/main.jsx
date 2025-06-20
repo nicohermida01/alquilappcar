@@ -16,6 +16,7 @@ import PaquetesPage from "./pages/PaquetesPage.jsx";
 import ClientsPage from "./pages/ClientPage.jsx";
 import LocalidadesPage from "./pages/LocalidadesPage.jsx";
 import SucursalesPage from "./pages/SucursalesPage.jsx";
+import AdminPwRecoveryPage from "./pages/AdminPwRecoveryPage.jsx";
 
 // Todas las páginas que se agregan dentro de la ruta van a tener el layout definido, está agregado dentro de
 // el componente DashboardLayout.jsx, que es el que se encarga de renderizar el sidebar y el topbar. Si se fijan,
@@ -60,6 +61,7 @@ createRoot(document.getElementById("root")).render(
                                 element={<SucursalesPage />}
                             />
                         </Route>
+                        <Route path="/admrecovery" element={<AdminPwRecoveryPage />} />
                         <Route path="/login" element={<LoginPage />} />
                     </Routes>
                 </BrowserRouter>

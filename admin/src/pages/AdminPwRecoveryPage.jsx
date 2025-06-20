@@ -1,8 +1,6 @@
 import { Input } from '@heroui/input'
 import { Button } from '@heroui/button'
-import { PageLayout } from '../components/PageLayout.jsx'
-import { useState, useEffect } from 'react'
-import { usersApi } from '../services/users.api.js'
+import { useState } from 'react'
 import { addToast } from '@heroui/toast'
 import {
     Modal,
@@ -11,8 +9,10 @@ import {
     ModalContent,
     useDisclosure
 } from "@heroui/react";
+import { employeeApi } from '../api/employee.api.js'
+import axios from 'axios'
 
-function PwRecoveryPage() {
+function AdminPwRecoveryPage() {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
@@ -24,20 +24,27 @@ function PwRecoveryPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        usersApi.getUserByEmail(email)
+        employeeApi.getEmployeeByEmail(email)
         .then(res => {
             setPassword(res.password);
             onOpen();
         })
-        .catch(error => (addToast({
-            title: "Se ha producido un error.",
-            description: "No se ha encontrado el correo electronico.",
-            color: 'danger'
-        })));
+        .catch(error => {
+            axios.get(`http://localhost:8000/alquilapp/api/v1/admins/by-email/${email}`)
+            .then(res => {
+                setPassword(res.password);
+                onOpen();
+            })
+            .catch(error => (addToast({
+                title: "Se ha producido un error.",
+                description: "No se ha encontrado el correo electronico.",
+                color: 'danger'
+            })));
+        });
     }
 
     return (
-        <PageLayout>
+        <>
             <section className='flex flex-col items-center gap-5 justify-center min-h-screen bg-gray-100'>
                 <form
     			    className='w-[50%] flex flex-col gap-4 p-8 bg-white rounded-lg shadow-lg'
@@ -80,8 +87,8 @@ function PwRecoveryPage() {
                 </ModalContent>
                 
             </Modal>
-        </PageLayout>
+        </>
     );
 }
 
-export default PwRecoveryPage;
+export default AdminPwRecoveryPage;

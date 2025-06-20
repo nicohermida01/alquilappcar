@@ -108,6 +108,15 @@ class Admin(models.Model):
 
     def __str__(self):
         return f"{self.nombre} {self.apellido} ({self.email})"
+    
+    def get_by_email(request, email):
+        admin = get_object_or_404(Admin, email=email)
+        data = {
+            "email": admin.email,
+            "password": admin.password
+        }
+
+        return JsonResponse(data)
 
 class Empleado(models.Model):
     nombre = models.CharField(max_length=100)
@@ -126,6 +135,15 @@ class Empleado(models.Model):
 
     def check_password(self, inputPassword):
         return check_password(inputPassword, self.password)
+
+    def get_by_email(request, email):
+        employee = get_object_or_404(Empleado, email=email)
+        data = {
+            "email": employee.email,
+            "password": employee.password
+        }
+
+        return JsonResponse(data)
 
 class Sucursal(models.Model):
     id = models.AutoField(primary_key=True)
