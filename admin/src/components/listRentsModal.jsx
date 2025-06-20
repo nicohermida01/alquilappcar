@@ -83,7 +83,7 @@ const [refundAmount, setRefundAmount] = useState(0)
 
 	const confirmCancel = (id, refundAmount) => {
 		rentApi
-			.cancel(id, refundAmount)
+			.confirmCancel(id, refundAmount)
 			.then(() => {
 				setRefreshValue(prev => prev + 1) // esto genera que se ejecute el useEffect y se actualicen los alquileres -Nico
 
