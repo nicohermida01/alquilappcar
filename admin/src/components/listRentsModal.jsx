@@ -23,7 +23,7 @@ import {
 	PENDING_RENT,
 } from '../constants/rentStatus'
 import { RentCard } from './RentCard'
-import { ModalConfirmCancelRent } from './ModalConfirmCancelRent'
+import { ModalConfirmAction} from './ModalConfirmAction'
 import { formatAmount } from '../utils/formatAmount'
 
 export function ListRentsModal({ isOpen, onOpenChange, client }) {
@@ -57,19 +57,33 @@ export function ListRentsModal({ isOpen, onOpenChange, client }) {
 				id={rent.id}
 				extraPackages={rent.paquetealquiler_set}
 				cancelFunction={() => handleCancelRent(rent)}
+        deleteFunction={() => handleDeleteRent(rent)}
 				refundAmount={rent.reembolso}
 			/>
 		)
 	}
 
+  const handleDeleteModal = useDisclosure()
+const [modalAction, setModalAction] = useState(null) // 'cancel' o 'delete'
+const [refundAmount, setRefundAmount] = useState(0)
+
 	const handleCancelRent = rent => {
-		setSelectedRent(rent)
-		handleCancelModal.onOpen()
+    setSelectedRent(rent)
+  setModalAction('cancel')
+  const amount = (rent.precio_total * rent.categoria_vehiculo.cancelacion.porcentaje) / 100
+  setRefundAmount(amount)
+  handleCancelModal.onOpen()
 	}
+
+  const handleDeleteRent = rent => {
+    setSelectedRent(rent)
+    setModalAction('delete')
+    handleCancelModal.onOpen()
+  }
 
 	const confirmCancel = (id, refundAmount) => {
 		rentApi
-			.cancel(id, refundAmount)
+			.confirmCancel(id, refundAmount)
 			.then(() => {
 				setRefreshValue(prev => prev + 1) // esto genera que se ejecute el useEffect y se actualicen los alquileres -Nico
 
@@ -86,6 +100,31 @@ export function ListRentsModal({ isOpen, onOpenChange, client }) {
 				addToast({
 					title: 'Error al cancelar el alquiler.',
 					description: 'No se pudo cancelar el alquiler, intente nuevamente.',
+					color: 'danger',
+					duration: 4000,
+				})
+			})
+	}
+
+  const confirmDelete = (id) => {
+		rentApi
+			.deleteRent(id, refundAmount)
+			.then(() => {
+				setRefreshValue(prev => prev + 1) // esto genera que se ejecute el useEffect y se actualicen los alquileres -Nico
+
+				addToast({
+					title: `Reserva #${id} eliminada correctamente.`,
+					variant: 'bordered',
+					// description: `Se han devuelto $${formatAmount(refundAmount)}`,
+					color: 'success',
+					duration: 4000,
+				})
+			})
+			.catch(err => {
+				console.error('Error al cancelar el alquiler', err)
+				addToast({
+					title: 'Error al eliminar el alquiler.',
+					description: 'No se pudo eliminar el alquiler, intente nuevamente.',
 					color: 'danger',
 					duration: 4000,
 				})
@@ -124,13 +163,18 @@ export function ListRentsModal({ isOpen, onOpenChange, client }) {
 						</ModalHeader>
 
 						<ModalBody className='overflow-y-auto bg-gray-100'>
-							<ModalConfirmCancelRent
-								isOpen={handleCancelModal.isOpen}
-								onOpenChange={handleCancelModal.onOpenChange}
-								rent={selectedRent}
-								handleConfirm={confirmCancel}
-							/>
-
+            <ModalConfirmAction
+  isOpen={handleCancelModal.isOpen}
+  onOpenChange={handleCancelModal.onOpenChange}
+  rent={selectedRent}
+  actionType={modalAction}
+  refundAmount={refundAmount}
+  onConfirm={
+    modalAction === 'cancel'
+      ? confirmCancel
+      : confirmDelete
+  }
+/>
 							{isLoading && <Spinner />}
 
 							{!isLoading && (

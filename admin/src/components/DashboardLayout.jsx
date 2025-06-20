@@ -83,7 +83,6 @@ export function DashboardLayout() {
                                     {/*
                                     <SidebarLink>Marcas</SidebarLink>
                                     <SidebarLink>Cancelaciones</SidebarLink>
-                                    */}
                                 </div>
                             </AccordionItem>
                             <AccordionItem
