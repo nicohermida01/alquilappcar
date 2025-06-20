@@ -31,6 +31,7 @@ export function RentCard({
 	id,
 	extraPackages = [],
 	cancelFunction,
+  deleteFunction,
 	refundAmount,
 }) {
 	const [title, setTitle] = useState('')
@@ -66,7 +67,7 @@ export function RentCard({
 	}, [startDate, status])
 
 	return (
-		<div className='bg-white w-max h-[474px] p-4 shadow rounded-md'>
+		<div className='bg-white w-max  p-4 shadow rounded-md'>
 			<div>
 				<h3 className='font-bold'>{title}</h3>
 				<div className='flex items-center gap-2 mt-1'>
@@ -121,6 +122,15 @@ export function RentCard({
 						>
 							Cancelar alquiler
 						</Button>
+            <Button
+							className='w-full mt-1'
+							radius='sm'
+							color='danger'
+							size='sm'
+							onPress={deleteFunction}
+						>
+							Dar de baja alquiler
+						</Button>
 					</div>
 				</>
 			)}
@@ -131,8 +141,18 @@ export function RentCard({
 						title='Monto devuelto'
 						value={`$${formatAmount(refundAmount)}`}
 					/>
+          <Button
+							className='w-full mt-1'
+							radius='sm'
+							color='danger'
+							size='sm'
+							onPress={deleteFunction}
+						>
+							Dar de baja alquiler
+						</Button>
 				</>
 			)}
+      
 		</div>
 	)
 }
