@@ -12,7 +12,14 @@ const getAlquileresByUserId = async (userId) => {
     return response.data;
 }
 
+const getUserByEmail = async (email) => {
+    const response = await api.get(`clientes/by-email/${email}`);
+
+    return response.data;
+}
+
 export const usersApi = {
     getUserById,
-    getAlquileresByUserId
+    getAlquileresByUserId,
+    getUserByEmail
 };

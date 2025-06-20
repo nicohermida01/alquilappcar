@@ -20,4 +20,7 @@ urlpatterns = [
     path('api/v1/login/', views.LoginAPIView.as_view(), name='login'),
     path('api/v1/login/admin/', views.LoginAdminAPIView.as_view(), name='login_admin'),
     path('api/v1/login/admin/2fa/<int:id>/', views.Confirm2FAAPIView.as_view(), name='login_admin_2fa'),
+    path('api/v1/clientes/by-email/<str:email>', views.Cliente.get_by_email),
+    path('api/v1/admins/by-email/<str:email>', views.Admin.get_by_email),
+    path('api/v1/empleados/by-email/<str:email>', views.Empleado.get_by_email)
 ]

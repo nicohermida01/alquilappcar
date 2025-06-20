@@ -15,8 +15,14 @@ const getAllEmployees = async () => {
     return response.data;
 };
 
+const getEmployeeByEmail = async (email) => {
+    const response = await api.get(`empleados/by-email/${email}`);
+    return response.data;
+}
+
 export const employeeApi = {
     register,
     update,
     getAllEmployees,
+    getEmployeeByEmail
 };

@@ -7,6 +7,7 @@ import UserProfile from './pages/UserProfile'
 import { AuthProvider } from './contexts/AuthContext'
 import { ToastProvider } from '@heroui/react'
 import { RentProvider } from './contexts/RentContext'
+import PwRecoveryPage from './pages/PwRecoveryPage'
 
 function App() {
 	return (
@@ -20,6 +21,7 @@ function App() {
 						<Route path='/register' element={<RegisterPage />} />
 						<Route path='/alquiler' element={<CreateAlquiler />} />
 						<Route path='/mi-perfil' element={<UserProfile />} />
+						<Route path='/recovery' element={<PwRecoveryPage />} />
 					</Routes>
 				</BrowserRouter>
 			</RentProvider>
