@@ -203,10 +203,10 @@ class AlquilerSerializer(serializers.ModelSerializer):
         fecha_inicio = data.get('fecha_inicio')
         fecha_devolucion = data.get('fecha_devolucion')
 
-        if fecha_inicio and fecha_inicio <= now() - timedelta(minutes=1):
-            raise serializers.ValidationError({
-                'fecha_inicio': 'La fecha de inicio debe ser igual o posterior al momento actual.'
-            })
+        # if fecha_inicio and fecha_inicio <= now() - timedelta(minutes=1):
+        #     raise serializers.ValidationError({
+        #         'fecha_inicio': 'La fecha de inicio debe ser igual o posterior al momento actual.'
+        #     })
 
         if fecha_inicio and fecha_devolucion and fecha_devolucion <= fecha_inicio:
             raise serializers.ValidationError({

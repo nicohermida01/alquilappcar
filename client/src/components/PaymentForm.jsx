@@ -70,6 +70,7 @@ export default function PaymentForm({ isOpen, onOpenChange, alquilerData }) {
                         error.message,
                     color: "danger",
                 });
+                console.error(error)
             });
     };
 

@@ -80,7 +80,7 @@ export function DashboardLayout() {
                                     >
                                         Categorías
                                     </SidebarLink>
-                                    {/*
+                                    
                                     <SidebarLink>Marcas</SidebarLink>
                                     <SidebarLink>Cancelaciones</SidebarLink>
                                 </div>
@@ -105,7 +105,7 @@ export function DashboardLayout() {
                                     >
                                         Clientes
                                     </SidebarLink>
-                                    {/*<SidebarLink>Administradores</SidebarLink>*/}
+                                    <SidebarLink>Administradores</SidebarLink>
                                 </div>
                             </AccordionItem>
                             <AccordionItem
