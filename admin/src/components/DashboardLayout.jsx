@@ -81,8 +81,14 @@ export function DashboardLayout() {
                                         Categorías
                                     </SidebarLink>
                                     
-                                    <SidebarLink>Marcas</SidebarLink>
-                                    <SidebarLink>Cancelaciones</SidebarLink>
+                                    <SidebarLink
+                                    to="/marcas"
+                                    setSelected={setSelected}
+                                    selected={selected === "marcas"}>Marcas</SidebarLink>
+                                    {/* <SidebarLink
+                                    to="/politicas"
+                                    setSelected={setSelected}
+                                    selected={selected === "politicas"}>Cancelaciones</SidebarLink> */}
                                 </div>
                             </AccordionItem>
                             <AccordionItem

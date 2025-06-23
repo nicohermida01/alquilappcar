@@ -73,7 +73,7 @@ export default function RegisterLeaseForm({
         try {
             setIsFetching(true);
             const response = await axios.get(
-                "http://localhost:8000/alquilapp/api/v1/sucursales/populated/"
+                'http://localhost:8000/alquilapp/api/v1/sucursales/populated_activas/'
             );
             return response.data;
         } catch (error) {

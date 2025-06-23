@@ -114,9 +114,9 @@ export function RentCard({
 					<Divider className='my-4' />
 					<div>
 						<Button
-							className='w-full'
+							className='w-full text-white'
 							radius='sm'
-							color='danger'
+							color='secondary'
 							size='sm'
 							onPress={cancelFunction}
 						>

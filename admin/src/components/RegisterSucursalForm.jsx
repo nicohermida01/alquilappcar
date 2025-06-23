@@ -1,4 +1,4 @@
-import { Input, Button, addToast, SelectItem, Select } from "@heroui/react";
+import { Input, Button, addToast, SelectItem, Select,Checkbox } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { vehiclesApi } from "../api/vehicles.api";
 
@@ -91,7 +91,12 @@ export default function RegisterSucursalForm({
                     </SelectItem>
                 ))}
             </Select>
-
+            <Checkbox
+              {...register('activo')}
+              defaultSelected={itemInfo?.activo}
+            >
+              Activo
+            </Checkbox>
             <Button type="submit" color="primary" className="text-white">
                 Confirmar
             </Button>

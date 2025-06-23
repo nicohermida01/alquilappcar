@@ -1,4 +1,5 @@
 import React from "react";
+import { addToast } from '@heroui/react'
 import ListItems from "../components/ListPageComponents/ListItems";
 import { vehiclesApi } from "../api/vehicles.api";
 import { subsidiariesApi } from "../api/subsidiaries.api";
@@ -13,10 +14,11 @@ function VehiclesPage() {
         { name: "MODELO", uid: "modelo", sortable: true },
         { name: "CATEGORÍA", uid: "categoria", sortable: true },
         { name: "SUCURSAL", uid: "sucursal", sortable: true },
+        { name: 'ACTIVO', uid: 'activo', sortable: true},
         { name: "ACCIONES", uid: "actions" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["patente", "modelo", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["patente", "modelo", 'activo', "actions"];
 
     const [itemList, setItemList] = React.useState([]);
     const [databaseInfo, setDatabaseInfo] = React.useState({
@@ -83,7 +85,31 @@ function VehiclesPage() {
 
     React.useEffect(() => {
         fetchInfo();
+        console.log(databaseInfo, 'DATABASEINFO AL FETCHEAR DATA DE VEHICULOS')
     }, []);
+
+    
+    const deleteFunction = (id) => {
+      vehiclesApi
+          .deleteVehicle(id)
+          .then(() => {
+              addToast({
+                  title: "Vehículo eliminado",
+                  description: "El vehículo ha sido eliminado correctamente.",
+                  color: "success",
+              });
+              fetchInfo(); // Refresh the list after deletion
+          })
+          .catch((error) => {
+              console.error("Error deleting vehicle:", error);
+              addToast({
+                  title: "Error al eliminar vehículo",
+                  description:
+                      "No se pudo eliminar el vehículo. Inténtelo de nuevo.",
+                  color: "danger",
+              });
+          });
+  };
 
     return (
         <section className="w-full py-[135px] flex flex-col items-center justify-center bg-gray-100 gap-10">
@@ -94,6 +120,7 @@ function VehiclesPage() {
                 registerForm={<RegisterVehicleForm />}
                 infoShow={<ShowVehicle />} // Placeholder for info show component
                 deleteItem={<></>} // Placeholder for delete item component
+                deleteFunction={deleteFunction}
                 columns={columns}
                 INITIAL_VISIBLE_COLUMNS={INITIAL_VISIBLE_COLUMNS}
                 fetchInfo={fetchInfo}

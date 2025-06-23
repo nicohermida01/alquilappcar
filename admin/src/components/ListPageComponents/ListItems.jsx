@@ -145,18 +145,22 @@ export default function ListItems({
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = React.useCallback((item, columnKey) => {
-        const cellValue = item[columnKey];
+    const entitiesWithActivo = ["vehículo", "alquiler", "cliente", "sucursal", "empleado"]
 
+    const renderCell = React.useCallback((item, columnKey) => {
+        console.log(item, 'ITEM' , columnKey, 'COLUMNKEY')
+        const cellValue = item[columnKey];
+        // console.log(item, 'ITEM')
         switch (columnKey) {
             case "sucursal":
                 return (
-                    <p>
-                        {databaseInfo?.sucursales[cellValue - 1]?.localidad
-                            .nombre +
-                            ", " +
-                            databaseInfo?.sucursales[cellValue - 1]?.direccion}
-                    </p>
+                    // <p>
+                    //     {databaseInfo?.sucursales[cellValue - 1]?.localidad
+                    //         .nombre +
+                    //         ", dadsa" +
+                    //         databaseInfo?.sucursales[cellValue - 1]?.direccion}
+                    // </p>
+                    <p>{item.sucursal.localidad.nombre}, {item.sucursal.direccion}</p>
                 );
             case "localidad":
                 return <p>{item.localidad.nombre}</p>;
@@ -166,6 +170,11 @@ export default function ListItems({
                 return <p>{databaseInfo.categorias[cellValue - 1]?.nombre}</p>;
             case "cancelacion":
                 return <p>{item.cancelacion.descripcion}</p>;
+            case "activo":
+                // return <p>{item.activo ? 'Sí':'Dado de baja'}</p>
+                return typeof item.activo === "boolean" ? (
+                  <p>{item.activo ? "Sí" : "Dado de baja"}</p>
+                ) : null
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
@@ -192,14 +201,16 @@ export default function ListItems({
                                 <EditIcon />
                             </span>
                         </Tooltip>
-                        <Tooltip content={"Eliminar " + itemName}>
+                        {entitiesWithActivo.includes(itemName) && Number(item.activo) === 0 ? null : (
+                          <Tooltip content={"Eliminar " + itemName}>
                             <span
-                                className="text-lg text-danger cursor-pointer active:opacity-50"
-                                onClick={() => onOpenItemDelete(item)}
+                              className="text-lg text-danger cursor-pointer active:opacity-50"
+                              onClick={() => onOpenItemDelete(item)}
                             >
-                                <DeleteIcon />
+                              <DeleteIcon />
                             </span>
-                        </Tooltip>
+                          </Tooltip>
+                        )}
                     </div>
                 );
             default:

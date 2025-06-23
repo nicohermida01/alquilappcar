@@ -58,7 +58,6 @@ class SucursalViewSet(viewsets.ModelViewSet):
     serializer_class = SucursalSerializer
     queryset = Sucursal.objects.all()
 
-    
     @action(detail=False, methods=['get'])
     def populated(self, request):
         # El decorador @action permite crear una ruta personalizada dentro del ViewSet
@@ -67,6 +66,17 @@ class SucursalViewSet(viewsets.ModelViewSet):
         # -Nico
 
         sucursales = self.get_queryset().select_related('localidad')
+        data = []
+        for sucursal in sucursales:
+            item = self.get_serializer(sucursal).data
+            if hasattr(sucursal, 'localidad') and sucursal.localidad:
+                item['localidad'] = LocalidadSerializer(sucursal.localidad).data
+            data.append(item)
+        return Response(data)
+
+    @action(detail=False, methods=['get'])
+    def populated_activas(self, request):
+        sucursales = self.get_queryset().filter(activo=True).select_related('localidad')
         data = []
         for sucursal in sucursales:
             item = self.get_serializer(sucursal).data

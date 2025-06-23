@@ -11,7 +11,8 @@ export default function ShowVehicle({ itemInfo, databaseInfo }) {
             </section>
             <section className="flex gap-2">
                 <p className="font-bold">Marca: </p>
-                <p>{databaseInfo.brands[itemInfo.marca - 1].nombre}</p>
+                {/* <p>{databaseInfo.brands[itemInfo.marca - 1].nombre}</p> */}
+                <p>{itemInfo.marca.nombre}</p>
             </section>
             <section className="flex gap-2">
                 <p className="font-bold">Año: </p>
@@ -19,22 +20,24 @@ export default function ShowVehicle({ itemInfo, databaseInfo }) {
             </section>
             <section className="flex gap-2">
                 <p className="font-bold">Categoría: </p>
-                <p>{databaseInfo.categorias[itemInfo.categoria - 1].nombre}</p>
+                {/* <p>{databaseInfo.categorias[itemInfo.categoria - 1].nombre}</p> */}
+                <p>{itemInfo.categoria.nombre}</p>
             </section>
             <section className="flex gap-2">
                 <p className="font-bold">Política de cancelación: </p>
                 <p>
-                    {databaseInfo.cancelaciones[itemInfo.marca - 1].descripcion}
+                    {/* {databaseInfo.cancelaciones[itemInfo.marca - 1].descripcion} */}
                 </p>
             </section>
             <section className="flex gap-2">
                 <p className="font-bold">Sucursal: </p>
-                <p>
+                {/* <p>
                     {databaseInfo.sucursales[itemInfo.sucursal - 1]?.direccion +
                         ", " +
                         databaseInfo.sucursales[itemInfo.sucursal - 1]
                             ?.localidad.nombre}
-                </p>
+                </p> */}
+                <p>{itemInfo.sucursal.nombre}</p>
             </section>
             <section className="flex gap-2">
                 <p className="font-bold">Aptitud para discapacitados: </p>

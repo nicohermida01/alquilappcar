@@ -1,6 +1,7 @@
 import ListItems from "../components/ListPageComponents/ListItems";
 import { clientApi } from "../api/client.api";
 import React from "react";
+import { addToast } from '@heroui/react'
 import DeleteBrand from "../components/DeleteBrand";
 import { RegisterClientForm } from "../components/RegisterClientForm";
 import ShowClient from "../components/ShowClient";
@@ -11,6 +12,7 @@ export default function ClientsPage() {
         { name: "APELLIDO", uid: "apellido", sortable: true },
         { name: "NOMBRE", uid: "nombre", sortable: true },
         { name: "EMAIL", uid: "email", sortable: true },
+        { name: "ACTIVO", uid: "activo", sortable: true },
         { name: "ACCIONES", uid: "actions" },
     ];
 
@@ -33,6 +35,28 @@ export default function ClientsPage() {
         fetchInfo();
     }, []);
 
+    const deleteFunction = (id) => {
+      clientApi
+          .deleteClient(id)
+          .then(() => {
+              addToast({
+                  title: "Cliente eliminado",
+                  description: "El cliente ha sido eliminado correctamente.",
+                  color: "success",
+              });
+              fetchInfo(); // Refresh the list after deletion
+          })
+          .catch((error) => {
+              console.error("Error deleting cliente:", error);
+              addToast({
+                  title: "Error al eliminar cliente",
+                  description:
+                      "No se pudo eliminar el cliente. Inténtelo de nuevo.",
+                  color: "danger",
+              });
+          });
+  };
+
     return (
         <section className="w-full py-[135px] flex flex-col items-center justify-center bg-gray-100 gap-10">
             <h2 className="text-3xl font-bold text-center">
@@ -41,8 +65,9 @@ export default function ClientsPage() {
             <ListItems
                 registerForm={<RegisterClientForm />}
                 infoShow={<ShowClient />}
-                deleteItem={<DeleteBrand />}
+                deleteItem={<DeleteBrand />} // por que pingo aparece un deletebrand en client?
                 columns={columns}
+                deleteFunction={deleteFunction}
                 INITIAL_VISIBLE_COLUMNS={INITIAL_VISIBLE_COLUMNS}
                 fetchInfo={fetchInfo}
                 itemList={itemList}

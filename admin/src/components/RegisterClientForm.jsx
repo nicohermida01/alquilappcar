@@ -1,4 +1,4 @@
-import { Input, Button, Select, SelectItem, addToast } from "@heroui/react";
+import { Input, Button, Select, SelectItem, addToast, Checkbox } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { InputPassword } from "./InputPassword";
@@ -153,6 +153,13 @@ export function RegisterClientForm({
                     })}
                     isRequired
                 />
+
+<Checkbox
+				{...register('activo')}
+				defaultSelected={itemInfo?.activo}
+			>
+				Activo
+			</Checkbox>
 
                 {!itemInfo && (
                     <InputField>
