@@ -14,6 +14,13 @@ const updateClient = (clientId, clientData) => {
 	return response
 }
 
+const deleteClient = (clientId) => {
+	const response = api.patch(`/clientes/${clientId}/`,{
+    activo: 0
+  })
+	return response
+}
+
 const getAlquileresByUserId = async userId => {
 	const response = await api.get(`alquileres/cliente/${userId}`)
 
@@ -25,4 +32,5 @@ export const clientApi = {
 	createClient,
 	updateClient,
 	getAlquileresByUserId,
+  deleteClient
 }

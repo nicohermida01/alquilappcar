@@ -1,7 +1,9 @@
 import { RegisterEmployeeForm } from "../components/RegisterEmployeeForm";
+import ShowEmployee from "../components/ShowEmployee";
 import { useAuth } from "../contexts/AuthContext";
 import { employeeApi } from "../api/employee.api";
 import React from "react";
+import { addToast } from '@heroui/react'
 import ListItems from "../components/ListPageComponents/ListItems";
 import { subsidiariesApi } from "../api/subsidiaries.api";
 
@@ -14,6 +16,7 @@ export function EmployeePage() {
         { name: "NOMBRE", uid: "nombre", sortable: true },
         { name: "EMAIL", uid: "email", sortable: true },
         { name: "SUCURSAL", uid: "sucursal", sortable: true },
+        { name: "ACTIVO", uid: "activo", sortable: true },
         { name: "ACCIONES", uid: "actions" },
     ];
 
@@ -22,6 +25,7 @@ export function EmployeePage() {
         "apellido",
         "email",
         "sucursal",
+        'activo',
         "actions",
     ];
 
@@ -41,7 +45,7 @@ export function EmployeePage() {
             });
 
         subsidiariesApi
-            .getSubsidiariesPopulated()
+            .getActiveSubsidiariesPopulated()
             .then((res) => {
                 let aux = databaseInfo;
                 aux.sucursales = res;
@@ -51,6 +55,28 @@ export function EmployeePage() {
                 console.error("Error fetching data:", error);
             });
     }
+
+    const deleteFunction = (id) => {
+      employeeApi
+          .deleteEmpleado(id)
+          .then(() => {
+              addToast({
+                  title: "Empleado eliminado",
+                  description: "El empleado ha sido eliminado correctamente.",
+                  color: "success",
+              });
+              fetchInfo(); // Refresh the list after deletion
+          })
+          .catch((error) => {
+              console.error("Error deleting empleado:", error);
+              addToast({
+                  title: "Error al eliminar empleado",
+                  description:
+                      "No se pudo eliminar el empleado. Inténtelo de nuevo.",
+                  color: "danger",
+              });
+          });
+  };
 
     React.useEffect(() => {
         fetchInfo();
@@ -67,13 +93,14 @@ export function EmployeePage() {
             {user.isAdmin && (
                 <ListItems
                     registerForm={<RegisterEmployeeForm />}
-                    infoShow={<></>} // Placeholder for info show component
+                    infoShow={<ShowEmployee />} // Placeholder for info show component
                     deleteItem={<></>} // Placeholder for delete item component
                     columns={columns}
                     INITIAL_VISIBLE_COLUMNS={INITIAL_VISIBLE_COLUMNS}
                     fetchInfo={fetchInfo}
                     itemList={itemList}
                     itemName={"empleado"}
+                    deleteFunction={deleteFunction}
                     databaseInfo={databaseInfo}
                 />
             )}

@@ -69,7 +69,7 @@ class Vehiculo(models.Model):
     max_pasajeros = models.IntegerField()
     aptitud_discapacidad = models.BooleanField(default=False)
     min_dias_alquiler = models.IntegerField(default=1)
-
+    activo = models.BooleanField(default=True, null=False)
     marca = models.ForeignKey('Marca', on_delete=models.CASCADE)
     sucursal = models.ForeignKey('Sucursal', on_delete=models.CASCADE, null=True, blank=True)
 
@@ -125,6 +125,7 @@ class Empleado(models.Model):
     dni = models.CharField(max_length=20, unique=True)
     password = models.CharField(max_length=100)
     sucursal = models.ForeignKey('Sucursal', on_delete=models.CASCADE)
+    activo = models.BooleanField(default=True, null=False)
 
     def __str__(self):
         return f"{self.nombre} {self.apellido} {self.dni}"
@@ -149,6 +150,7 @@ class Sucursal(models.Model):
     id = models.AutoField(primary_key=True)
     direccion = models.CharField(max_length=255)
     localidad = models.ForeignKey('Localidad', on_delete=models.CASCADE, default=1)
+    activo = models.BooleanField(default=True, null=False)
 
     def __str__(self):
         return f"{self.direccion} + ({self.localidad})"

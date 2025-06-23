@@ -17,7 +17,9 @@ const updateVehicle = async (vehicleData, id) => {
 };
 
 const deleteVehicle = async (id) => {
-    const response = await api.delete(`vehiculos/${id}/`);
+    const response = await api.patch(`vehiculos/${id}/`, {
+      activo: 0
+    });
     return response.data;
 };
 

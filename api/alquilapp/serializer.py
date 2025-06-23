@@ -77,8 +77,26 @@ class AdminSerializer(serializers.ModelSerializer):
         return instance
 
 
+class LocalidadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Localidad
+        fields = '__all__'
+        read_only_fields = ['id']
+
+class SucursalSerializer(serializers.ModelSerializer):
+    localidad = LocalidadSerializer(read_only=True)
+    localidad_id = serializers.PrimaryKeyRelatedField(
+        queryset=Localidad.objects.all(), source='localidad', write_only=True
+    )
+
+    class Meta:
+        model = Sucursal
+        fields = '__all__'
+        read_only_fields = ['id']
+
 class EmpleadoSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    sucursal = SucursalSerializer(read_only=True)
 
     class Meta:
         model = Empleado
@@ -104,23 +122,6 @@ class EmpleadoSerializer(serializers.ModelSerializer):
         employee.save()
 
         return employee
-
-class LocalidadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Localidad
-        fields = '__all__'
-        read_only_fields = ['id']
-
-class SucursalSerializer(serializers.ModelSerializer):
-    localidad = LocalidadSerializer(read_only=True)
-    localidad_id = serializers.PrimaryKeyRelatedField(
-        queryset=Localidad.objects.all(), source='localidad', write_only=True
-    )
-
-    class Meta:
-        model = Sucursal
-        fields = '__all__'
-        read_only_fields = ['id']
 
 class CategoriaVehiculoSerializer(serializers.ModelSerializer):
     cancelacion = CancelacionSerializer(read_only=True)

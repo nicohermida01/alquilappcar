@@ -10,6 +10,13 @@ const update = async (id, employeeData) => {
     return response.data;
 };
 
+const deleteEmpleado = async (id, employeeData) => {
+  const response = await api.patch(`empleados/${id}/`, {
+    activo: 0
+  });
+  return response.data;
+};
+
 const getAllEmployees = async () => {
     const response = await api.get("empleados/");
     return response.data;
@@ -24,5 +31,6 @@ export const employeeApi = {
     register,
     update,
     getAllEmployees,
-    getEmployeeByEmail
+    getEmployeeByEmail,
+    deleteEmpleado
 };

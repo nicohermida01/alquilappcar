@@ -1,6 +1,7 @@
 import React from "react";
 import ListItems from "../components/ListPageComponents/ListItems";
 import { vehiclesApi } from "../api/vehicles.api";
+import { subsidiariesApi } from "../api/subsidiaries.api";
 import RegisterSucursalForm from "../components/RegisterSucursalForm";
 import ShowSucursal from "../components/ShowSucursal";
 import { addToast } from "@heroui/react";
@@ -10,11 +11,12 @@ export default function SucursalesPage() {
         { name: "ID", uid: "id", sortable: true },
         { name: "LOCALIDAD", uid: "localidad", sortable: true },
         { name: "DIRECCION", uid: "direccion", sortable: true },
-        { name: "ACCIONES", uid: "actions" },
+        { name: 'ACTIVO', uid: 'activo', sortable: true},
+        { name: "ACCIONES", uid: "actions"}
     ];
 
     const deleteFunction = (id) => {
-        vehiclesApi
+        subsidiariesApi
             .deleteSucursal(id)
             .then(() => {
                 addToast({
@@ -35,7 +37,7 @@ export default function SucursalesPage() {
             });
     };
 
-    const INITIAL_VISIBLE_COLUMNS = ["localidad", "direccion", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["localidad", "direccion", 'activo', "actions"];
 
     const [itemList, setItemList] = React.useState([]);
     const [databaseInfo, setDatabaseInfo] = React.useState();
