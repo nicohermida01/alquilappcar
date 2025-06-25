@@ -62,13 +62,13 @@ export function DashboardLayout() {
 									>
 										Vehículos
 									</SidebarLink>
-									{/* <SidebarLink
+									<SidebarLink
 										to='/paquetes'
 										setSelected={setSelected}
 										selected={selected === 'paquetes'}
 									>
 										Paquetes
-									</SidebarLink> */}
+									</SidebarLink>
 									<SidebarLink
 										to='/categorias'
 										setSelected={setSelected}
@@ -76,9 +76,17 @@ export function DashboardLayout() {
 									>
 										Categorías
 									</SidebarLink>
-
-									<SidebarLink>Marcas</SidebarLink>
-									{/* <SidebarLink>Cancelaciones</SidebarLink> */}
+									<SidebarLink
+										to='/marcas'
+										setSelected={setSelected}
+										selected={selected === 'marcas'}
+									>
+										Marcas
+									</SidebarLink>
+									{/* <SidebarLink
+                                    to="/politicas"
+                                    setSelected={setSelected}
+                                    selected={selected === "politicas"}>Cancelaciones</SidebarLink> */}
 								</div>
 							</AccordionItem>
 							<AccordionItem key='2' aria-label='Usuarios' title='Usuarios'>
@@ -97,7 +105,7 @@ export function DashboardLayout() {
 									>
 										Clientes
 									</SidebarLink>
-									{/*<SidebarLink>Administradores</SidebarLink>*/}
+									<SidebarLink>Administradores</SidebarLink>
 								</div>
 							</AccordionItem>
 							<AccordionItem key='3' aria-label='Sucursales' title='Sucursales'>

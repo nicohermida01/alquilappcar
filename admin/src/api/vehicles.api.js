@@ -47,6 +47,13 @@ const getAvailablesVehicles = async alquilerId => {
 	return response.data
 }
 
+const deleteVehicle = async id => {
+	const response = await api.patch(`vehiculos/${id}/`, {
+		activo: 0,
+	})
+	return response.data
+}
+
 const getAllBrands = async () => {
 	const response = await api.get('marcas/')
 	return response.data

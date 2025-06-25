@@ -1,4 +1,4 @@
-import { Input, Button, Select, SelectItem, addToast } from "@heroui/react";
+import { Input, Button, Select, SelectItem, addToast, Checkbox } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { InputPassword } from "./InputPassword";
 import { employeeApi } from "../api/employee.api";
@@ -155,6 +155,14 @@ export function RegisterEmployeeForm({
                     hasItemInfo={!!itemInfo}
                 />
             </InputField>
+
+            <Checkbox
+				{...register('activo')}
+				defaultSelected={itemInfo?.activo}
+			>
+				Activo
+			</Checkbox>
+
 
             <Button type="submit" color="primary" className="text-white">
                 Confirmar

@@ -96,8 +96,26 @@ class AdminSerializer(serializers.ModelSerializer):
         return instance
 
 
+class LocalidadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Localidad
+        fields = '__all__'
+        read_only_fields = ['id']
+
+class SucursalSerializer(serializers.ModelSerializer):
+    localidad = LocalidadSerializer(read_only=True)
+    localidad_id = serializers.PrimaryKeyRelatedField(
+        queryset=Localidad.objects.all(), source='localidad', write_only=True
+    )
+
+    class Meta:
+        model = Sucursal
+        fields = '__all__'
+        read_only_fields = ['id']
+
 class EmpleadoSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    sucursal = SucursalSerializer(read_only=True)
 
     class Meta:
         model = Empleado
@@ -123,23 +141,6 @@ class EmpleadoSerializer(serializers.ModelSerializer):
         employee.save()
 
         return employee
-
-class LocalidadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Localidad
-        fields = '__all__'
-        read_only_fields = ['id']
-
-class SucursalSerializer(serializers.ModelSerializer):
-    localidad = LocalidadSerializer(read_only=True)
-    localidad_id = serializers.PrimaryKeyRelatedField(
-        queryset=Localidad.objects.all(), source='localidad', write_only=True
-    )
-
-    class Meta:
-        model = Sucursal
-        fields = '__all__'
-        read_only_fields = ['id']
 
 
 
@@ -226,10 +227,10 @@ class AlquilerSerializer(serializers.ModelSerializer):
         fecha_inicio = data.get('fecha_inicio')
         fecha_devolucion = data.get('fecha_devolucion')
 
-        if fecha_inicio and fecha_inicio <= now() - timedelta(minutes=1):
-            raise serializers.ValidationError({
-                'fecha_inicio': 'La fecha de inicio debe ser igual o posterior al momento actual.'
-            })
+        # if fecha_inicio and fecha_inicio <= now() - timedelta(minutes=1):
+        #     raise serializers.ValidationError({
+        #         'fecha_inicio': 'La fecha de inicio debe ser igual o posterior al momento actual.'
+        #     })
 
         if fecha_inicio and fecha_devolucion and fecha_devolucion <= fecha_inicio:
             raise serializers.ValidationError({
