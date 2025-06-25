@@ -84,9 +84,12 @@ export default function RegisterCancelacionForm({
                 label="Porcentaje"
                 defaultValue={itemInfo?.porcentaje}
                 {...register("porcentaje", {
-                    required: true,
-                    valueAsNumber: true,
+                  required: true,
+                  valueAsNumber: true
                 })}
+                max="100"
+                min="0"
+                errorMessage="El porcentaje debe estar entre el 0 y el 100%"
                 isRequired
             />
 

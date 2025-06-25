@@ -90,7 +90,6 @@ export default function AlquileresPage() {
 	const itemsToShow = useMemo(() => {
 		const start = (page - 1) * rowsPerPage
 		const end = start + rowsPerPage
-
 		return sortedItems.slice(start, end)
 	}, [page, sortedItems, rowsPerPage])
 
@@ -200,7 +199,7 @@ export default function AlquileresPage() {
 							onPress={() => newAlquilerModalHandler.onOpen()}
 							endContent={<PlusIcon />}
 						>
-							Nuevo alquler
+							Nuevo alquiler
 						</Button>
 
 						<Button
@@ -310,7 +309,7 @@ export default function AlquileresPage() {
 						</TableColumn>
 					)}
 				</TableHeader>
-				<TableBody items={itemsToShow} isLoading={isLoading}>
+				<TableBody items={itemsToShow} isLoading={isLoading} emptyContent={"No hay alquileres registrados."}>
 					{item => (
 						<TableRow key={item.id}>
 							{columnKey => (

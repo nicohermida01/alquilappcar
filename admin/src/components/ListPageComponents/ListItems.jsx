@@ -218,6 +218,18 @@ export default function ListItems({
         }
     }, []);
 
+    const pluralMap = {
+      cliente: "clientes",
+      vehiculo: "vehículos",
+      alquiler: "alquileres",
+      localidad: "localidades",
+      sucursal: "sucursales",
+      categoria: "categorías",
+      paquete: "paquetes",
+      empleado: "empleados",
+      // agregá más si necesitás
+    }
+
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
             setPage(page + 1);
@@ -302,9 +314,12 @@ export default function ListItems({
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">
+                    {/* <span className="text-default-400 text-small">
                         Total {itemList.length} {itemName}s
-                    </span>
+                    </span> */}
+                    <span className="text-default-400 text-small">
+  Total {itemList.length} {pluralMap[itemName] || itemName + "s"}
+</span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por página:
                         <select

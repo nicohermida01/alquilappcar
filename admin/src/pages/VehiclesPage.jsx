@@ -15,10 +15,11 @@ function VehiclesPage() {
         { name: "CATEGORÍA", uid: "categoria", sortable: true },
         { name: "SUCURSAL", uid: "sucursal", sortable: true },
         { name: 'ACTIVO', uid: 'activo', sortable: true},
+        { name: 'DIAS MIN.' , uid: 'min_dias_alquiler', sortable: true},
         { name: "ACCIONES", uid: "actions" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["patente", "modelo", 'activo', "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["patente", "modelo", 'activo', 'min_dias_alquiler', "actions"];
 
     const [itemList, setItemList] = React.useState([]);
     const [databaseInfo, setDatabaseInfo] = React.useState({

@@ -83,10 +83,10 @@ export function DashboardLayout() {
 									>
 										Marcas
 									</SidebarLink>
-									{/* <SidebarLink
-                                    to="/politicas"
+									<SidebarLink
+                                    to="/cancelaciones"
                                     setSelected={setSelected}
-                                    selected={selected === "politicas"}>Cancelaciones</SidebarLink> */}
+                                    selected={selected === "politicas"}>Cancelaciones</SidebarLink>
 								</div>
 							</AccordionItem>
 							<AccordionItem key='2' aria-label='Usuarios' title='Usuarios'>
