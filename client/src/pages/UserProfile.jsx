@@ -18,7 +18,7 @@ function UserProfile() {
 		if (!isAuthenticated) {
 			navigate('/login')
 		}
-	}, [isAuthenticated, loadingAuth])
+	}, [isAuthenticated, loadingAuth, navigate])
 
 	if (loadingAuth) return 'Cargando...'
 

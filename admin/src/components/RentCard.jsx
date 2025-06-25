@@ -294,7 +294,7 @@ export function RentCard({ rentId, refreshTableFn }) {
 
 	return (
 		<>
-			<div className='bg-white w-max  p-4 shadow rounded-md'>
+			<div className='bg-white w-max p-4 shadow rounded-md'>
 				<div className='flex items-center justify-between'>
 					<h3 className='font-bold'>Alquiler #{rent.id}</h3>
 					<Chip color={STATUS_CHIP_COLORS[rent.status]} size='sm'>

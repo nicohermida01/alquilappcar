@@ -14,7 +14,13 @@ const cancelLease = async (id, refundAmount) => {
 	return response.data
 }
 
+const getLeaseById = async id => {
+	const response = await api.get(`/alquileres/${id}/`)
+	return response.data
+}
+
 export const leasesApi = {
 	createLease,
 	cancelLease,
+	getLeaseById,
 }

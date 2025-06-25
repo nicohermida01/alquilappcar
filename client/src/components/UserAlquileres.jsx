@@ -6,13 +6,11 @@ import { addToast } from '@heroui/react'
 import { RentCard } from './RentCard'
 import {
 	CANCELLED_RENT,
-	DELETED_RENT,
 	FINISHED_RENT,
 	IN_PROGRESS_RENT,
 	PENDING_RENT,
 } from '../constants/rentStatus'
 import { ModalConfirmCancelRent } from './ModalConfirmCancelRent'
-import { getFecha } from '../utils/getFecha'
 import { leasesApi } from '../services/leases.api'
 import { formatAmount } from '../utils/formatAmount'
 
@@ -21,7 +19,7 @@ function UserAlquileres() {
 	const [inProgressRents, setInProgressRents] = useState([])
 	const [finishedRents, setFinishedRents] = useState([])
 	const [cancelledRents, setCancelledRents] = useState([])
-	const [deletedRents, setDeletedRents] = useState([])
+	/* const [deletedRents, setDeletedRents] = useState([]) */
 	const [selectedRent, setSelectedRent] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [refreshValue, setRefreshValue] = useState(0)
@@ -30,25 +28,11 @@ function UserAlquileres() {
 	const handleCancelModal = useDisclosure()
 
 	const generateRentCard = rent => {
-		const vehicle = rent.vehiculo_asignado
-			? rent.vehiculo_asignado
-			: 'Sin confirmar'
-		const withdrawalSubsidiary = `${rent.sucursal_retiro.direccion}, ${rent.sucursal_retiro.localidad.nombre}`
-
 		return (
 			<RentCard
 				key={rent.id}
-				startDate={getFecha(rent.fecha_inicio)}
-				status={rent.status}
-				category={rent.categoria_vehiculo.nombre}
-				endDate={getFecha(rent.fecha_devolucion)}
-				amount={rent.precio_total}
-				vehicle={vehicle}
-				withdrawalSubsidiary={withdrawalSubsidiary}
-				id={rent.id}
-				extraPackages={rent.paquetealquiler_set}
+				rentId={rent.id}
 				cancelFunction={() => handleCancelRent(rent)}
-				refundAmount={rent.reembolso}
 			/>
 		)
 	}
@@ -96,7 +80,7 @@ function UserAlquileres() {
 				setCancelledRents(
 					response.filter(rent => rent.status === CANCELLED_RENT)
 				)
-				setDeletedRents(response.filter(rent => rent.status === DELETED_RENT))
+				/* setDeletedRents(response.filter(rent => rent.status === DELETED_RENT)) */
 			})
 			.catch(error => console.error(error))
 			.finally(() => setIsLoading(false))
@@ -163,7 +147,7 @@ function UserAlquileres() {
 							)}
 						</div>
 					</AccordionItem>
-{/* 
+					{/* 
 					<AccordionItem
 						key='5'
 						title={`Dados de baja (${deletedRents.length})`}
