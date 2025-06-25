@@ -33,7 +33,7 @@ class VehiculoView(viewsets.ModelViewSet):
     def getVehiclesBySucursalAndCategoria(self, request, sucursal_id=None, category_id=None):
         # Este método devuelve los vehículos disponibles en una sucursal específica y de una categoría específica 
 
-        vehicles = Vehiculo.objects.filter(sucursal=sucursal_id, categoria=category_id, available=True)
+        vehicles = Vehiculo.objects.filter(sucursal=sucursal_id, categoria=category_id, available=True, activo=True)
         serializer = self.get_serializer(vehicles, many=True)
         return Response(serializer.data)
 
@@ -54,6 +54,7 @@ class VehiculoView(viewsets.ModelViewSet):
             sucursal=alquiler.sucursal_retiro,
             categoria=alquiler.categoria_vehiculo,
             available=True,
+            activo=True,
             min_dias_alquiler__lte=rental_days # __lte permite a django filtrar por "menor o igual que" -Nico
         )
 

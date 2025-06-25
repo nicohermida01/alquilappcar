@@ -37,11 +37,6 @@ const getBySucursalAndCategory = async (sucursalId, categoryId) => {
 	return response.data
 }
 
-const deleteVehicle = async id => {
-	const response = await api.delete(`vehiculos/${id}/`)
-	return response.data
-}
-
 const getAvailablesVehicles = async alquilerId => {
 	const response = await api.get(`vehiculos/availables/${alquilerId}/`)
 	return response.data
