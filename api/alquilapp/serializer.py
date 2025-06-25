@@ -176,7 +176,7 @@ class AlquilerSerializer(serializers.ModelSerializer):
     vehiculo_asignado = VehiculoSerializer(read_only=True)
 
     vehiculo_asignado_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vehiculo.objects.all(), source='vehiculo_asignado', write_only=True
+        queryset=Vehiculo.objects.all(), source='vehiculo_asignado', write_only=True, allow_null=True, required=False
     )
 
 

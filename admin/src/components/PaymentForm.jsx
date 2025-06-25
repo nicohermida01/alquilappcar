@@ -74,6 +74,7 @@ export default function PaymentForm({
 					description: 'Ocurrió un error al procesar el pago. ' + error.message,
 					color: 'danger',
 				})
+				console.error('Error al registrar el pago:', error)
 			})
 	}
 

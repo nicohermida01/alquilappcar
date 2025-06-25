@@ -15,7 +15,6 @@ import {
 } from '@heroui/react'
 import {
 	CANCELLED_RENT,
-	DELETED_RENT,
 	FINISHED_RENT,
 	IN_PROGRESS_RENT,
 	PENDING_RENT,
@@ -25,7 +24,7 @@ import {
 } from '../constants/rentStatus'
 import { useEffect, useState } from 'react'
 import { formatAmount } from '../utils/formatAmount'
-import { getFecha } from '../utils/getFecha'
+import { getFormattedDate } from '../utils/getFecha'
 import { leasesApi } from '../api/leases.api'
 import { vehiclesApi } from '../api/vehicles.api'
 import { categoriesApi } from '../api/categories.api'
@@ -62,6 +61,8 @@ export function RentCard({ rentId, refreshTableFn }) {
 	const [selectedOtherVehicle, setSelectedOtherVehicle] = useState(null)
 	const [sucursales, setSucursales] = useState([])
 	const [selectedSucursal, setSelectedSucursal] = useState(null)
+
+	console.log(rent)
 
 	const handleCancel = () => {
 		setModalActionTitle('Cancelar alquiler')
@@ -307,15 +308,15 @@ export function RentCard({ rentId, refreshTableFn }) {
 					<ItemText title='Cliente' value={`${rent.cliente.email}`} />
 					<ItemText
 						title='Fecha de registro'
-						value={`${getFecha(rent.fecha_registro)}hs`}
+						value={`${getFormattedDate(rent.fecha_registro)}`}
 					/>
 					<ItemText
 						title='Fecha de inicio'
-						value={`${getFecha(rent.fecha_inicio)}hs`}
+						value={`${getFormattedDate(rent.fecha_inicio)}`}
 					/>
 					<ItemText
 						title='Fecha de devolución'
-						value={`${getFecha(rent.fecha_devolucion)}hs`}
+						value={`${getFormattedDate(rent.fecha_devolucion)}`}
 					/>
 					<ItemText
 						title='Categoría elegida'
@@ -374,7 +375,7 @@ export function RentCard({ rentId, refreshTableFn }) {
 							<span>{`$${formatAmount(rent.precio_total)}`}</span>
 						</p>
 
-						{rent.reembolso !== -1 && (
+						{rent.reembolso !== '-1.00' && (
 							<p className='text-sm flex justify-between  '>
 								<span className='font-bold'>Monto devuelto:</span>
 								<span>{`$${formatAmount(rent.reembolso)}`}</span>
