@@ -11,6 +11,8 @@ import {
 } from '../constants/rentStatus'
 import { useEffect, useState } from 'react'
 import { formatAmount } from '../utils/formatAmount'
+import { getFecha, getFormattedDate } from '../utils/getFecha'
+import { leasesApi } from '../services/leases.api'
 
 const ItemText = ({ title, value }) => {
 	return (
@@ -20,73 +22,114 @@ const ItemText = ({ title, value }) => {
 	)
 }
 
-export function RentCard({
-	startDate,
-	status,
-	category,
-	endDate,
-	amount,
-	vehicle,
-	withdrawalSubsidiary,
-	id,
-	extraPackages = [],
-	cancelFunction,
-	refundAmount,
-}) {
+export function RentCard({ rentId, cancelFunction }) {
+	const [rent, setRent] = useState(null)
+	const [isLoading, setIsLoading] = useState(true)
 	const [title, setTitle] = useState('')
-	const statusChipColor = STATUS_CHIP_COLORS[status]
-	const statusTextColor = STATUS_TEXT_COLOR[status]
-	const statusText = STATUS_TEXT[status]
 
 	useEffect(() => {
-		switch (status) {
-			case PENDING_RENT:
-				setTitle(`Alquiler para el día ${startDate}hs`)
-				break
+		setIsLoading(true)
+		leasesApi
+			.getLeaseById(rentId)
+			.then(res => {
+				setRent(res)
+				const startDate = getFecha(res.fecha_inicio)
+				switch (res.status) {
+					case PENDING_RENT:
+						setTitle(`Alquiler para el día ${startDate}hs`)
+						break
 
-			case IN_PROGRESS_RENT:
-				setTitle(`Alquiler iniciado el día ${startDate}hs`)
-				break
+					case IN_PROGRESS_RENT:
+						setTitle(`Alquiler iniciado el día ${startDate}hs`)
+						break
 
-			case FINISHED_RENT:
-				setTitle(`Alquiler del día ${startDate}hs`)
-				break
+					case FINISHED_RENT:
+						setTitle(`Alquiler del día ${startDate}hs`)
+						break
 
-			case CANCELLED_RENT:
-				setTitle(`Alquiler del día ${startDate}hs`)
-				break
+					case CANCELLED_RENT:
+						setTitle(`Alquiler del día ${startDate}hs`)
+						break
 
-			case DELETED_RENT:
-				setTitle(`Alquiler del día ${startDate}hs`)
-				break
+					case DELETED_RENT:
+						setTitle(`Alquiler del día ${startDate}hs`)
+						break
 
-			default:
-				break
-		}
-	}, [startDate, status])
+					default:
+						break
+				}
+			})
+			.catch(err => console.error(err))
+			.finally(() => setIsLoading(false))
+	}, [rentId])
+
+	if (isLoading) return <p>Cargando...</p>
 
 	return (
-		<div className='bg-white w-max h-[474px] p-4 shadow rounded-md'>
+		<div className='bg-white w-max p-4 shadow rounded-md'>
 			<div>
 				<h3 className='font-bold'>{title}</h3>
 				<div className='flex items-center gap-2 mt-1'>
-					<Chip color={statusChipColor} size='sm'>
-						<span className={statusTextColor}>Estado: {statusText}</span>
+					<Chip color={STATUS_CHIP_COLORS[rent.status]} size='sm'>
+						<span className={STATUS_TEXT_COLOR[rent.status]}>
+							Estado: {STATUS_TEXT[rent.status]}
+						</span>
 					</Chip>
-					<p className='text-sm text-gray-500'># {id}</p>
+					<p className='text-sm text-gray-500'># {rent.id}</p>
 				</div>
 			</div>
 			<Divider className='my-4' />
 			<div>
-				<ItemText title='Categoría' value={category} />
-				<ItemText title='Vehículo' value={vehicle} />
-				<ItemText title='Fecha de devolución' value={`${endDate}hs`} />
-				<ItemText title='Sucursal de retiro' value={withdrawalSubsidiary} />
-				{extraPackages.length > 0 && (
+				<ItemText
+					title='Fecha de registro'
+					value={`${getFormattedDate(rent.fecha_registro)}`}
+				/>
+				<ItemText
+					title='Fecha de inicio'
+					value={`${getFormattedDate(rent.fecha_inicio)}`}
+				/>
+				<ItemText
+					title='Fecha de devolución'
+					value={`${getFormattedDate(rent.fecha_devolucion)}`}
+				/>
+				<ItemText
+					title='Categoría elegida'
+					value={rent.categoria_vehiculo.nombre}
+				/>
+				<ItemText title='Politica de cancelación' value='' />
+				<p className='text-sm bg-gray-100 text-gray-600 p-1 mb-1 rounded-md flex items-center justify-between'>
+					<span>{rent.categoria_vehiculo.cancelacion.descripcion}</span>
+					<span>{Number(rent.categoria_vehiculo.cancelacion.porcentaje)}%</span>
+				</p>
+				{rent.vehiculo_asignado ? (
+					<>
+						<ItemText title='Vehiculo asignado' value='' />
+						<div className='text-sm bg-gray-100 p-1 mb-1 rounded-md'>
+							<p className='font-bold flex items-center justify-between'>
+								{rent.vehiculo_asignado.marca.nombre}{' '}
+								<span className='text-gray-600 text-xs mr-1'>
+									{rent.vehiculo_asignado.categoria.nombre}
+								</span>
+							</p>
+							<p className='text-gray-600'>{`${rent.vehiculo_asignado.modelo} | ${rent.vehiculo_asignado.patente}`}</p>
+						</div>
+					</>
+				) : (
+					<ItemText title='Vehículo' value='Sin confirmar' />
+				)}
+				<ItemText
+					title='Sucursal de retiro'
+					value={`${rent.sucursal_retiro.direccion}, ${rent.sucursal_retiro.localidad.nombre}`}
+				/>
+				{/* <ItemText title='Categoría' value={category} /> */}
+				{/* <ItemText title='Vehículo' value={vehicle} /> */}
+				{/* <ItemText title='Fecha de devolución' value={`${endDate}hs`} /> */}
+				{/* <ItemText title='Sucursal de retiro' value={withdrawalSubsidiary} /> */}
+				{rent.paquetealquiler_set.length > 0 && (
 					<div>
 						<p className='text-sm font-bold'>Paquetes extra:</p>
 						<div className='flex flex-col gap-1 mt-1'>
-							{extraPackages.map((pkg, idx) => (
+							{rent.paquetealquiler_set.map((pkg, idx) => (
 								<p
 									key={idx}
 									className='text-sm bg-gray-100 text-gray-600 p-1 rounded-md'
@@ -104,33 +147,31 @@ export function RentCard({
 				<div className='mt-4'>
 					<p className='text-sm flex justify-between  '>
 						<span className='font-bold'>Precio total:</span>
-						<span>{`$${formatAmount(amount)}`}</span>
+						<span>{`$${formatAmount(rent.precio_total)}`}</span>
 					</p>
+
+					{rent.reembolso !== '-1.00' && (
+						<p className='text-sm flex justify-between  '>
+							<span className='font-bold'>Monto devuelto:</span>
+							<span>{`$${formatAmount(rent.reembolso)}`}</span>
+						</p>
+					)}
 				</div>
 			</div>
-			{status === PENDING_RENT && (
+			{rent.status === PENDING_RENT && (
 				<>
 					<Divider className='my-4' />
 					<div>
 						<Button
-							className='w-full'
+							className='text-white'
 							radius='sm'
-							color='danger'
+							color='primary'
 							size='sm'
 							onPress={cancelFunction}
 						>
 							Cancelar alquiler
 						</Button>
 					</div>
-				</>
-			)}
-			{status === CANCELLED_RENT && (
-				<>
-					<Divider className='my-4' />
-					<ItemText
-						title='Monto devuelto'
-						value={`$${formatAmount(refundAmount)}`}
-					/>
 				</>
 			)}
 		</div>

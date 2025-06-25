@@ -25,14 +25,15 @@ class Alquiler(models.Model):
     # puede no enviarse la fecha de inicio si resulta que es un alquiler en el momento
     fecha_inicio = models.DateTimeField(default=now)
     fecha_devolucion = models.DateTimeField()
+    fecha_registro = models.DateTimeField(auto_now_add=True) # auto_now_add=True setea la fecha y hora actual al crear el objeto -Nico
     categoria_vehiculo = models.ForeignKey('CategoriaVehiculo', on_delete=models.PROTECT, null=False)
     sucursal_retiro = models.ForeignKey('Sucursal', on_delete=models.PROTECT)
-    vehiculo_asignado = models.ForeignKey('Vehiculo', on_delete=models.SET_NULL, null=True, blank=True, to_field='patente')
+    vehiculo_asignado = models.ForeignKey('Vehiculo', on_delete=models.SET_NULL, null=True, blank=True)
     cliente = models.ForeignKey('Cliente', on_delete=models.PROTECT)
     precio_total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     activo = models.BooleanField(default=True) # este campo ya no se debe usar, lo dejo por las dudas -Nico
     status = models.CharField(max_length=20, choices=AlquilerStatus.choices, default=AlquilerStatus.PENDING)
-    reembolso = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
+    reembolso = models.DecimalField(max_digits=20, decimal_places=2, default=-1)
 
     objects = ActivosManager()  # solo alquileres activos
     todos = models.Manager()    # acceso a todos los alquileres
@@ -69,6 +70,7 @@ class Vehiculo(models.Model):
     max_pasajeros = models.IntegerField()
     aptitud_discapacidad = models.BooleanField(default=False)
     min_dias_alquiler = models.IntegerField(default=1)
+    available = models.BooleanField(default=True) 
     activo = models.BooleanField(default=True, null=False)
     marca = models.ForeignKey('Marca', on_delete=models.CASCADE)
     sucursal = models.ForeignKey('Sucursal', on_delete=models.CASCADE, null=True, blank=True)
