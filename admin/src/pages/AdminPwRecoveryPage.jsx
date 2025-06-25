@@ -32,7 +32,7 @@ function AdminPwRecoveryPage() {
         .catch(error => {
             axios.get(`http://localhost:8000/alquilapp/api/v1/admins/by-email/${email}`)
             .then(res => {
-                setPassword(res.password);
+                setPassword(res.data.password);
                 onOpen();
             })
             .catch(error => (addToast({
