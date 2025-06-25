@@ -118,6 +118,18 @@ export function DashboardLayout() {
 									</SidebarLink>
 								</div>
 							</AccordionItem>
+
+							<AccordionItem key='4' aria-label='Alquileres' title='Alquileres'>
+								<div className='flex flex-col px-4'>
+									<SidebarLink
+										to={'/alquileres'}
+										setSelected={setSelected}
+										selected={selected === 'alquileres'}
+									>
+										Alquileres
+									</SidebarLink>
+								</div>
+							</AccordionItem>
 						</Accordion>
 						<div className='flex p-4'>
 							<Button color='primary' onPress={onOpen} fullWidth>

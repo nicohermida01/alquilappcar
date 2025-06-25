@@ -11,3 +11,14 @@ const opcionesFecha = {
 export const getFecha = fecha => {
 	return new Date(fecha).toLocaleString('es-AR', opcionesFecha)
 }
+
+const dateOptions = {
+	month: 'long',
+	day: '2-digit',
+	year: 'numeric',
+	timeZone: 'America/Argentina/Buenos_Aires',
+}
+
+export const getFormattedDate = fecha => {
+	return new Date(fecha).toLocaleString('es-AR', dateOptions)
+}

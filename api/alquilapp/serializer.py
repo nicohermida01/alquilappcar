@@ -20,22 +20,41 @@ class PaqueteAlquilerSerializer(serializers.ModelSerializer):
         model = PaqueteAlquiler
         fields = ['id', 'alquiler', 'paquete', 'paquete_id']
 
-
-class VehiculoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Vehiculo
-        fields = '__all__'
-        read_only_fields = ['id']
-
 class MarcaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Marca
         fields = '__all__'
         read_only_fields = ['id']
-    
+
 class CancelacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cancelacion
+        fields = '__all__'
+        read_only_fields = ['id']
+
+class CategoriaVehiculoSerializer(serializers.ModelSerializer):
+    cancelacion = CancelacionSerializer(read_only=True)
+    cancelacion_id = serializers.PrimaryKeyRelatedField(
+        queryset=Cancelacion.objects.all(), source='cancelacion', write_only=True
+    )
+    
+    class Meta:
+        model = CategoriaVehiculo
+        fields = '__all__'
+        read_only_fields = ['id']
+
+class VehiculoSerializer(serializers.ModelSerializer):
+    marca = MarcaSerializer(read_only=True)
+    marca_id = serializers.PrimaryKeyRelatedField(
+        queryset=Marca.objects.all(), source='marca', write_only=True
+    )
+    categoria = CategoriaVehiculoSerializer(read_only=True)
+    categoria_id = serializers.PrimaryKeyRelatedField(
+        queryset=CategoriaVehiculo.objects.all(), source='categoria', write_only=True
+    )
+
+    class Meta:
+        model = Vehiculo
         fields = '__all__'
         read_only_fields = ['id']
 
@@ -122,16 +141,7 @@ class SucursalSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id']
 
-class CategoriaVehiculoSerializer(serializers.ModelSerializer):
-    cancelacion = CancelacionSerializer(read_only=True)
-    cancelacion_id = serializers.PrimaryKeyRelatedField(
-        queryset=Cancelacion.objects.all(), source='cancelacion', write_only=True
-    )
-    
-    class Meta:
-        model = CategoriaVehiculo
-        fields = '__all__'
-        read_only_fields = ['id']
+
 
 class ClienteSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -162,6 +172,12 @@ class AlquilerSerializer(serializers.ModelSerializer):
     # Devuelve los objetos completos
     sucursal_retiro = SucursalSerializer(read_only=True)
     categoria_vehiculo = CategoriaVehiculoSerializer(read_only=True)
+    cliente = ClienteSerializer(read_only=True)
+    vehiculo_asignado = VehiculoSerializer(read_only=True)
+
+    vehiculo_asignado_id = serializers.PrimaryKeyRelatedField(
+        queryset=Vehiculo.objects.all(), source='vehiculo_asignado', write_only=True
+    )
 
 
     # Acepta solo IDs para escritura
@@ -170,6 +186,10 @@ class AlquilerSerializer(serializers.ModelSerializer):
     )
     categoria_vehiculo_id = serializers.PrimaryKeyRelatedField(
         queryset=CategoriaVehiculo.objects.all(), write_only=True, source='categoria_vehiculo'
+    )
+
+    cliente_id = serializers.PrimaryKeyRelatedField(
+        queryset=Cliente.objects.all(), write_only=True, source='cliente'
     )
 
     paquetes = serializers.ListField(
@@ -183,21 +203,24 @@ class AlquilerSerializer(serializers.ModelSerializer):
             'id',
             'fecha_inicio',
             'fecha_devolucion',
+            'fecha_registro',           # read-only (auto_now_add)
             'cantidad_dias_totales',
             'categoria_vehiculo',        # read-only (objeto)
             'categoria_vehiculo_id',     # write-only (ID)
             'sucursal_retiro',           # read-only (objeto)
             'sucursal_retiro_id',        # write-only (ID)
             'vehiculo_asignado',
+            'vehiculo_asignado_id',      # write-only (ID)
             'precio_total',
             'reembolso',
             'activo',
             'status',
             'cliente',
+            'cliente_id',            # write-only (ID)
             'paquetes',                  # campo virtual para crear relaciones
             'paquetealquiler_set',       # campo real que devuelve los relacionados
         ]
-        read_only_fields = ['cantidad_dias_totales', 'paquetealquiler_set']
+        read_only_fields = ['cantidad_dias_totales', 'paquetealquiler_set', 'fecha_registro']
 
     def validate(self, data):
         fecha_inicio = data.get('fecha_inicio')

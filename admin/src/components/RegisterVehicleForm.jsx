@@ -62,6 +62,7 @@ function RegisterVehicleForm({
 							description: handleApiError(error),
 							color: 'danger',
 						})
+						console.error(error)
 					})
 	}
 
@@ -91,7 +92,7 @@ function RegisterVehicleForm({
 			<InputField>
 				<Select
 					label='Marca'
-					{...register('marca', {
+					{...register('marca_id', {
 						required: true,
 						valueAsNumber: true,
 					})}
@@ -118,7 +119,7 @@ function RegisterVehicleForm({
 				<Select
 					label='Categoría'
 					defaultSelectedKeys={[vehicleInfo?.categoria.toString()]}
-					{...register('categoria', {
+					{...register('categoria_id', {
 						required: true,
 						valueAsNumber: true,
 					})}

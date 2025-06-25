@@ -29,6 +29,38 @@ class VehiculoView(viewsets.ModelViewSet):
     serializer_class = VehiculoSerializer
     queryset = Vehiculo.objects.all()
 
+    @action(detail=False, methods=['get'], url_path='sucursal/(?P<sucursal_id>[^/.]+)/categoria/(?P<category_id>[^/.]+)')
+    def getVehiclesBySucursalAndCategoria(self, request, sucursal_id=None, category_id=None):
+        # Este método devuelve los vehículos disponibles en una sucursal específica y de una categoría específica 
+
+        vehicles = Vehiculo.objects.filter(sucursal=sucursal_id, categoria=category_id, available=True)
+        serializer = self.get_serializer(vehicles, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='availables/(?P<alquiler_id>[^/.]+)')
+    def available_vehicles_by_alquiler(self, request, alquiler_id=None):
+        # Este método devuelve los vehículos disponibles para un alquiler específico
+        # Un vehiculo está disponible para un alquiler si:
+        # - La sucursal del vehículo es la misma que la del alquiler
+        # - La categoría del vehículo es la misma que la del alquiler
+        # - El vehículo no está alquilado actualmente
+        # - La cantidad de dias minimos del vehículo es menor o igual a la cantidad de días del alquiler
+
+        alquiler = Alquiler.objects.get(id=alquiler_id)
+
+        rental_days = (alquiler.fecha_devolucion - alquiler.fecha_inicio).days
+
+        vehicles = Vehiculo.objects.filter(
+            sucursal=alquiler.sucursal_retiro,
+            categoria=alquiler.categoria_vehiculo,
+            available=True,
+            min_dias_alquiler__lte=rental_days # __lte permite a django filtrar por "menor o igual que" -Nico
+        )
+
+        serializer = self.get_serializer(vehicles, many=True)
+        return Response(serializer.data)
+
+
 class MarcaView(viewsets.ModelViewSet):
     serializer_class = MarcaSerializer
     queryset = Marca.objects.all()

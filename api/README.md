@@ -1,8 +1,17 @@
 API de Alquilapp Car
 
+## Vehiculo
+
+### Atributo: available
+
+Este campo indica si el vehiculo esta disponible para usar o esta siendo en uso por un alquiler en progreso.
+
+- true: el vehiculo esta disponible para alquilar.
+- false: el vehiculo esta siendo usado por un alquiler en progreso.
+
 ## Alquiler
 
-# State
+### Atributo: State
 
 - PENDING: es el estado inicial de un alquiler. Cuando se crea un alquiler, se debe establecer en Pending.
 - IN_PROGRESS: se establece cuando un empleado confirma el alquiler. Cuando se asigna el vehiculo especifico.
