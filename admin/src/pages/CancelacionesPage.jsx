@@ -43,7 +43,7 @@ export default function CancelacionesPage() {
                 INITIAL_VISIBLE_COLUMNS={INITIAL_VISIBLE_COLUMNS}
                 fetchInfo={fetchInfo}
                 itemList={itemList}
-                itemName={"categoría"}
+                itemName={"cancelacione"}
                 updateItemList={fetchInfo}
             />
         </section>

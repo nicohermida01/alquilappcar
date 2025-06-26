@@ -86,7 +86,8 @@ export function DashboardLayout() {
 									<SidebarLink
                                     to="/cancelaciones"
                                     setSelected={setSelected}
-                                    selected={selected === "politicas"}>Cancelaciones</SidebarLink>
+                                    selected={selected === "politicas"}>Cancelaciones
+									</SidebarLink>
 								</div>
 							</AccordionItem>
 							<AccordionItem key='2' aria-label='Usuarios' title='Usuarios'>
@@ -135,6 +136,15 @@ export function DashboardLayout() {
 										selected={selected === 'alquileres'}
 									>
 										Alquileres
+									</SidebarLink>
+								</div>
+							</AccordionItem>
+							<AccordionItem key='5' aria-label='Reportes' title='Reportes'>
+								<div className='flex flex-col px-4'>
+									<SidebarLink
+                                    to="/reporte-clientes"
+                                    setSelected={setSelected}
+                                    selected={selected === "reporte-clientes"}>Reporte de clientes
 									</SidebarLink>
 								</div>
 							</AccordionItem>
