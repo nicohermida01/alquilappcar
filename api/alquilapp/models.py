@@ -114,6 +114,7 @@ class Admin(models.Model):
     def get_by_email(request, email):
         admin = get_object_or_404(Admin, email=email)
         data = {
+            "id": admin.id,
             "email": admin.email,
             "password": admin.password
         }
@@ -142,6 +143,7 @@ class Empleado(models.Model):
     def get_by_email(request, email):
         employee = get_object_or_404(Empleado, email=email)
         data = {
+            "id": employee.id,
             "email": employee.email,
             "password": employee.password
         }
@@ -204,6 +206,7 @@ class Cliente(models.Model):
     def get_by_email(request, email):
         client = get_object_or_404(Cliente, email=email)
         data = {
+            "id": client.id,
             "email": client.email,
             "password": client.password
         }

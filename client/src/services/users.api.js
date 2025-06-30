@@ -18,8 +18,15 @@ const getUserByEmail = async (email) => {
     return response.data;
 }
 
+const changeUserPassword = async (userId, data) => {
+    const response = await api.patch(`clientes/${userId}/`, data);
+
+    return response.data;
+}
+
 export const usersApi = {
     getUserById,
     getAlquileresByUserId,
-    getUserByEmail
+    getUserByEmail,
+    changeUserPassword
 };

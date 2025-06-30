@@ -1,21 +1,14 @@
 import { Input } from '@heroui/input'
 import { Button } from '@heroui/button'
+import { Link } from '@heroui/link'
 import { useState } from 'react'
 import { addToast } from '@heroui/toast'
-import {
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalContent,
-    useDisclosure
-} from "@heroui/react";
 import { employeeApi } from '../api/employee.api.js'
 import axios from 'axios'
 
 function AdminPwRecoveryPage() {
     const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const [queried, isQueried] = useState(false);
 
     const handleChange = (e) => {
         setEmail(e.target.value);
@@ -26,14 +19,14 @@ function AdminPwRecoveryPage() {
 
         employeeApi.getEmployeeByEmail(email)
         .then(res => {
-            setPassword(res.password);
-            onOpen();
+            axios.patch(`http://localhost:8000/alquilapp/api/v1/empleados/${res.id}/`, { password: "123456" });
+            isQueried(true);
         })
         .catch(error => {
             axios.get(`http://localhost:8000/alquilapp/api/v1/admins/by-email/${email}`)
             .then(res => {
-                setPassword(res.data.password);
-                onOpen();
+                axios.patch(`http://localhost:8000/alquilapp/api/v1/admins/${res.data.id}/`, { password: "123456" });
+                isQueried(true);
             })
             .catch(error => (addToast({
                 title: "Se ha producido un error.",
@@ -46,6 +39,25 @@ function AdminPwRecoveryPage() {
     return (
         <>
             <section className='flex flex-col items-center gap-5 justify-center min-h-screen bg-gray-100'>
+                <>
+                {
+                queried ?
+                <div>
+                    <p>
+                        Se ha enviado una contraseña temporal a tu<br/>
+                        direccion de correo electronico para que<br/>
+                        puedas acceder a tu cuenta. Recorda revisar<br/>
+                        la casilla de correo no deseado.
+                    </p>
+                    <Button color="primary" 
+                    as={Link} 
+                    href="/login" 
+                    className="text-white m-6 ml-[70px]"
+                    >
+                    Ir a inicio de sesion
+                    </Button>
+                </div>
+                :
                 <form
     			    className='w-[50%] flex flex-col gap-4 p-8 bg-white rounded-lg shadow-lg'
 			        onSubmit={handleSubmit}
@@ -68,25 +80,9 @@ function AdminPwRecoveryPage() {
         				Enviar
 			        </Button>
 		        </form>
+                }
+                </>
             </section>
-            <Modal isOpen={isOpen} radius="lg" onOpenChange={onOpenChange}>
-                <ModalContent>
-                    {onClose => (
-                        <>
-                            <ModalBody>
-                                <p className="font-bold">Contraseña: </p>
-                                <p>{password}</p>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button onPress={onClose}>
-                                    Cerrar
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-                
-            </Modal>
         </>
     );
 }
