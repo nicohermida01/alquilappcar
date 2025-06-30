@@ -12,7 +12,14 @@ const confirm2FA = async (code, userId) => {
 	return response.data
 }
 
+const checkActiveness = async (id) => {
+	const response = await api.get(`empleados/${id}/`);
+
+	return response.data.activo;
+}
+
 export const authService = {
 	login,
 	confirm2FA,
+	checkActiveness
 }

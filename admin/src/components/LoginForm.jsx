@@ -18,8 +18,41 @@ export function LoginForm() {
 
 	const { register, handleSubmit, reset } = useForm()
 
-	const onSubmit = data => {
-		authService
+	const onSubmit = async (data) => {
+		/*
+		Permiso loco. Reescribi esta func para ahorrar todo el quilombo que
+		hace JijoScript con la concurrencia y que me ande el chequeo de si
+		el empleado esta activo o no. Hace la misma mierda, y realmente no
+		entendi como carajo el sistema se da cuenta si esta queriendo entrar
+		un armin o un empleado, pero active el sentido aracnido y segui los
+		instintos. -Valen
+		*/
+		try {
+			const res = await authService.login(data);
+			const isActive = await authService.checkActiveness(res.userId);
+			if (res.status === 'pending') {
+				setShow2FA(true)
+				setUserFor2FA(res.userId)
+				toast('Por favor, ingresa el código de verificación de dos pasos', {
+					icon: '🔐',
+				})
+				return
+			} else {
+				if (isActive) {
+					toast.success('¡Bienvenido!')
+					reset()
+					login(res)
+					navigate('/')
+				} else {
+					toast.error('Esta cuenta de empleado se encuentra deshabilitada');
+				}
+			}
+		} catch (err) {
+			toast.error('Credenciales incorrectas')
+			console.error(err)
+		}
+
+/* 		authService
 			.login(data)
 			.then(res => {
 				if (res.status === 'pending') {
@@ -39,7 +72,7 @@ export function LoginForm() {
 			.catch(err => {
 				toast.error('Credenciales incorrectas')
 				console.error(err)
-			})
+			}) */
 	}
 
 	const onError = errors => {

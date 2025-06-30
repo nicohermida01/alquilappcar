@@ -10,7 +10,15 @@ const login = async credentials => {
 	return response.data
 }
 
+const checkActiveness = async (userId) => {
+	const response = await api.get(`clientes/${userId}/`);
+	console.log(response.data);
+
+	return response.data.activo;
+}
+
 export const authService = {
 	register,
 	login,
+	checkActiveness
 }
