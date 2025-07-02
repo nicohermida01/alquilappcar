@@ -265,7 +265,7 @@ export default function ListItems({
         return (
             <div className="flex flex-col gap-4 ">
                 <div className="flex justify-between gap-3">
-                    <Input
+{/*                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
                         placeholder="Buscar por nombre..."
@@ -273,7 +273,7 @@ export default function ListItems({
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
-                    />
+                    /> */}
                     <div className="flex gap-3">
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
