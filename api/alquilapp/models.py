@@ -187,6 +187,7 @@ class Cliente(models.Model):
     activo = models.BooleanField(default=True, null=False)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=64)
+    fecha_de_registro = models.DateTimeField(auto_now_add=True)  # auto_now_add=True setea la fecha y hora actual al crear el objeto -Augus
 
     def __str__(self):
         return f"{self.nombre} {self.apellido} ({self.dni})" # Esto solo se usa para mostrar en el admin, no es tan importante -Nico
