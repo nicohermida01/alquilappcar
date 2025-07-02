@@ -268,7 +268,7 @@ export default function AlquileresPage() {
 	useEffect(() => {
 		// Actualizamos el total de páginas cuando cambia el arreglo de items filtrados
 
-		setTotalPages(Math.ceil(filteredItems.length / rowsPerPage))
+		setTotalPages(Math.ceil(filteredItems.length / rowsPerPage) || 1)
 	}, [filteredItems])
 
 	useEffect(() => {
@@ -309,7 +309,11 @@ export default function AlquileresPage() {
 						</TableColumn>
 					)}
 				</TableHeader>
-				<TableBody items={itemsToShow} isLoading={isLoading} emptyContent={"No hay alquileres registrados."}>
+				<TableBody
+					items={itemsToShow}
+					isLoading={isLoading}
+					emptyContent={'No hay alquileres registrados.'}
+				>
 					{item => (
 						<TableRow key={item.id}>
 							{columnKey => (
