@@ -22,6 +22,8 @@ export function ConfirmVehicleModal({
 	onClose,
 	refreshData,
 	leaseSucursalRetiroId,
+	startDate,
+	endDate,
 }) {
 	const [vehicles, setVehicles] = useState([])
 	const [selectedVehicle, setSelectedVehicle] = useState(null)
@@ -35,9 +37,37 @@ export function ConfirmVehicleModal({
 	const confirmVehicle = e => {
 		e.preventDefault()
 
+		// Validamos que la fecha en que se inicia el alquiler esté dentro del rango permitido (fecha de inicio y fin del alquiler)
+		const dateNow = new Date()
+		const startDateObj = new Date(startDate)
+		const endDateObj = new Date(endDate)
+
+		if (dateNow < startDateObj || dateNow > endDateObj) {
+			// si la fecha actual es menor a la fecha de inicio o mayor a la fecha de fin, mostramos un error
+			addToast({
+				title: 'Error al iniciar el alquiler.',
+				description:
+					'La fecha de inicio debe estar dentro del rango permitido.',
+				color: 'danger',
+				duration: 4000,
+			})
+
+			return
+		}
+
+		// Verificamos si hay algun dia de retraso en iniciar el alquiler
+		let isLate = false
+		let daysDifference = 0
+		if (dateNow > startDateObj) {
+			// si la fecha actual es mayor a la fecha de inicio, significa que hay un retraso
+			isLate = true
+			daysDifference = Math.ceil(
+				(dateNow - startDateObj) / (1000 * 60 * 60 * 24)
+			)
+		}
+
 		// Actualizamos el alquiler con el vehículo seleccionado -> setear el vehiculo asignado y el estado a IN_PROGRESS_RENT
 		// Actualizamos el estado del vehiculo elegido a available=false
-
 		const vehicleId = otherCategory
 			? Number(selectedOtherVehicle)
 			: Number(selectedVehicle)
@@ -49,8 +79,10 @@ export function ConfirmVehicleModal({
 					.updateAvailableVehicle(vehicleId, false)
 					.then(() => {
 						addToast({
-							title: `Alquiler #${leaseId} iniciado correctamente.`,
-							description: `Vehículo asignado correctamente.`,
+							title: isLate
+								? `Alquiler #${leaseId} iniciado correctamente con un retraso de ${daysDifference} días.`
+								: `Alquiler #${leaseId} iniciado correctamente.`,
+							description: 'Vehículo asignado correctamente.',
 							color: 'success',
 							duration: 4000,
 						})

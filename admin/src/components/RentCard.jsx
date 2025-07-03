@@ -254,6 +254,8 @@ export function RentCard({ rentId, refreshTableFn }) {
 				leaseSucursalRetiroId={rent.sucursal_retiro?.id}
 				onClose={confirmVehicleModalController.onClose}
 				refreshData={refreshData}
+				startDate={rent.fecha_inicio}
+				endDate={rent.fecha_devolucion}
 			/>
 		</>
 	)

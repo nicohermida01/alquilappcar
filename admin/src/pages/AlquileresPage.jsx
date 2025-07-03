@@ -207,7 +207,7 @@ export default function AlquileresPage() {
 								onPress={() => setRefreshValue(prev => prev + 1)}
 								isLoading={isLoading}
 							>
-								{!isLoading && <RefreshIcon className='w-10 text-white' />}
+								{!isLoading && <RefreshIcon className='w-10' />}
 							</Button>
 						</Tooltip>
 					</div>
