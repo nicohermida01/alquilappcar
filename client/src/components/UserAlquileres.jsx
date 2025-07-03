@@ -84,12 +84,10 @@ function UserAlquileres() {
 			})
 			.catch(error => console.error(error))
 			.finally(() => setIsLoading(false))
-	}, [user.clientId, refreshValue])
+	}, [user, refreshValue])
 
 	return (
-		<div className='w-full h-full p-[50px]'>
-			<h2 className='text-3xl font-bold'>Mis alquileres</h2>
-
+		<div>
 			<ModalConfirmCancelRent
 				isOpen={handleCancelModal.isOpen}
 				onOpenChange={handleCancelModal.onOpenChange}
