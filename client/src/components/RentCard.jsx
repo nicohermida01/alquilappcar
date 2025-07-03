@@ -150,7 +150,7 @@ export function RentCard({ rentId, cancelFunction }) {
 					</div>
 				)}
 				<div className='mt-4'>
-					<p className='text-sm flex justify-between  '>
+					<p className='text-sm flex justify-between'>
 						<span className='font-bold'>Costo de la reserva:</span>
 						<span>{`$${formatAmount(rent.precio_total)}`}</span>
 					</p>

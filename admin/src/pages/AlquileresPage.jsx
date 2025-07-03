@@ -202,12 +202,14 @@ export default function AlquileresPage() {
 							Nuevo alquiler
 						</Button>
 
-						<Button
-							onPress={() => setRefreshValue(prev => prev + 1)}
-							isLoading={isLoading}
-						>
-							{!isLoading && <RefreshIcon className='w-10 text-white' />}
-						</Button>
+						<Tooltip content='Actualizar alquileres' size='sm'>
+							<Button
+								onPress={() => setRefreshValue(prev => prev + 1)}
+								isLoading={isLoading}
+							>
+								{!isLoading && <RefreshIcon className='w-10' />}
+							</Button>
+						</Tooltip>
 					</div>
 				</div>
 
