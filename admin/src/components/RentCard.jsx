@@ -16,6 +16,7 @@ import { CancelLeaseModal } from './CancelLeaseModal'
 import { DeleteLeaseModal } from './DeleteLeaseModal'
 import { ConfirmReturnModal } from './ConfirmReturnModal'
 import { ConfirmVehicleModal } from './ConfirmVehicleModal'
+import { ConfirmCancelPolicyModal } from './ConfirmCancelPolicyModal'
 
 const WarningContianer = ({ children }) => {
 	return (
@@ -38,6 +39,7 @@ export function RentCard({ rentId, refreshTableFn }) {
 	const [refreshValue, setRefreshValue] = useState(0)
 
 	const cancelLeaseModalController = useDisclosure()
+	const confirmCancelPolicyModalController = useDisclosure()
 	const deleteLeaseModalController = useDisclosure()
 	const confirmReturnModalController = useDisclosure()
 	const confirmVehicleModalController = useDisclosure()
@@ -199,6 +201,13 @@ export function RentCard({ rentId, refreshTableFn }) {
 							<Button
 								color='primary'
 								size='sm'
+								onPress={() => confirmCancelPolicyModalController.onOpen()}
+							>
+								Ejecutar politica
+							</Button>
+							<Button
+								color='default'
+								size='sm'
 								onPress={() => cancelLeaseModalController.onOpen()}
 							>
 								Cancelar alquiler
@@ -218,12 +227,21 @@ export function RentCard({ rentId, refreshTableFn }) {
 				</div>
 			</div>
 
+			<ConfirmCancelPolicyModal
+				isOpen={confirmCancelPolicyModalController.isOpen}
+				onOpenChange={confirmCancelPolicyModalController.onOpenChange}
+				leaseId={rent.id}
+				leaseAmount={rent.precio_total}
+				leaseCategoryPercentage={rent.categoria_vehiculo.cancelacion.porcentaje}
+				onClose={confirmCancelPolicyModalController.onClose}
+				refreshData={refreshData}
+			/>
+
 			<CancelLeaseModal
 				isOpen={cancelLeaseModalController.isOpen}
 				onOpenChange={cancelLeaseModalController.onOpenChange}
 				leaseId={rent.id}
 				leaseAmount={rent.precio_total}
-				leaseCategoryPercentage={rent.categoria_vehiculo.cancelacion.porcentaje}
 				onClose={cancelLeaseModalController.onClose}
 				refreshData={refreshData}
 			/>
