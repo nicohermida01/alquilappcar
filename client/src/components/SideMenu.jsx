@@ -1,24 +1,31 @@
-function SideMenu({ onSelect }) {
+import { Link } from 'react-router-dom'
+
+function SideMenu() {
 	return (
-		<div className='w-[20%] bg-color-2 text-white h-100'>
-			<ul className='sticky p-4 space-y-2 top-0'>
-				<li
-					className='bg-color-5 hover:bg-color-4 p-2 rounded cursor-pointer'
-					onClick={() => onSelect('myinfo')}
-				>
-					<p>Mis datos</p>
+		<div className='bg-color-2 text-white'>
+			<ul className='p-4 space-y-2 sticky top-[70px]'>
+				<li>
+					<Link to='/mi-perfil'>
+						<div className='bg-color-5 hover:bg-color-4 p-2 rounded cursor-pointer'>
+							Ver perfil
+						</div>
+					</Link>
 				</li>
-				<li
-					className='bg-color-5 hover:bg-color-4 p-2 rounded cursor-pointer'
-					onClick={() => onSelect('alquileres')}
-				>
-					<p>Mis alquileres</p>
+
+				<li>
+					<Link to='/editar-perfil'>
+						<div className='bg-color-5 hover:bg-color-4 p-2 rounded cursor-pointer'>
+							Editar información
+						</div>
+					</Link>
 				</li>
-				<li
-					className='bg-color-5 hover:bg-color-4 p-2 rounded cursor-pointer'
-					onClick={() => onSelect('settings')}
-				>
-					<p>Editar informacion</p>
+
+				<li>
+					<Link to='/mis-alquileres'>
+						<div className='bg-color-5 hover:bg-color-4 p-2 rounded cursor-pointer'>
+							Mis alquileres
+						</div>
+					</Link>
 				</li>
 			</ul>
 		</div>

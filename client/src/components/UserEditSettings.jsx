@@ -1,71 +1,131 @@
-import { Form } from "@heroui/form";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
-import { useAuth } from "../contexts/AuthContext";
-import { useState, useEffect } from "react";
-import { usersApi } from "../services/users.api";
-import axios from "axios";
-import { addToast } from "@heroui/toast";
+import { Form } from '@heroui/form'
+import { Input } from '@heroui/input'
+import { Button } from '@heroui/button'
+import { useAuth } from '../contexts/AuthContext'
+import { useState, useEffect } from 'react'
+import { usersApi } from '../services/users.api'
+import axios from 'axios'
+import { addToast } from '@heroui/toast'
+import { Spinner } from '@heroui/react'
 
 function UserEditSettings() {
-    const { user } = useAuth();
-    const [clientInfo, setClientInfo] = useState([]);
-    const [newClientInfo, setNewClientInfo] = useState(null);
+	const { user } = useAuth()
+	const [clientInfo, setClientInfo] = useState([])
+	const [newClientInfo, setNewClientInfo] = useState(null)
+	const [isLoading, setIsLoading] = useState(true)
 
-    useEffect(() => {
-        usersApi
-            .getUserById(user.clientId)
-            .then((ret) => setClientInfo(ret))
-            .catch((error) => alert(error));
-    }, []);
+	useEffect(() => {
+		setIsLoading(true)
+		usersApi
+			.getUserById(user.clientId)
+			.then(ret => setClientInfo(ret))
+			.catch(error => alert(error))
+			.finally(() => setIsLoading(false))
+	}, [user])
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+	const handleChange = e => {
+		const { name, value } = e.target
 
-        setClientInfo((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+		setClientInfo(prev => ({
+			...prev,
+			[name]: value,
+		}))
 
-        setNewClientInfo((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
+		setNewClientInfo(prev => ({
+			...prev,
+			[name]: value,
+		}))
+	}
 
-    const onSubmit = async (e) => {
-        e.preventDefault();
+	const onSubmit = async e => {
+		e.preventDefault()
 
-        if (newClientInfo === null) {
-            addToast({
-                title: "No se realizaron cambios.",
-            });
+		if (newClientInfo === null) {
+			addToast({
+				title: 'No se realizaron cambios.',
+			})
 
-            return;
-        }
+			return
+		}
 
-        try {
-            await axios.patch(
-                `http://localhost:8000/alquilapp/api/v1/clientes/${user.clientId}/`,
-                newClientInfo
-            );
-            addToast({
-                title: "Se actualizo la informacion.",
-                color: "success",
-            });
-        } catch (error) {
-            if (error.response.data.email) {
-                addToast({
-                    title: "Error al actualizar el email.",
-                    description: "El email especificado ya esta en uso.",
-                    color: "danger",
-                });
-                console.log(error.response);
-            }
-        }
-    };
+		try {
+			await axios.patch(
+				`http://localhost:8000/alquilapp/api/v1/clientes/${user.clientId}/`,
+				newClientInfo
+			)
+			addToast({
+				title: 'Se actualizo la informacion.',
+				color: 'success',
+			})
+		} catch (error) {
+			if (error.response.data.email) {
+				addToast({
+					title: 'Error al actualizar el email.',
+					description: 'El email especificado ya esta en uso.',
+					color: 'danger',
+				})
+				console.log(error.response)
+			}
+		}
+	}
 
-    return (
+	return (
+		<>
+			{isLoading && <Spinner />}
+
+			{!isLoading && clientInfo && (
+				<Form onSubmit={onSubmit} className='bg-white p-4 rounded-lg shadow-md'>
+					<div className='flex gap-2 w-full'>
+						<Input
+							label='Nombre'
+							onChange={handleChange}
+							value={clientInfo.nombre}
+							name='nombre'
+							isRequired
+							errorMessage='Este campo no puede estar vacio.'
+						/>
+
+						<Input
+							label='Apellido'
+							onChange={handleChange}
+							value={clientInfo.apellido}
+							name='apellido'
+							isRequired
+							errorMessage='Este campo no puede estar vacio.'
+						/>
+					</div>
+
+					<Input
+						label='E-mail'
+						onChange={handleChange}
+						value={clientInfo.email}
+						name='email'
+						type='email'
+						isRequired
+						errorMessage={validate => {
+							if (validate.validationErrors[0]?.includes('@'))
+								return 'E-mail invalido.'
+							return validate.validationErrors[0]
+						}}
+					/>
+
+					<Input
+						label='Contacto'
+						onChange={handleChange}
+						value={clientInfo.contacto}
+						name='contacto'
+					/>
+					<div className='flex justify-end w-full'>
+						<Button color='secondary' type='submit' className='text-white'>
+							Guardar
+						</Button>
+					</div>
+				</Form>
+			)}
+		</>
+	)
+
+	/* return (
         <Form
             className="ml-[300px] mt-[10%] w-[600px] h-[500px]"
             onSubmit={onSubmit}
@@ -119,7 +179,7 @@ function UserEditSettings() {
                 </Button>
             </div>
         </Form>
-    );
+    ); */
 }
 
-export default UserEditSettings;
+export default UserEditSettings

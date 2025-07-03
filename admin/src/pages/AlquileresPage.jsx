@@ -202,12 +202,14 @@ export default function AlquileresPage() {
 							Nuevo alquiler
 						</Button>
 
-						<Button
-							onPress={() => setRefreshValue(prev => prev + 1)}
-							isLoading={isLoading}
-						>
-							{!isLoading && <RefreshIcon className='w-10 text-white' />}
-						</Button>
+						<Tooltip content='Actualizar alquileres' size='sm'>
+							<Button
+								onPress={() => setRefreshValue(prev => prev + 1)}
+								isLoading={isLoading}
+							>
+								{!isLoading && <RefreshIcon className='w-10' />}
+							</Button>
+						</Tooltip>
 					</div>
 				</div>
 
@@ -268,7 +270,7 @@ export default function AlquileresPage() {
 	useEffect(() => {
 		// Actualizamos el total de páginas cuando cambia el arreglo de items filtrados
 
-		setTotalPages(Math.ceil(filteredItems.length / rowsPerPage))
+		setTotalPages(Math.ceil(filteredItems.length / rowsPerPage) || 1)
 	}, [filteredItems])
 
 	useEffect(() => {
@@ -309,7 +311,11 @@ export default function AlquileresPage() {
 						</TableColumn>
 					)}
 				</TableHeader>
-				<TableBody items={itemsToShow} isLoading={isLoading} emptyContent={"No hay alquileres registrados."}>
+				<TableBody
+					items={itemsToShow}
+					isLoading={isLoading}
+					emptyContent={'No hay alquileres registrados.'}
+				>
 					{item => (
 						<TableRow key={item.id}>
 							{columnKey => (

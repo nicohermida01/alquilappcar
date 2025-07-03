@@ -8,6 +8,8 @@ import { AuthProvider } from './contexts/AuthContext'
 import { ToastProvider } from '@heroui/react'
 import { RentProvider } from './contexts/RentContext'
 import PwRecoveryPage from './pages/PwRecoveryPage'
+import EditProfilePage from './pages/EditProfilePage'
+import MyLeasesPage from './pages/MyLeasesPage'
 
 function App() {
 	return (
@@ -20,6 +22,8 @@ function App() {
 						<Route path='/login' element={<LoginPage />} />
 						<Route path='/register' element={<RegisterPage />} />
 						<Route path='/alquiler' element={<CreateAlquiler />} />
+						<Route path='/editar-perfil' element={<EditProfilePage />} />
+						<Route path='/mis-alquileres' element={<MyLeasesPage />} />
 						<Route path='/mi-perfil' element={<UserProfile />} />
 						<Route path='/recovery' element={<PwRecoveryPage />} />
 					</Routes>

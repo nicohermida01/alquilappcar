@@ -221,6 +221,8 @@ class AlquilerSerializer(serializers.ModelSerializer):
             'cliente_id',            # write-only (ID)
             'paquetes',                  # campo virtual para crear relaciones
             'paquetealquiler_set',       # campo real que devuelve los relacionados
+            'montoExtra',
+            'montoDevuelto',
         ]
         read_only_fields = ['cantidad_dias_totales', 'paquetealquiler_set', 'fecha_registro']
 
