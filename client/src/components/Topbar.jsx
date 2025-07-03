@@ -57,7 +57,6 @@ function Topbar() {
 									isBordered
 									as='button'
 									className='transition-transform'
-									src='https://i.pravatar.cc/150?u=a042581f4e29026704d'
 								/>
 							</DropdownTrigger>
 							<DropdownMenu aria-label='Profile Actions' variant='flat'>
