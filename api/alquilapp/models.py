@@ -5,6 +5,7 @@ from django.utils.timezone import now
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+import datetime
 
 class PaqueteExtra(models.Model):
     nombre = models.CharField(max_length=100)
@@ -72,6 +73,7 @@ class Vehiculo(models.Model):
     min_dias_alquiler = models.IntegerField(default=1)
     available = models.BooleanField(default=True) 
     activo = models.BooleanField(default=True, null=False)
+    fecha_registro = models.DateField(default=datetime.date.today)
     marca = models.ForeignKey('Marca', on_delete=models.CASCADE)
     sucursal = models.ForeignKey('Sucursal', on_delete=models.CASCADE, null=True, blank=True)
 

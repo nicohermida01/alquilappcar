@@ -57,6 +57,7 @@ export function RegisterEmployeeForm({
                       reset();
                   })
                   .catch((err) => {
+                      console.log(employeeData, 'EMPLEADO')
                       addToast({
                           title: "Error",
                           description: handleApiError(err),
@@ -133,7 +134,7 @@ export function RegisterEmployeeForm({
                 <Select
                     label="Sucursal"
                     defaultSelectedKeys={[itemInfo?.sucursal.toString()]}
-                    {...register("sucursal", { required: true })}
+                    {...register("sucursal_id", { required: true })}
                     isRequired
                 >
                     {databaseInfo.sucursales.map((elem) => {

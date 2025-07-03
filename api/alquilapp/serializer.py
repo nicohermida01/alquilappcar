@@ -116,6 +116,7 @@ class SucursalSerializer(serializers.ModelSerializer):
 class EmpleadoSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     sucursal = SucursalSerializer(read_only=True)
+    sucursal_id = serializers.PrimaryKeyRelatedField(queryset=Sucursal.objects.all(), source='sucursal', write_only=True)
 
     class Meta:
         model = Empleado
