@@ -29,25 +29,38 @@ export function LoginForm() {
 		*/
 		try {
 			const res = await authService.login(data);
-			const isActive = await authService.checkActiveness(res.userId);
-			if (res.status === 'pending') {
-				setShow2FA(true)
-				setUserFor2FA(res.userId)
-				toast('Por favor, ingresa el código de verificación de dos pasos', {
-					icon: '🔐',
-				})
-				return
-			} else {
-				if (isActive) {
-					toast.success('¡Bienvenido!')
-					reset()
-					login(res)
-					navigate('/')
-				} else {
-					toast.error('Esta cuenta de empleado se encuentra deshabilitada');
-				}
-			}
-		} catch (err) {
+      console.log(res, 'RES')
+      //const isAdmin = res.isAdmin;
+      if (!res.isAdmin) {
+        const isActive = await authService.checkActiveness(res.userId);
+        if (isActive) {
+            toast.success('¡Bienvenido!')
+            reset()
+            login(res)
+            navigate('/')
+          } else {
+            toast.error('Esta cuenta de empleado se encuentra deshabilitada');
+          }
+      } else {
+        if (res.status === 'pending') {
+          setShow2FA(true)
+          setUserFor2FA(res.userId)
+          toast('Por favor, ingresa el código de verificación de dos pasos', {
+            icon: '🔐',
+          })
+          return
+        } 
+        // else {
+        //   if (isActive) {
+        //     toast.success('¡Bienvenido!')
+        //     reset()
+        //     login(res)
+        //     navigate('/')
+        //   } else {
+        //     toast.error('Esta cuenta de empleado se encuentra deshabilitada');
+        //   }
+        }
+      } catch (err) {
 			toast.error('Credenciales incorrectas')
 			console.error(err)
 		}
