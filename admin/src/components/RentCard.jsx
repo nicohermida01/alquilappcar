@@ -140,7 +140,7 @@ export function RentCard({ rentId, refreshTableFn }) {
 					)}
 					<div className='mt-4'>
 						<p className='text-sm flex justify-between  '>
-							<span className='font-bold'>Precio total:</span>
+							<span className='font-bold'>Costo de la reserva:</span>
 							<span>{`$${formatAmount(rent.precio_total)}`}</span>
 						</p>
 
