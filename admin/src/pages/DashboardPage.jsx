@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Card, CardBody, CardHeader } from "@heroui/react";
 import RegisterUsers from "../components/DashboardHomeComponents/RegisterUsers";
+import EarningsReport from "../components/DashboardHomeComponents/EarningsReport";
 
 export function DashboardPage() {
     const { user, loadingAuth } = useAuth();
@@ -13,17 +14,7 @@ export function DashboardPage() {
             </h1>
             <div className="flex justify-between gap-4">
                 <RegisterUsers />
-                <Card className="w-[49%]">
-                    <CardHeader>
-                        <h2 className="text-xl font-bold">
-                            Información del Usuario
-                        </h2>
-                    </CardHeader>
-                    <CardBody>
-                        <p>Email: {user?.email}</p>
-                        <p>Nombre: {user?.displayName}</p>
-                    </CardBody>
-                </Card>
+                <EarningsReport />
             </div>
         </section>
     );
