@@ -9,23 +9,27 @@ import {
 } from '@heroui/react'
 import { leasesApi } from '../api/leases.api'
 import { formatAmount } from '../utils/formatAmount'
+import { useEffect, useState } from 'react'
 
-export function CancelLeaseModal({
+export function ConfirmCancelPolicyModal({
 	isOpen,
 	onOpenChange,
 	leaseId,
 	leaseAmount,
+	leaseCategoryPercentage,
 	onClose,
 	refreshData,
 }) {
+	const [refundAmount, setRefundAmount] = useState(0)
+
 	const confirmCancel = () => {
 		leasesApi
-			.cancelLease(leaseId, leaseAmount)
+			.cancelLease(leaseId, refundAmount)
 			.then(() => {
 				addToast({
 					title: `Reserva #${leaseId} cancelada correctamente.`,
 					variant: 'bordered',
-					description: `Se han devuelto $${formatAmount(leaseAmount)}`,
+					description: `Se han devuelto $${formatAmount(refundAmount)}`,
 					color: 'success',
 					duration: 4000,
 				})
@@ -44,21 +48,28 @@ export function CancelLeaseModal({
 			})
 	}
 
+	useEffect(() => {
+		if (isOpen) {
+			const amount = (leaseAmount * leaseCategoryPercentage) / 100
+			setRefundAmount(amount)
+		}
+	}, [isOpen, leaseAmount, leaseCategoryPercentage])
+
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
 			<ModalContent>
 				{onClose => (
 					<>
-						<ModalHeader>Cancelar alquiler</ModalHeader>
+						<ModalHeader>Ejecutar política de cancelación</ModalHeader>
 						<ModalBody>
 							<p>
-								¿Estás seguro de que quieres cancelar el alquiler{' '}
-								<span className='font-bold'>#{leaseId}</span>?
+								¿Estás seguro de que quieres ejecutar la política de cancelación
+								del alquiler <span className='font-bold'>#{leaseId}</span>?
 							</p>
 							<p className='bg-danger-100 text-danger-500 p-2 rounded-md mt-4'>
-								Se realizará un reembolso del{' '}
-								<span className='font-bold'>100%</span> del costo total de
-								reserva.
+								Según la política de cancelación de este alquiler, se hará un
+								reembolso de{' '}
+								<span className='font-bold'>${formatAmount(refundAmount)}</span>
 							</p>
 						</ModalBody>
 						<ModalFooter>
