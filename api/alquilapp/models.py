@@ -33,7 +33,9 @@ class Alquiler(models.Model):
     precio_total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     activo = models.BooleanField(default=True) # este campo ya no se debe usar, lo dejo por las dudas -Nico
     status = models.CharField(max_length=20, choices=AlquilerStatus.choices, default=AlquilerStatus.PENDING)
-    reembolso = models.DecimalField(max_digits=20, decimal_places=2, default=-1)
+    reembolso = models.DecimalField(max_digits=20, decimal_places=2, default=-1) # reembolso por cancelacion, si es -1 no se ha reembolsado nada
+    montoExtra = models.DecimalField(max_digits=20, decimal_places=2, default=-1) # monto extra por dias adicionales, si es -1 no se ha cobrado nada
+    montoDevuelto = models.DecimalField(max_digits=20, decimal_places=2, default=-1) # monto devuelto al cliente por dias que no se usaron, si es -1 no se ha devuelto nada
 
     objects = ActivosManager()  # solo alquileres activos
     todos = models.Manager()    # acceso a todos los alquileres

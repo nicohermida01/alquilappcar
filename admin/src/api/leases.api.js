@@ -51,6 +51,22 @@ const confirmReturn = async id => {
 	return response.data
 }
 
+const confirmAfterReturn = async (id, amount) => {
+	const response = await api.patch(`/alquileres/${id}/`, {
+		status: FINISHED_RENT,
+		montoExtra: amount,
+	})
+	return response.data
+}
+
+const confirmBeforeReturn = async (id, amount) => {
+	const response = await api.patch(`/alquileres/${id}/`, {
+		status: FINISHED_RENT,
+		montoDevuelto: amount,
+	})
+	return response.data
+}
+
 export const leasesApi = {
 	createLease,
 	getAllLeases,
@@ -59,4 +75,6 @@ export const leasesApi = {
 	getLeaseById,
 	confirmVehicle,
 	confirmReturn,
+	confirmBeforeReturn,
+	confirmAfterReturn,
 }

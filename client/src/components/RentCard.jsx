@@ -22,6 +22,14 @@ const ItemText = ({ title, value }) => {
 	)
 }
 
+const WarningContianer = ({ children }) => {
+	return (
+		<div className='bg-warning-100 border-1 border-warning-600 rounded-md p-4 text-sm text-warning-600 flex flex-col gap-2 mt-2'>
+			{children}
+		</div>
+	)
+}
+
 export function RentCard({ rentId, cancelFunction }) {
 	const [rent, setRent] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
@@ -66,7 +74,7 @@ export function RentCard({ rentId, cancelFunction }) {
 	if (isLoading) return <p>Cargando...</p>
 
 	return (
-		<div className='bg-white w-max p-4 shadow rounded-md'>
+		<div className='bg-white w-[400px] p-4 shadow rounded-md'>
 			<div>
 				<h3 className='font-bold'>{title}</h3>
 				<div className='flex items-center gap-2 mt-1'>
@@ -121,10 +129,7 @@ export function RentCard({ rentId, cancelFunction }) {
 					title='Sucursal de retiro'
 					value={`${rent.sucursal_retiro.direccion}, ${rent.sucursal_retiro.localidad.nombre}`}
 				/>
-				{/* <ItemText title='Categoría' value={category} /> */}
-				{/* <ItemText title='Vehículo' value={vehicle} /> */}
-				{/* <ItemText title='Fecha de devolución' value={`${endDate}hs`} /> */}
-				{/* <ItemText title='Sucursal de retiro' value={withdrawalSubsidiary} /> */}
+
 				{rent.paquetealquiler_set.length > 0 && (
 					<div>
 						<p className='text-sm font-bold'>Paquetes extra:</p>
@@ -146,7 +151,7 @@ export function RentCard({ rentId, cancelFunction }) {
 				)}
 				<div className='mt-4'>
 					<p className='text-sm flex justify-between  '>
-						<span className='font-bold'>Precio total:</span>
+						<span className='font-bold'>Costo de la reserva:</span>
 						<span>{`$${formatAmount(rent.precio_total)}`}</span>
 					</p>
 
@@ -157,6 +162,30 @@ export function RentCard({ rentId, cancelFunction }) {
 						</p>
 					)}
 				</div>
+
+				{rent.montoExtra !== '-1.00' && (
+					<WarningContianer>
+						<p>
+							Este alquiler se devolvio con retraso. Se adicionó un monto extra
+							de{' '}
+							<span className='font-bold'>
+								${formatAmount(rent.montoExtra)}
+							</span>
+						</p>
+					</WarningContianer>
+				)}
+
+				{rent.montoDevuelto !== '-1.00' && (
+					<WarningContianer>
+						<p>
+							Este alquiler se devolvio antes de la fecha pactada. Se realizó
+							una devolución de{' '}
+							<span className='font-bold'>
+								${formatAmount(rent.montoDevuelto)}
+							</span>
+						</p>
+					</WarningContianer>
+				)}
 			</div>
 			{rent.status === PENDING_RENT && (
 				<>
