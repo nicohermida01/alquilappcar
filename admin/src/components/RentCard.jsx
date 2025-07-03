@@ -17,6 +17,14 @@ import { DeleteLeaseModal } from './DeleteLeaseModal'
 import { ConfirmReturnModal } from './ConfirmReturnModal'
 import { ConfirmVehicleModal } from './ConfirmVehicleModal'
 
+const WarningContianer = ({ children }) => {
+	return (
+		<div className='bg-warning-100 border-1 border-warning-600 rounded-md p-4 text-sm text-warning-600 flex flex-col gap-2 mt-2'>
+			{children}
+		</div>
+	)
+}
+
 const ItemText = ({ title, value }) => {
 	return (
 		<p className='text-sm'>
@@ -43,6 +51,7 @@ export function RentCard({ rentId, refreshTableFn }) {
 		leasesApi
 			.getLeaseById(rentId)
 			.then(data => {
+				console.log('Alquiler obtenido:', data)
 				setRent(data)
 			})
 			.catch(err => console.error(err))
@@ -54,7 +63,7 @@ export function RentCard({ rentId, refreshTableFn }) {
 
 	return (
 		<>
-			<div className='bg-white w-max p-4 shadow rounded-md'>
+			<div className='bg-white w-[400px] p-4 shadow rounded-md'>
 				<div className='flex items-center justify-between'>
 					<h3 className='font-bold'>Alquiler #{rent.id}</h3>
 					<Chip color={STATUS_CHIP_COLORS[rent.status]} size='sm'>
@@ -142,6 +151,30 @@ export function RentCard({ rentId, refreshTableFn }) {
 							</p>
 						)}
 					</div>
+
+					{rent.montoExtra !== '-1.00' && (
+						<WarningContianer>
+							<p>
+								Este alquiler se devolvio con retraso. Se adicionó un monto
+								extra de{' '}
+								<span className='font-bold'>
+									${formatAmount(rent.montoExtra)}
+								</span>
+							</p>
+						</WarningContianer>
+					)}
+
+					{rent.montoDevuelto !== '-1.00' && (
+						<WarningContianer>
+							<p>
+								Este alquiler se devolvio antes de la fecha pactada. Se realizó
+								una devolución de{' '}
+								<span className='font-bold'>
+									${formatAmount(rent.montoDevuelto)}
+								</span>
+							</p>
+						</WarningContianer>
+					)}
 				</div>
 				<Divider className='my-4' />
 				<div className='flex items-center gap-2 flex-wrap'>
@@ -210,6 +243,8 @@ export function RentCard({ rentId, refreshTableFn }) {
 				leaseVehicleId={rent.vehiculo_asignado?.id}
 				onClose={confirmReturnModalController.onClose}
 				refreshData={refreshData}
+				returnDate={rent.fecha_devolucion}
+				pricePerDay={rent.categoria_vehiculo.precio}
 			/>
 
 			<ConfirmVehicleModal

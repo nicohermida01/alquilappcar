@@ -8,11 +8,14 @@ export const AlquilerDetailsModal = ({
 	refreshTableFn,
 }) => {
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange} size='3xl'>
+		<Modal
+			isOpen={isOpen}
+			onOpenChange={onOpenChange}
+			className='w-max'
+			hideCloseButton
+		>
 			<ModalContent className='bg-gray-200'>
-				<ModalBody className='flex justify-center items-center py-10'>
-					<RentCard rentId={rentId} refreshTableFn={refreshTableFn} />
-				</ModalBody>
+				<RentCard rentId={rentId} refreshTableFn={refreshTableFn} />
 			</ModalContent>
 		</Modal>
 	)
