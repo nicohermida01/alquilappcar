@@ -16,8 +16,8 @@ export function DashboardPage() {
             <div className="flex flex-wrap justify-between gap-4">
                 <RegisterUsers />
                 <RegisterVehicles />
-//                 <Card className="w-[49%]">
-//                     <CardHeader>
+                {/* <Card className="w-[49%]">
+/                     <CardHeader>
 //                         <h2 className="text-xl font-bold">
 //                             Información del Usuario
 //                         </h2>
@@ -25,10 +25,10 @@ export function DashboardPage() {
 //                     <CardBody>
 //                         <p>Email: {user?.email}</p>
 //                         {/* Si es admin la API no trae el campo nombre para ser mostrado, 
-//                         calculo que esto estaba porque siendo empleado sí lo muestra. */}
-//                         { !user?.isAdmin ? (<p>Nombre: {user?.nombre}</p>):(<p>Administrador</p>)}
-//                     </CardBody>
-//                 </Card>
+//                         calculo que esto estaba porque siendo empleado sí lo muestra. }
+                         { !user?.isAdmin ? (<p>Nombre: {user?.nombre}</p>):(<p>Administrador</p>)}
+                     </CardBody>
+                 </Card> */}
                 <EarningsReport />
             </div>
         </section>
