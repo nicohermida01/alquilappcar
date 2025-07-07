@@ -1,4 +1,5 @@
 export default function ShowVehicle({ itemInfo, databaseInfo }) {
+    console.log(itemInfo);
     return (
         <>
             <section className="flex gap-2">
@@ -25,19 +26,11 @@ export default function ShowVehicle({ itemInfo, databaseInfo }) {
             </section>
             <section className="flex gap-2">
                 <p className="font-bold">Política de cancelación: </p>
-                <p>
-                    {/* {databaseInfo.cancelaciones[itemInfo.marca - 1].descripcion} */}
-                </p>
+                <p>{itemInfo.categoria.cancelacion.descripcion}</p>
             </section>
             <section className="flex gap-2">
                 <p className="font-bold">Sucursal: </p>
-                {/* <p>
-                    {databaseInfo.sucursales[itemInfo.sucursal - 1]?.direccion +
-                        ", " +
-                        databaseInfo.sucursales[itemInfo.sucursal - 1]
-                            ?.localidad.nombre}
-                </p> */}
-                <p>{itemInfo.sucursal.nombre}</p>
+                <p>{itemInfo.sucursal.localidad.nombre}, {itemInfo.sucursal.direccion}</p>
             </section>
             <section className="flex gap-2">
                 <p className="font-bold">Aptitud para discapacitados: </p>

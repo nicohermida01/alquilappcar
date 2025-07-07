@@ -16,7 +16,7 @@ export default function ClientsPage() {
         { name: "ACCIONES", uid: "actions" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["apellido", "nombre", "email", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["apellido", "nombre", "email", "activo", "actions"];
 
     const [itemList, setItemList] = React.useState([]);
 

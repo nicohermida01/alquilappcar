@@ -4,6 +4,10 @@ const getAllClients = () => {
 	return api.get('/clientes')
 }
 
+const getAllActiveClients = () => {
+	return api.get('/clientes/activeclientes')
+}
+
 const createClient = clientData => {
 	const response = api.post('/clientes/', clientData)
 	return response
@@ -30,6 +34,7 @@ const getAlquileresByUserId = async userId => {
 export const clientApi = {
 	getAllClients,
 	createClient,
+  getAllActiveClients,
 	updateClient,
 	getAlquileresByUserId,
   deleteClient

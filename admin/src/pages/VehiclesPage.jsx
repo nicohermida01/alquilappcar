@@ -51,9 +51,10 @@ function VehiclesPage() {
             });
 
         subsidiariesApi
-            .getSubsidiariesPopulated()
+            .getActiveSubsidiariesPopulated()
             .then((res) => {
                 let aux = databaseInfo;
+                // console.log(aux,'HOLA')
                 aux.sucursales = res;
                 setDatabaseInfo(aux);
             })

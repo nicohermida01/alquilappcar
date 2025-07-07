@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState} from "react";
 import {
     Table,
     TableHeader,
@@ -26,6 +26,15 @@ import { clientApi } from "../api/client.api";
 export default function ListClients({ isOpen, onOpenChange }) {
     const [selectedUser, setSelectedUser] = React.useState();
     const [itemList, setItemList] = React.useState([]);
+    // const [clientes, setClientes] = useState([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      clientApi.getAllActiveClients()
+        .then((res) => setItemList(res.data))
+        .catch((err) => console.error("Error al obtener clientes activos:", err));
+    }
+  }, [isOpen]);
 
     const columns = [
         { name: "ID", uid: "id", sortable: true },
@@ -163,7 +172,7 @@ export default function ListClients({ isOpen, onOpenChange }) {
 
     useEffect(() => {
         clientApi
-            .getAllClients()
+            .getAllActiveClients()
             .then((response) => {
                 setItemList(response.data);
             })
@@ -317,7 +326,7 @@ export default function ListClients({ isOpen, onOpenChange }) {
                         )}
                     </TableHeader>
                     <TableBody
-                        emptyContent={"No se encontraron clientes"}
+                        emptyContent={"No se encontraron clientes activos"}
                         items={sortedItems}
                     >
                         {(item) => (
