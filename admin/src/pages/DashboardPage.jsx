@@ -7,7 +7,7 @@ import EarningsReport from "../components/DashboardHomeComponents/EarningsReport
 
 export function DashboardPage() {
     const { user, loadingAuth } = useAuth();
-    console.log(user);
+    //console.log(user);
     return (
         <section className="w-full flex flex-col p-4 justify-center bg-gray-100">
             <h1 className="text-3xl font-bold">

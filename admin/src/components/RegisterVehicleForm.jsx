@@ -22,6 +22,7 @@ function RegisterVehicleForm({
 }) {
 	const { brands, sucursales, categorias } = databaseInfo
 
+  console.log(vehicleInfo, 'VEHICULO')
 	const { register, handleSubmit, reset, getValues } = useForm()
 
 	const onSubmit = data => {
@@ -96,7 +97,7 @@ function RegisterVehicleForm({
 						required: true,
 						valueAsNumber: true,
 					})}
-					defaultSelectedKeys={[vehicleInfo?.marca.toString()]}
+					defaultSelectedKeys={[vehicleInfo?.marca.id.toString()]}
 					isRequired
 				>
 					{brands.map(brand => (
@@ -118,7 +119,7 @@ function RegisterVehicleForm({
 			<InputField>
 				<Select
 					label='Categoría'
-					defaultSelectedKeys={[vehicleInfo?.categoria.toString()]}
+					defaultSelectedKeys={[vehicleInfo?.categoria.id.toString()]}
 					{...register('categoria_id', {
 						required: true,
 						valueAsNumber: true,
@@ -159,8 +160,8 @@ function RegisterVehicleForm({
 
 			<Select
 				label='Sucursal'
-				defaultSelectedKeys={[vehicleInfo?.sucursal.toString()]}
-				{...register('sucursal', {
+				defaultSelectedKeys={[vehicleInfo?.sucursal.id.toString()]}
+				{...register('sucursal_id', {
 					required: true,
 					valueAsNumber: true,
 				})}

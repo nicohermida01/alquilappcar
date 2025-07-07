@@ -129,7 +129,12 @@ class CategoriaVehiculoViewSet(viewsets.ModelViewSet):
 class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
     queryset = Cliente.objects.all()
-    
+
+    @action(detail=False, methods=['get'], url_path='activeclientes')
+    def get_active_clients(self, request):
+        activos = self.queryset.filter(activo=True)
+        serializer = self.get_serializer(activos, many=True)
+        return Response(serializer.data)
     #def create(self, request):
     #    serializer = self.get_serializer(data=request.data)
     #    serializer.is_valid(raise_exception=True)

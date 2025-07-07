@@ -148,7 +148,7 @@ export default function ListItems({
     const entitiesWithActivo = ["vehículo", "alquiler", "cliente", "sucursal", "empleado"]
 
     const renderCell = React.useCallback((item, columnKey) => {
-        console.log(item, 'ITEM' , columnKey, 'COLUMNKEY')
+        //console.log(item, 'ITEM' , columnKey, 'COLUMNKEY')
         const cellValue = item[columnKey];
         // console.log(item, 'ITEM')
         switch (columnKey) {
@@ -165,9 +165,11 @@ export default function ListItems({
             case "localidad":
                 return <p>{item.localidad.nombre}</p>;
             case "marca":
-                return <p>{databaseInfo?.brands[cellValue - 1]?.nombre}</p>;
+                // return <p>{databaseInfo?.brands[cellValue - 1]?.nombre}</p>;
+                return <p>{item?.marca?.nombre}</p>;
             case "categoria":
-                return <p>{databaseInfo.categorias[cellValue - 1]?.nombre}</p>;
+                // return <p>{databaseInfo.categorias[cellValue - 1]?.nombre}</p>;
+                 return <p>{item?.categoria?.nombre}</p>;
             case "cancelacion":
                 return <p>{item.cancelacion.descripcion}</p>;
             case "activo":

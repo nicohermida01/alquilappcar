@@ -122,7 +122,7 @@ export default function AlquileresPage() {
 					)
 				case 'actions':
 					return (
-						<div className='flex items-center gap-2 text-lg'>
+						<div className='flex justify-center items-center text-lg'>
 							<Tooltip content='Ver' size='sm'>
 								<button
 									className='hover:scale-125 transition-transform duration-200'
@@ -134,14 +134,14 @@ export default function AlquileresPage() {
 									<EyeIcon />
 								</button>
 							</Tooltip>
-							<Tooltip content='Editar' size='sm'>
+							{/* <Tooltip content='Editar' size='sm'>
 								<button
 									className='hover:scale-125 transition-transform duration-200'
 									disabled={item.status === DELETED_RENT}
 								>
 									<EditIcon />
 								</button>
-							</Tooltip>
+							</Tooltip> */}
 						</div>
 					)
 				default:

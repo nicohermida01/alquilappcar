@@ -43,20 +43,6 @@ class CategoriaVehiculoSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id']
 
-class VehiculoSerializer(serializers.ModelSerializer):
-    marca = MarcaSerializer(read_only=True)
-    marca_id = serializers.PrimaryKeyRelatedField(
-        queryset=Marca.objects.all(), source='marca', write_only=True
-    )
-    categoria = CategoriaVehiculoSerializer(read_only=True)
-    categoria_id = serializers.PrimaryKeyRelatedField(
-        queryset=CategoriaVehiculo.objects.all(), source='categoria', write_only=True
-    )
-
-    class Meta:
-        model = Vehiculo
-        fields = '__all__'
-        read_only_fields = ['id']
 
 class AdminSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True) # Esto es para que no se muestre la contraseña en la respuesta
@@ -110,6 +96,24 @@ class SucursalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sucursal
+        fields = '__all__'
+        read_only_fields = ['id']
+
+class VehiculoSerializer(serializers.ModelSerializer):
+    marca = MarcaSerializer(read_only=True)
+    marca_id = serializers.PrimaryKeyRelatedField(
+        queryset=Marca.objects.all(), source='marca', write_only=True
+    )
+    categoria = CategoriaVehiculoSerializer(read_only=True)
+    categoria_id = serializers.PrimaryKeyRelatedField(
+        queryset=CategoriaVehiculo.objects.all(), source='categoria', write_only=True
+    )
+    sucursal = SucursalSerializer(read_only=True)
+    sucursal_id = serializers.PrimaryKeyRelatedField(
+        queryset=Sucursal.objects.all(), source='sucursal', write_only=True
+    )
+    class Meta:
+        model = Vehiculo
         fields = '__all__'
         read_only_fields = ['id']
 
