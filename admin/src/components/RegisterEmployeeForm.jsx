@@ -15,7 +15,7 @@ export function RegisterEmployeeForm({
     onClose,
 }) {
     const { register, handleSubmit, reset } = useForm();
-
+    console.log(itemInfo);
     const onSubmit = (data) => {
         const { password, ...dataWithoutPassword } = data;
 
@@ -133,7 +133,7 @@ export function RegisterEmployeeForm({
             <InputField>
                 <Select
                     label="Sucursal"
-                    defaultSelectedKeys={[itemInfo?.sucursal.toString()]}
+                    defaultSelectedKeys={[itemInfo?.sucursal.id.toString()]}
                     {...register("sucursal_id", { required: true })}
                     isRequired
                 >
@@ -159,7 +159,7 @@ export function RegisterEmployeeForm({
 
             <Checkbox
 				{...register('activo')}
-				defaultSelected={itemInfo?.activo}
+				defaultSelected={itemInfo ? itemInfo.activo : true }
 			>
 				Activo
 			</Checkbox>

@@ -203,14 +203,14 @@ export function RentCard({ rentId, refreshTableFn }) {
 								size='sm'
 								onPress={() => confirmCancelPolicyModalController.onOpen()}
 							>
-								Ejecutar politica
+								Cancelar alquiler
 							</Button>
 							<Button
 								color='default'
 								size='sm'
 								onPress={() => cancelLeaseModalController.onOpen()}
 							>
-								Cancelar alquiler
+								Anular alquiler
 							</Button>
 						</>
 					)}

@@ -5,6 +5,12 @@ const getAllSucursales = async () => {
 	return response.data
 }
 
+const getActiveSubsidiariesPopulated = async () => {
+	const response = await api.get('sucursales/populated_activas/')
+	return response.data
+}
+
 export const sucursalesService = {
 	getAllSucursales,
+	getActiveSubsidiariesPopulated
 }

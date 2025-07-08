@@ -154,9 +154,9 @@ export function RegisterClientForm({
                     isRequired
                 />
 
-<Checkbox
+            <Checkbox
 				{...register('activo')}
-				defaultSelected={itemInfo?.activo}
+				defaultSelected={itemInfo ? itemInfo.activo : true}
 			>
 				Activo
 			</Checkbox>

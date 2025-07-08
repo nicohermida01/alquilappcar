@@ -66,7 +66,7 @@ export default function EarningsReport() {
                 >
                     Consultar
                 </Button>
-                Total: {total}
+                Total: ${total}
             </CardBody>
         </Card>
     );

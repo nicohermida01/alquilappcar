@@ -195,9 +195,9 @@ function RegisterVehicleForm({
 				Apto para discapacitados
 			</Checkbox>
 
-      <Checkbox
+      		<Checkbox
 				{...register('activo')}
-				defaultSelected={vehicleInfo?.activo}
+				defaultSelected={vehicleInfo ? vehicleInfo.activo : true }
 			>
 				Activo
 			</Checkbox>

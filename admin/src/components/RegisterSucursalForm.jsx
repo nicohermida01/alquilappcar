@@ -93,7 +93,7 @@ export default function RegisterSucursalForm({
             </Select>
             <Checkbox
               {...register('activo')}
-              defaultSelected={itemInfo?.activo}
+              defaultSelected={itemInfo ? itemInfo.activo : true}
             >
               Activo
             </Checkbox>

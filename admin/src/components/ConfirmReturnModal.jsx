@@ -163,7 +163,7 @@ export function ConfirmReturnModal({
 	useEffect(() => {
 		if (isOpen) {
 			subsidiariesApi
-				.getSubsidiariesPopulated()
+				.getActiveSubsidiariesPopulated()
 				.then(res => {
 					setSucursales(res)
 				})
