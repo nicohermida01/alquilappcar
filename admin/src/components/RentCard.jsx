@@ -206,7 +206,7 @@ export function RentCard({ rentId, refreshTableFn }) {
 								Cancelar alquiler
 							</Button>
 							<Button
-								color='default'
+								color='danger'
 								size='sm'
 								onPress={() => cancelLeaseModalController.onOpen()}
 							>

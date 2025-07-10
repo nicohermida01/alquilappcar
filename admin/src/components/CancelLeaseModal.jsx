@@ -49,10 +49,10 @@ export function CancelLeaseModal({
 			<ModalContent>
 				{onClose => (
 					<>
-						<ModalHeader>Cancelar alquiler</ModalHeader>
+						<ModalHeader>Anular alquiler</ModalHeader>
 						<ModalBody>
 							<p>
-								¿Estás seguro de que quieres cancelar el alquiler{' '}
+								¿Estás seguro de que quieres anular el alquiler{' '}
 								<span className='font-bold'>#{leaseId}</span>?
 							</p>
 							<p className='bg-danger-100 text-danger-500 p-2 rounded-md mt-4'>
@@ -66,7 +66,7 @@ export function CancelLeaseModal({
 								Cerrar
 							</Button>
 							<Button size='sm' color='primary' onPress={confirmCancel}>
-								Confirmar cancelación
+								Confirmar Anulación
 							</Button>
 						</ModalFooter>
 					</>

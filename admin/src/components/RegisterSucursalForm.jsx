@@ -1,6 +1,7 @@
 import { Input, Button, addToast, SelectItem, Select,Checkbox } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { vehiclesApi } from "../api/vehicles.api";
+import { useAuth } from '../contexts/AuthContext'
 
 export default function RegisterSucursalForm({
     itemInfo,
@@ -8,6 +9,7 @@ export default function RegisterSucursalForm({
     databaseInfo,
     onClose,
 }) {
+    const { user, logout } = useAuth()
     const { register, handleSubmit, reset } = useForm();
 
     const onSubmit = (data) => {
@@ -79,6 +81,7 @@ export default function RegisterSucursalForm({
 
             <Select
                 label="Localidad"
+                isRequired
                 defaultSelectedKeys={[itemInfo?.localidad.id.toString()]}
                 {...register("localidad_id", {
                     required: true,
@@ -91,12 +94,13 @@ export default function RegisterSucursalForm({
                     </SelectItem>
                 ))}
             </Select>
-            <Checkbox
+            { user.isAdmin ? (<Checkbox
               {...register('activo')}
               defaultSelected={itemInfo ? itemInfo.activo : true}
             >
               Activo
-            </Checkbox>
+            </Checkbox>):(<></>)}
+            
             <Button type="submit" color="primary" className="text-white">
                 Confirmar
             </Button>

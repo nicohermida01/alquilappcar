@@ -6,6 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { format } from "date-fns";
 import { clientApi } from "../api/client.api";
 import { handleApiError } from "../utils/handleApiError";
+import { useAuth } from '../contexts/AuthContext'
 
 const InputField = ({ children }) => {
     return <fieldset className="flex items-center gap-3">{children}</fieldset>;
@@ -18,7 +19,7 @@ export function RegisterClientForm({
     onClose,
 }) {
     const [matchPasswords, setMatchPasswords] = useState(true);
-
+	  const { user } = useAuth()
     const { register, handleSubmit, reset, getValues } = useForm();
 
     const onSubmit = (data) => {
@@ -153,13 +154,18 @@ export function RegisterClientForm({
                     })}
                     isRequired
                 />
-
-            <Checkbox
+{user.isAdmin && <Checkbox
 				{...register('activo')}
 				defaultSelected={itemInfo ? itemInfo.activo : true}
 			>
 				Activo
-			</Checkbox>
+			</Checkbox>}
+            {/* <Checkbox
+				{...register('activo')}
+				defaultSelected={itemInfo ? itemInfo.activo : true}
+			>
+				Activo
+			</Checkbox> */}
 
                 {!itemInfo && (
                     <InputField>

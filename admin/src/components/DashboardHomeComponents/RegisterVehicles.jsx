@@ -5,9 +5,11 @@ import {
     CardFooter,
     CardHeader,
     DateRangePicker,
+    Chip
 } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { vehiclesApi } from "../../api/vehicles.api";
+import { getFecha } from '../../utils/getFecha.js'
 
 export default function RegisterVehicles() {
     const [vehicleSelectedDateRange, setVehicleSelectedDateRange] = useState();
@@ -61,26 +63,43 @@ export default function RegisterVehicles() {
                 </Button>
             </CardBody>
             <CardFooter className="flex flex-col gap-4 max-h-[400px] overflow-y-auto items-start">
-                {filteredVehicleList.map((vehicle) => (
-                    <div key={vehicle.id} className="flex flex-col gap-2">
-                        <p>
-                            <strong>Patente:</strong> {vehicle.patente}{" "}
-                            {vehicle.apellido}
-                        </p>
-                        <p>
-                            <strong>Modelo:</strong> {vehicle.modelo}
-                        </p>
-                        <p>
-                            <strong>Año:</strong> {vehicle.año}
-                        </p>
-                        <p>
-                            <strong>Fecha de registro:</strong>{" "}
-                            {new Date(
-                                vehicle.fecha_registro
-                            ).toLocaleDateString("es-AR")}
-                        </p>
+                {filteredVehicleList.length > 0 ? filteredVehicleList.map((vehicle) => (
+                    <div
+                        key={vehicle.id}
+                        className="flex gap-2 justify-between w-full"
+                    >
+                        
+                        <div className="flex flex-col">
+                          <p className="text-bold text-sm">
+                                <strong>Patente: </strong>
+                                {vehicle.patente}
+                            </p>
+                            <p className="text-bold text-sm">
+                                <strong>Fecha de registro: </strong>
+                                {vehicle.fecha_registro}
+                            </p>
+                            <p className="text-bold text-sm">
+                                <strong>Marca: </strong>
+                                {vehicle.marca.nombre}
+                            </p>
+                            <p className="text-bold text-sm">
+                                <strong>Modelo: </strong>
+                                {vehicle.modelo}
+                            </p>
+                             <p className="text-bold text-sm">
+                                <strong>Categoría: </strong>
+                                {vehicle.categoria.nombre}
+                            </p>
+                        </div>
+                        <Chip
+                            className="capitalize"
+                            variant="flat"
+                            color={vehicle.activo ? "success" : "danger"}
+                        >
+                            {vehicle.activo ? "Activo" : "Inactivo"}
+                        </Chip>
                     </div>
-                ))}
+                )):(<p>No hay vehículos registrados en las fechas seleccionadas.</p>)}
             </CardFooter>
         </Card>
     );

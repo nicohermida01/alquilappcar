@@ -10,7 +10,7 @@ import ListClients from './ListClients'
 
 export function DashboardLayout() {
 	const [selected, setSelected] = useState()
-	const { isAuthenticated, loadingAuth } = useAuth()
+	const { isAuthenticated, loadingAuth, user } = useAuth()
 
 	const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
@@ -62,13 +62,13 @@ export function DashboardLayout() {
 									>
 										Vehículos
 									</SidebarLink>
-									<SidebarLink
+									{user.isAdmin && <SidebarLink
 										to='/paquetes'
 										setSelected={setSelected}
 										selected={selected === 'paquetes'}
 									>
 										Paquetes
-									</SidebarLink>
+									</SidebarLink>}
 									<SidebarLink
 										to='/categorias'
 										setSelected={setSelected}
@@ -91,13 +91,20 @@ export function DashboardLayout() {
 							</AccordionItem>
 							<AccordionItem key='2' aria-label='Usuarios' title='Usuarios'>
 								<div className='flex flex-col px-4'>
-									<SidebarLink
+                  {user.isAdmin && <SidebarLink
 										to='/empleados'
 										setSelected={setSelected}
 										selected={selected === 'empleados'}
 									>
 										Empleados
-									</SidebarLink>
+									</SidebarLink>}
+									{/* <SidebarLink
+										to='/empleados'
+										setSelected={setSelected}
+										selected={selected === 'empleados'}
+									>
+										Empleados
+									</SidebarLink> */}
 									<SidebarLink
 										to='/clientes'
 										setSelected={setSelected}
@@ -105,7 +112,7 @@ export function DashboardLayout() {
 									>
 										Clientes
 									</SidebarLink>
-									<SidebarLink>Administradores</SidebarLink>
+									{/* <SidebarLink>Administradores</SidebarLink> */}
 								</div>
 							</AccordionItem>
 							<AccordionItem key='3' aria-label='Sucursales' title='Sucursales'>
@@ -127,7 +134,7 @@ export function DashboardLayout() {
 								</div>
 							</AccordionItem>
 
-							<AccordionItem key='4' aria-label='Alquileres' title='Alquileres'>
+							{user.isAdmin && <AccordionItem key='4' aria-label='Alquileres' title='Alquileres'>
 								<div className='flex flex-col px-4'>
 									<SidebarLink
 										to={'/alquileres'}
@@ -137,7 +144,7 @@ export function DashboardLayout() {
 										Alquileres
 									</SidebarLink>
 								</div>
-							</AccordionItem>
+							</AccordionItem>}
 						</Accordion>
 						<div className='flex p-4'>
 							<Button color='primary' onPress={onOpen} fullWidth>

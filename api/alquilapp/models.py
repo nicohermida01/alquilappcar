@@ -190,7 +190,7 @@ class Cliente(models.Model):
     dni = models.IntegerField(unique=True)
     fecha_de_nacimiento = models.DateField()
     contacto = models.CharField(max_length=64, blank=True, null=True)
-    activo = models.BooleanField(default=True, null=False)
+    activo = models.BooleanField(default=True, blank=True, null=False)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=64)
     fecha_de_registro = models.DateTimeField(auto_now_add=True)  # auto_now_add=True setea la fecha y hora actual al crear el objeto -Augus

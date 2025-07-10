@@ -36,6 +36,10 @@ export default function ShowVehicle({ itemInfo, databaseInfo }) {
                 <p className="font-bold">Aptitud para discapacitados: </p>
                 <p>{itemInfo.aptitud_discapacidad ? "Apto" : "No apto"}</p>
             </section>
+            <section className="flex gap-2">
+                <p className="font-bold">Estado: </p>
+                <p>{itemInfo.activo ? "Activo" : "Dado de baja"}</p>
+            </section>
         </>
     );
 }

@@ -47,7 +47,7 @@ export function ConfirmVehicleModal({
 			addToast({
 				title: 'Error al iniciar el alquiler.',
 				description:
-					'La fecha de inicio debe estar dentro del rango permitido.',
+					'La fecha actual debe estar dentro del rango de la fecha de inicio y fin del alquiler.',
 				color: 'danger',
 				duration: 4000,
 			})

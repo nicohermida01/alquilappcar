@@ -30,6 +30,7 @@ import ModifyItemModal from "./ModifyItemModal";
 import ViewItemModal from "./ViewItemModal";
 import DeleteItemModal from "./DeleteItemModal";
 import { ListRentsModal } from "../listRentsModal";
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function ListItems({
     columns,
@@ -42,6 +43,7 @@ export default function ListItems({
     itemName,
     deleteFunction,
 }) {
+    const { user, logout } = useAuth()
     const [selectedItem, setSelectedItem] = React.useState();
 
     const {
@@ -195,6 +197,7 @@ export default function ListItems({
                                 <EyeIcon />
                             </span>
                         </Tooltip>
+                        {((["vehículo", 'empleado', 'sucursal', 'paquete', 'categoría', 'marca', 'cancelacion', 'localidad'].includes(itemName) && user.isAdmin) || ['cliente'].includes(itemName)) &&
                         <Tooltip content={"Editar " + itemName}>
                             <span
                                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
@@ -203,15 +206,25 @@ export default function ListItems({
                                 <EditIcon />
                             </span>
                         </Tooltip>
-                        {entitiesWithActivo.includes(itemName) && Number(item.activo) === 0 ? null : (
-                          <Tooltip content={"Eliminar " + itemName}>
+                        }
+                        {/* {["cliente"].includes(itemName) && <Tooltip content={"Editar " + itemName}>
+                            <span
+                                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                onClick={() => onOpenItemModify(item)}
+                            >
+                                <EditIcon />
+                            </span>
+                        </Tooltip>} */}
+                        {/* aaaaaAAAAAAAAAAAAAAAAAAAAAAAA */}
+                        {user.isAdmin && ["sucursal", "empleado", "cliente", "vehículo"].includes(itemName) && entitiesWithActivo.includes(itemName) && Number(item.activo) ? (<Tooltip content={"Eliminar " + itemName}>
                             <span
                               className="text-lg text-danger cursor-pointer active:opacity-50"
                               onClick={() => onOpenItemDelete(item)}
                             >
                               <DeleteIcon />
                             </span>
-                          </Tooltip>
+                          </Tooltip>) : (
+                          null
                         )}
                     </div>
                 );
@@ -306,13 +319,32 @@ export default function ListItems({
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button
+                        {/* hay que hacerlo condicional según la entidad y segun el rol */}
+                        {/* <Button
                             color="primary"
                             onPress={onOpenCreateItem}
                             endContent={<PlusIcon />}
                         >
                             Crear nuevo
-                        </Button>
+                        </Button> */}
+                        {["sucursal", "empleado", "categoría", "vehículo", "marca", "paquete", 'localidad'].includes(itemName) && user.isAdmin && (
+                          <Button
+                            color="primary"
+                            onPress={onOpenCreateItem}
+                            endContent={<PlusIcon />}
+                          >
+                            Crear nuevo
+                          </Button>
+                        )}
+                        {["cliente"].includes(itemName) && (
+                          <Button
+                            color="primary"
+                            onPress={onOpenCreateItem}
+                            endContent={<PlusIcon />}
+                          >
+                            Crear nuevo
+                          </Button>
+                        )}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">

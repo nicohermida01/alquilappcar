@@ -14,22 +14,13 @@ export function DashboardPage() {
                 Bienvenido, {user?.email.split("@")[0]}
             </h1>
             <div className="flex flex-wrap justify-between gap-4">
-                <RegisterUsers />
-                <RegisterVehicles />
-                {/* <Card className="w-[49%]">
-/                     <CardHeader>
-//                         <h2 className="text-xl font-bold">
-//                             Información del Usuario
-//                         </h2>
-//                     </CardHeader>
-//                     <CardBody>
-//                         <p>Email: {user?.email}</p>
-//                         {/* Si es admin la API no trae el campo nombre para ser mostrado, 
-//                         calculo que esto estaba porque siendo empleado sí lo muestra. }
-                         { !user?.isAdmin ? (<p>Nombre: {user?.nombre}</p>):(<p>Administrador</p>)}
-                     </CardBody>
-                 </Card> */}
-                <EarningsReport />
+              {user.isAdmin && (
+                <>
+                  <RegisterUsers />
+                  <RegisterVehicles />
+                  <EarningsReport />
+                </>
+              )} 
             </div>
         </section>
     );

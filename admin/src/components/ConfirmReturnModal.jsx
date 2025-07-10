@@ -171,27 +171,36 @@ export function ConfirmReturnModal({
 
 			const now = new Date()
 			const returnDateObj = new Date(returnDate)
-			if (returnDateObj < now) {
-				// El alquiler se está devolviendo después de la fecha de devolución, es decir, con retraso
-				setReturnAfter(true)
+      // console.log(now.getTime(), returnDateObj.getTime(),'FECHAS')
+      
+      const sameDay =
+      now.getFullYear() === returnDateObj.getFullYear() &&
+      now.getMonth() === returnDateObj.getMonth() &&
+      now.getDate() === returnDateObj.getDate();
 
-				// calcular monto adicional
-				const extraDays = Math.ceil(
-					(now - returnDateObj) / (1000 * 60 * 60 * 24)
-				)
-				setExtraDays(extraDays)
-				setAuxAmount(extraDays * pricePerDay)
-			} else if (returnDateObj > now) {
-				// El alquiler se está devolviendo antes de la fecha de devolución
-				setReturnBefore(true)
+      if (!sameDay) {
+        if (returnDateObj.getTime() < now.getTime()) {
+          // El alquiler se está devolviendo después de la fecha de devolución, es decir, con retraso
+          setReturnAfter(true)
 
-				// calcular monto a devolver (dias no utilizados * precio diario)
-				const unusedDays = Math.ceil(
-					(returnDateObj - now) / (1000 * 60 * 60 * 24)
-				)
-				setUnusedDays(unusedDays)
-				setAuxAmount(unusedDays * pricePerDay)
-			}
+          // calcular monto adicional
+          const extraDays = Math.ceil(
+            (now - returnDateObj) / (1000 * 60 * 60 * 24)
+          )
+          setExtraDays(extraDays)
+          setAuxAmount(extraDays * pricePerDay)
+        } else if (returnDateObj > now) {
+          // El alquiler se está devolviendo antes de la fecha de devolución
+          setReturnBefore(true)
+
+          // calcular monto a devolver (dias no utilizados * precio diario)
+          const unusedDays = Math.ceil(
+            (returnDateObj - now) / (1000 * 60 * 60 * 24)
+          )
+          setUnusedDays(unusedDays)
+          setAuxAmount(unusedDays * pricePerDay)
+        }
+      }
 		}
 	}, [isOpen, returnDate, pricePerDay])
 

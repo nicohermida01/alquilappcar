@@ -30,7 +30,7 @@ function HomePage() {
 			})
 
 		sucursalesService
-			.getAllSucursales()
+			.getActiveSubsidiariesPopulated()
 			.then(res => {
 				setSucursales(res)
 			})
