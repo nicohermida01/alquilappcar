@@ -167,7 +167,7 @@ class LoginAdminAPIView(APIView):
 
         if isAdmin:
             # si es admin, enviamos el codigo de verificacion de dos factores
-            self.sendTwoFactorCode(user.email)
+            # self.sendTwoFactorCode(user.email)
             return Response({"status": "pending", "userId": user.id, "isAdmin": True}, status=200)
 
         if not isAdmin:
