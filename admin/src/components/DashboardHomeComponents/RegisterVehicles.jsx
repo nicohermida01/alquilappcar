@@ -12,6 +12,7 @@ import { vehiclesApi } from "../../api/vehicles.api";
 import { getFecha } from '../../utils/getFecha.js'
 
 export default function RegisterVehicles() {
+    const [dataSetted, setDataSetted] = useState(false);
     const [vehicleSelectedDateRange, setVehicleSelectedDateRange] = useState();
     const [allVehicleList, setAllVehicleList] = useState([]);
     const [filteredVehicleList, setFilteredVehicleList] = useState([]);
@@ -34,12 +35,14 @@ export default function RegisterVehicles() {
             end: new Date(vehicleSelectedDateRange.end),
         };
         console.log(allVehicleList, 'VEHICULOS');
+        
         const filteredUsers = allVehicleList.filter((vehicle) => {
             const registrationDate = new Date(vehicle.fecha_registro);
             return (
                 registrationDate >= data.start && registrationDate <= data.end
             );
         });
+        setDataSetted(true);
         setFilteredVehicleList(filteredUsers);
     }
 
@@ -63,7 +66,9 @@ export default function RegisterVehicles() {
                 </Button>
             </CardBody>
             <CardFooter className="flex flex-col gap-4 max-h-[400px] overflow-y-auto items-start">
-                {filteredVehicleList.length > 0 ? filteredVehicleList.map((vehicle) => (
+              {
+                dataSetted && (
+filteredVehicleList.length > 0 ? filteredVehicleList.map((vehicle) => (
                     <div
                         key={vehicle.id}
                         className="flex gap-2 justify-between w-full"
@@ -99,7 +104,10 @@ export default function RegisterVehicles() {
                             {vehicle.activo ? "Activo" : "Inactivo"}
                         </Chip>
                     </div>
-                )):(<p>No hay vehículos registrados en las fechas seleccionadas.</p>)}
+                )):(<p>No hay vehículos registrados en las fechas seleccionadas.</p>)
+                )
+              }
+                
             </CardFooter>
         </Card>
     );

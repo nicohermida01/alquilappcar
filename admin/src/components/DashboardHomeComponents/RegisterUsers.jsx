@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { clientApi } from "../../api/client.api";
 
 export default function RegisterUsers() {
+    const [dataSetted, setDataSetted] = useState(false)
     const [userSelectedDateRange, setuserSelectedDateRange] = useState();
     const [allUserList, setAllUserList] = useState([]);
     const [filteredUserList, setFilteredUserList] = useState([]);
@@ -39,6 +40,7 @@ export default function RegisterUsers() {
                 registrationDate >= data.start && registrationDate <= data.end
             );
         });
+        setDataSetted(true);
         setFilteredUserList(filteredUsers);
     }
 
@@ -62,7 +64,7 @@ export default function RegisterUsers() {
                 </Button>
             </CardBody>
             <CardFooter className="flex flex-col gap-4 max-h-[400px] overflow-y-auto items-start">
-                {filteredUserList.map((user) => (
+                {dataSetted && (filteredUserList.length > 0 ? filteredUserList.map((user) => (
                     <div
                         key={user.id}
                         className="flex gap-2 justify-between w-full"
@@ -94,12 +96,12 @@ export default function RegisterUsers() {
                             {user.activo ? "Activo" : "Inactivo"}
                         </Chip>
                     </div>
-                ))}
-                <Divider className="my-4" />
+                )):(<p>No hay clientes registrados en las fechas seleccionadas.</p>))}
+                {/* <Divider className="my-4" />
                 <p className="text-sm text-gray-500">
                     {filteredUserList.length} usuarios registrados en el rango
                     de fechas
-                </p>
+                </p> */}
             </CardFooter>
         </Card>
     );

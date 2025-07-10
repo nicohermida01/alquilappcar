@@ -49,7 +49,7 @@ export function DashboardLayout() {
 		<div>
 			<ListClients isOpen={isOpen} onOpenChange={onOpenChange} />
 			<Topbar />
-			<div className='flex h-[calc(100vh-70px)]'>
+			<div className='flex min-h-[calc(100vh-70px)]'>
 				<Sidebar>
 					<Menu>
 						<Accordion variant='light' selectionMode='multiple'>

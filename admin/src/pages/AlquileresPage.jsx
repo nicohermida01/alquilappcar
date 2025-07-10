@@ -14,7 +14,7 @@ import {
 } from '@heroui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { leasesApi } from '../api/leases.api'
-import { getFormattedDate } from '../utils/getFecha'
+import { getFormattedDate, getFecha } from '../utils/getFecha'
 import { formatAmount } from '../utils/formatAmount'
 import {
 	DELETED_RENT,

@@ -8,6 +8,7 @@ import {
 } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { leasesApi } from "../../api/leases.api";
+import { formatAmount } from '../../utils/formatAmount.js'
 
 export default function EarningsReport() {
     const [userSelectedDateRange, setuserSelectedDateRange] = useState();
@@ -66,7 +67,7 @@ export default function EarningsReport() {
                 >
                     Consultar
                 </Button>
-                Total: ${total}
+                Total: ${formatAmount(total)}
             </CardBody>
         </Card>
     );

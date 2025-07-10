@@ -33,45 +33,62 @@ export function ConfirmVehicleModal({
 	const [isVehiclesLoading, setIsVehiclesLoading] = useState(false)
 	const [otherVehicles, setOtherVehicles] = useState([])
 	const [selectedOtherVehicle, setSelectedOtherVehicle] = useState(null)
-
+  console.log(vehicles,'VEHICULOS')
 	const confirmVehicle = e => {
 		e.preventDefault()
 
+    
 		// Validamos que la fecha en que se inicia el alquiler esté dentro del rango permitido (fecha de inicio y fin del alquiler)
 		const dateNow = new Date()
 		const startDateObj = new Date(startDate)
 		const endDateObj = new Date(endDate)
+    
+    // const sameDay =
+    // dateNow.getFullYear() === startDateObj.getFullYear() &&
+    // dateNow.getMonth() === startDateObj.getMonth() &&
+    // dateNow.getDate() === startDateObj.getDate();
+    const sameDay =
+  dateNow.getUTCFullYear() === startDateObj.getUTCFullYear() &&
+  dateNow.getUTCMonth() === startDateObj.getUTCMonth() &&
+  dateNow.getUTCDate() === startDateObj.getUTCDate();
 
-		if (dateNow < startDateObj || dateNow > endDateObj) {
-			// si la fecha actual es menor a la fecha de inicio o mayor a la fecha de fin, mostramos un error
-			addToast({
-				title: 'Error al iniciar el alquiler.',
-				description:
-					'La fecha actual debe estar dentro del rango de la fecha de inicio y fin del alquiler.',
-				color: 'danger',
-				duration: 4000,
-			})
 
-			return
-		}
+
+    if(!sameDay){
+      if (dateNow < startDateObj || dateNow > endDateObj) {
+        // si la fecha actual es menor a la fecha de inicio o mayor a la fecha de fin, mostramos un error
+        addToast({
+          title: 'Error al iniciar el alquiler.',
+          description:
+            'La fecha actual debe estar dentro del rango de la fecha de inicio y fin del alquiler.',
+          color: 'danger',
+          duration: 4000,
+        })
+  
+        return
+      }
+    }
 
 		// Verificamos si hay algun dia de retraso en iniciar el alquiler
 		let isLate = false
 		let daysDifference = 0
-		if (dateNow > startDateObj) {
-			// si la fecha actual es mayor a la fecha de inicio, significa que hay un retraso
-			isLate = true
-			daysDifference = Math.ceil(
-				(dateNow - startDateObj) / (1000 * 60 * 60 * 24)
-			)
-		}
+    if(!sameDay){
+      if (dateNow > startDateObj) {
+        // si la fecha actual es mayor a la fecha de inicio, significa que hay un retraso
+        isLate = true
+        daysDifference = Math.ceil(
+          (dateNow - startDateObj) / (1000 * 60 * 60 * 24)
+        )
+      }
+    }
 
 		// Actualizamos el alquiler con el vehículo seleccionado -> setear el vehiculo asignado y el estado a IN_PROGRESS_RENT
 		// Actualizamos el estado del vehiculo elegido a available=false
 		const vehicleId = otherCategory
-			? Number(selectedOtherVehicle)
-			: Number(selectedVehicle)
+			? Number(selectedOtherVehicle.currentKey)
+			: Number(selectedVehicle.currentKey)
 
+    // console.log(vehicleId, 'VEHICLEID L.75')
 		leasesApi
 			.confirmVehicle(leaseId, vehicleId)
 			.then(() => {
@@ -119,7 +136,7 @@ export function ConfirmVehicleModal({
 			vehiclesApi
 				.getBySucursalAndCategory(
 					leaseSucursalRetiroId,
-					Number(selectedCategory)
+					Number(selectedCategory.currentKey)
 				)
 				.then(res => {
 					setOtherVehicles(res)
@@ -168,7 +185,9 @@ export function ConfirmVehicleModal({
 									disabled={otherCategory}
 									selectedKeys={selectedVehicle}
 									onSelectionChange={keys => {
-										setSelectedVehicle(keys.currentKey)
+                    // console.log(keys, 'KEYS')
+                    // console.log(keys.currentKey, 'CURRENTKEY')
+										setSelectedVehicle(keys)
 									}}
 									items={vehicles}
 									renderValue={items => {
@@ -216,7 +235,7 @@ export function ConfirmVehicleModal({
 											isRequired={otherCategory}
 											selectedKeys={selectedCategory}
 											onSelectionChange={keys => {
-												setSelectedCategory(keys.currentKey)
+												setSelectedCategory(keys)
 											}}
 										>
 											{categories.map(c => (
@@ -231,7 +250,7 @@ export function ConfirmVehicleModal({
 											isLoading={isVehiclesLoading}
 											selectedKeys={selectedOtherVehicle}
 											onSelectionChange={keys => {
-												setSelectedOtherVehicle(keys.currentKey)
+												setSelectedOtherVehicle(keys)
 											}}
 											items={otherVehicles}
 											renderValue={items => {

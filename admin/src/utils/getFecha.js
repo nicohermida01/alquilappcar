@@ -19,6 +19,21 @@ const dateOptions = {
 	timeZone: 'America/Argentina/Buenos_Aires',
 }
 
-export const getFormattedDate = fecha => {
-	return new Date(fecha).toLocaleString('es-AR', dateOptions)
-}
+// export const getFormattedDate = fecha => {
+// 	return new Date(fecha).toLocaleString('es-AR', dateOptions)
+// }
+
+export const getFormattedDate = (fecha) => {
+  const date = new Date(fecha);
+
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth(); // 0-based
+  const day = date.getUTCDate();
+
+  const meses = [
+    'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+  ];
+
+  return `${day.toString().padStart(2, '0')} de ${meses[month]} de ${year}`;
+};
